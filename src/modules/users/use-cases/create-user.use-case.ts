@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 
 import { CreateUserInputDto } from '../dtos/create-user.dto';
 import { UsersRepository } from '../repositories/users-repository';
@@ -13,6 +13,21 @@ export class CreateUserUseCase {
 
   async execute({ name, email, age, password }: CreateUserInputDto) {
     const hash = await this.hashRepository.hash(password);
-    return this.usersRepository.create({ name, email, age, password: hash });
+
+    const user = await this.usersRepository.getByEmail(email);
+
+    if (user || user !== null) {
+      throw new ConflictException({
+        message: 'Email already in use.',
+        code: 'EMAIL_ALREADY_IN_USE',
+      });
+    }
+
+    return this.usersRepository.create({
+      name,
+      email,
+      age,
+      password: hash,
+    });
   }
 }
