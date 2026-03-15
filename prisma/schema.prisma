@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -8,17 +8,31 @@ datasource db {
   provider = "postgresql"
 }
 
+enum BiologicalSex {
+  MALE
+  FEMALE
+}
+
+enum UserGoal {
+  GAIN_MASS
+  DEFINE
+  LOSE_WEIGHT
+  MAINTAIN_WEIGHT
+}
+
 model User {
-  id                  String   @id @default(uuid())
+  id                  String         @id @default(uuid())
   name                String
-  email               String   @unique
+  email               String         @unique
+  goal                UserGoal?
+  biologicalSex       BiologicalSex?
   age                 Int
-  passwordHash        String   @map("password_hash")
-  weightInGrams       Int?     @map("weight_in_grams")
-  heightInCentimeters Int?     @map("height_in_centimeters")
-  goalWeightInGrams   Int?     @map("goal_weight_in_grams")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  passwordHash        String         @map("password_hash")
+  weightInGrams       Int?           @map("weight_in_grams")
+  heightInCentimeters Int?           @map("height_in_centimeters")
+  goalWeightInGrams   Int?           @map("goal_weight_in_grams")
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
 
   waterIngestion WaterIngestion?
   weightHistory  WeightHistory[]
@@ -37,18 +51,11 @@ model Diet {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  goal   DietGoal
+  goal   UserGoal
   userId String   @map("user_id")
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("diets")
-}
-
-enum DietGoal {
-  GAIN_MASS
-  DEFINE
-  LOSE_WEIGHT
-  MAINTAIN_WEIGHT
 }
 
 model WeightHistory {
