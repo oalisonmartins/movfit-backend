@@ -6,13 +6,16 @@ import { UsersRepository } from './repositories/users-repository';
 import { CreateUserUseCase } from './use-cases/create-user.use-case';
 import { HashModule } from '../hash/hash.module';
 import { PrismaUsersRepository } from './repositories/prisma-users-repository';
+import { GetMeUseCase } from './use-cases/get-me.use-case';
+import { JwtAuthModule } from '../auth/jwt-auth.module';
 
 @Module({
-  imports: [HashModule],
+  imports: [HashModule, JwtAuthModule],
   exports: [UsersRepository, CreateUserUseCase],
   controllers: [UsersController],
   providers: [
     CreateUserUseCase,
+    GetMeUseCase,
     PrismaService,
     {
       provide: UsersRepository,
