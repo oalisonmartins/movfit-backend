@@ -1,4 +1,5 @@
-import { IsEmail, IsInt, IsString, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsEmail, IsInt, IsString, MinLength } from 'class-validator';
 
 export class CreateUserInputDto {
   @IsString({ message: 'Invalid name.' })
@@ -11,6 +12,7 @@ export class CreateUserInputDto {
   @MinLength(8, { message: 'Leak password.' })
   password: string;
 
-  @IsInt({ message: 'Invalid age.' })
-  age: number;
+  @IsDate({ message: 'Invalid age.' })
+  @Type(() => Date)
+  birthDate: Date;
 }

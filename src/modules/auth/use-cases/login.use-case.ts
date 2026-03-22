@@ -43,7 +43,7 @@ export class LoginUseCase {
       {
         sub: user.id,
         email: user.email,
-        age: user.age,
+        birthDate: user.birthDate,
       },
       {
         secret: this.jwtConfiguration.secret,

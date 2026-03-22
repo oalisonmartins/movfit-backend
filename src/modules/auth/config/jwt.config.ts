@@ -7,6 +7,6 @@ export default registerAs('jwt', () => {
     secret: process.env.JWT_SECRET,
     audience: process.env.JWT_TOKEN_AUDIENCE,
     issuer: process.env.JWT_TOKEN_ISSUER,
-    expiresIn: '30d' as const,
+    expiresIn: '7d' as const,
   };
 });

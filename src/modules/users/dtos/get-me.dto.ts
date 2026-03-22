@@ -3,7 +3,7 @@ import { BiologicalSex, UserGoal } from 'generated/prisma/enums';
 export class GetMeOutoutDto {
   name: string;
   email: string;
-  age: number;
+  birthDate: Date;
   goal: UserGoal | null;
   biologicalSex: BiologicalSex | null;
   heightInCentimeters: number | null;

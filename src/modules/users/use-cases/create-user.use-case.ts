@@ -11,12 +11,12 @@ export class CreateUserUseCase {
     private readonly hashRepository: HashRepository,
   ) {}
 
-  async execute({ name, email, age, password }: CreateUserInputDto) {
+  async execute({ name, email, birthDate, password }: CreateUserInputDto) {
     const hash = await this.hashRepository.hash(password);
 
     const user = await this.usersRepository.getByEmail(email);
 
-    if (user || user !== null) {
+    if (user) {
       throw new ConflictException({
         message: 'Email already in use.',
         code: 'EMAIL_ALREADY_IN_USE',
@@ -26,7 +26,7 @@ export class CreateUserUseCase {
     return this.usersRepository.create({
       name,
       email,
-      age,
+      birthDate,
       password: hash,
     });
   }

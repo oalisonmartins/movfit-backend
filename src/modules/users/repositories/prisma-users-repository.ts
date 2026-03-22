@@ -5,17 +5,18 @@ import { UsersRepository } from 'src/modules/users/repositories/users-repository
 
 import { PrismaService } from 'src/infra/database/prisma/prisma.service';
 import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
+import { GetUserMetricsDto } from '../dtos/get-metrics.dto';
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create({ name, age, email, password }: CreateUserInputDto) {
+  async create({ name, birthDate, email, password }: CreateUserInputDto) {
     return await this.prisma.user.create({
       data: {
         name,
         email,
-        age,
+        birthDate,
         passwordHash: password,
       },
       omit: {
@@ -48,6 +49,19 @@ export class PrismaUsersRepository implements UsersRepository {
         heightInCentimeters: data.heightInCentimeters,
         weightInGrams: data.weightInGrams,
         goalWeightInGrams: data.goalWeightInGrams,
+      },
+    });
+  }
+
+  async getMetrics(userId: string): Promise<GetUserMetricsDto | null> {
+    return await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        birthDate: true,
+        biologicalSex: true,
+        goal: true,
+        heightInCentimeters: true,
+        weightInGrams: true,
       },
     });
   }

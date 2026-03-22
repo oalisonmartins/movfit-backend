@@ -20,7 +20,7 @@ export class GetMeUseCase {
     return {
       name: user.name,
       email: user.email,
-      age: user.age,
+      birthDate: user.birthDate,
       goal: user.goal,
       biologicalSex: user.biologicalSex,
       weightInGrams: user.weightInGrams,
