@@ -16,6 +16,6 @@ export class UpdateUserMetricsUseCase {
       });
     }
 
-    await this.usersRepository.updateMetrics(user.id, data);
+    return await this.usersRepository.updateMetrics(user.id, data);
   }
 }

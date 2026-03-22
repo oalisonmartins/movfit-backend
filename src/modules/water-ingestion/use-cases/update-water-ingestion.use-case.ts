@@ -14,7 +14,7 @@ export class UpdateWaterIngestionUseCase {
     private readonly repository: WaterIngestionRepository,
   ) {}
 
-  async execute(userId: string): Promise<void> {
+  async execute(userId: string) {
     const user = await this.usersRepository.getById(userId);
 
     if (!user) {
@@ -42,6 +42,9 @@ export class UpdateWaterIngestionUseCase {
       goal: user.goal,
     });
 
-    await this.repository.upsertWaterIngestion(userId, dailyIngestionInMl);
+    return await this.repository.upsertWaterIngestion(
+      userId,
+      dailyIngestionInMl,
+    );
   }
 }

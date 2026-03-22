@@ -10,7 +10,7 @@ export class UpdateDailyNutritionUseCase {
     userId: string,
     { carbsInGrams, fatsInGrams, proteinsInGrams }: UpdateDailyNutritionDto,
   ) {
-    await this.repository.upsertDailyNutrition({
+    return await this.repository.upsertDailyNutrition({
       userId,
       carbsInGrams,
       fatsInGrams,
