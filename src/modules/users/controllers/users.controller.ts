@@ -1,17 +1,25 @@
-import { Body, Controller, Get, HttpStatus, Patch, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 
 import { GetMeUseCase } from '../use-cases/get-me.use-case';
-import { TokenPayloadDto } from 'src/modules/auth/dtos/token-payload.dto';
-import type { FastifyRequest } from 'fastify';
-import { PAYLOAD_KEY } from 'src/modules/auth/constants/auth.constant';
 import { UpdateUserMetricsUseCase } from '../use-cases/update-user-metrics.use-case';
 import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { BiologicalSex, UserGoal } from 'generated/prisma/enums';
+import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
+import type { User } from 'generated/prisma/client';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller({
   path: '/users',
-  version: '3',
+  version: '4',
 })
 export class UsersController {
   constructor(
@@ -40,9 +48,10 @@ export class UsersController {
     },
   })
   @Get('/me')
-  getMe(@Req() req: FastifyRequest) {
-    const payload: TokenPayloadDto = req[PAYLOAD_KEY];
-    return this.getMeUseCase.execute(payload);
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  getMe(@AuthenticatedUser() user: User) {
+    return this.getMeUseCase.execute(user);
   }
 
   @ApiResponse({
@@ -63,11 +72,12 @@ export class UsersController {
     },
   })
   @Patch('/metrics')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
   updateUserMetrics(
-    @Req() req: FastifyRequest,
+    @AuthenticatedUser() user: User,
     @Body() dto: UpdateUserMetricsInputDto,
   ) {
-    const payload: TokenPayloadDto = req[PAYLOAD_KEY];
-    return this.updateUserMetricsUseCase.execute(payload.sub, dto);
+    return this.updateUserMetricsUseCase.execute(user.id, dto);
   }
 }

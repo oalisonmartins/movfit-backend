@@ -1,22 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersRepository } from '../repositories/users-repository';
-import { TokenPayloadDto } from 'src/modules/auth/dtos/token-payload.dto';
+import { Injectable } from '@nestjs/common';
 import { GetMeDto } from '../dtos/get-me.dto';
+import { User } from 'generated/prisma/client';
 
 @Injectable()
 export class GetMeUseCase {
-  constructor(private readonly usersRepository: UsersRepository) {}
-
-  async execute(payload: TokenPayloadDto): Promise<GetMeDto> {
-    const user = await this.usersRepository.getById(payload.sub);
-
-    if (!user) {
-      throw new UnauthorizedException({
-        message: 'Unauthorized.',
-        code: 'UNAUTHORIZED_ERROR',
-      });
-    }
-
+  async execute(user: User): Promise<GetMeDto> {
     return {
       name: user.name,
       email: user.email,

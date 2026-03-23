@@ -4,18 +4,18 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
-  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { GetWaterIngestionUseCase } from '../use-cases/get-water-ingestion.use-case';
-import type { FastifyRequest } from 'fastify';
-import { PAYLOAD_KEY } from 'src/modules/auth/constants/auth.constant';
-import { TokenPayloadDto } from 'src/modules/auth/dtos/token-payload.dto';
 import { UpdateWaterIngestionUseCase } from '../use-cases/update-water-ingestion.use-case';
 import { ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
+import type { User } from 'generated/prisma/client';
 
 @Controller({
   path: '/water-ingestion',
-  version: '3',
+  version: '4',
 })
 export class WaterIngestionController {
   constructor(
@@ -35,9 +35,10 @@ export class WaterIngestionController {
     },
   })
   @Get()
-  getWaterIngestion(@Req() req: FastifyRequest) {
-    const payload: TokenPayloadDto = req[PAYLOAD_KEY];
-    return this.getWaterIngestionUseCase.execute(payload.sub);
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  getWaterIngestion(@AuthenticatedUser() user: User) {
+    return this.getWaterIngestionUseCase.execute(user.id);
   }
 
   @ApiResponse({
@@ -52,9 +53,9 @@ export class WaterIngestionController {
     },
   })
   @Patch()
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  updateWaterIngestion(@Req() req: FastifyRequest) {
-    const payload: TokenPayloadDto = req[PAYLOAD_KEY];
-    return this.updateWaterIngestionUseCase.execute(payload.sub);
+  updateWaterIngestion(@AuthenticatedUser() user: User) {
+    return this.updateWaterIngestionUseCase.execute(user.id);
   }
 }
