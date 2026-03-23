@@ -1,11 +1,14 @@
 import { Controller, Get } from '@nestjs/common'
 import { AppService } from './app.service'
 
-@Controller()
+@Controller({
+  path: '/',
+  version: '1',
+})
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('/')
+  @Get()
   healthCheck() {
     return this.appService.getHealthCheck()
   }
