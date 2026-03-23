@@ -12,6 +12,8 @@ import { UpdateDailyNutritionDto } from '../dtos/update-daily-nutrition.dto';
 import { UpdateDailyNutritionUseCase } from '../use-cases/update-daily-nutrition.use-case';
 import { ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
+import { UserDto } from '../../users/dtos/user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -59,8 +61,8 @@ export class DailyNutritionController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  getDailyNutrition() {
-    return this.getDailyNutritionUseCase.execute();
+  getDailyNutrition(@AuthenticatedUser() user: UserDto) {
+    return this.getDailyNutritionUseCase.execute(user.id);
   }
 
   @ApiResponse({

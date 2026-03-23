@@ -14,8 +14,8 @@ import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { BiologicalSex, UserGoal } from 'generated/prisma/enums';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
-import type { User } from 'generated/prisma/client';
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
+import { UserDto } from '../dtos/user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -50,7 +50,7 @@ export class UsersController {
   })
   @Get('/me')
   @HttpCode(HttpStatus.OK)
-  getMe(@AuthenticatedUser() user: User) {
+  getMe(@AuthenticatedUser() user: UserDto) {
     return this.getMeUseCase.execute(user);
   }
 

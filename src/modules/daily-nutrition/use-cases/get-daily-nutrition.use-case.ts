@@ -14,8 +14,7 @@ export class GetDailyNutritionUseCase {
     private readonly requestContext: RequestContextService,
   ) {}
 
-  async execute() {
-    const userId = this.requestContext.getUserId;
+  async execute(userId: string) {
     let consumedMacros = await this.repository.getTotalMacros(userId);
 
     if (consumedMacros === null) {

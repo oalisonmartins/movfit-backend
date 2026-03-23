@@ -10,6 +10,8 @@ import { GetWaterIngestionUseCase } from '../use-cases/get-water-ingestion.use-c
 import { UpdateWaterIngestionUseCase } from '../use-cases/update-water-ingestion.use-case';
 import { ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
+import { UserDto } from 'src/modules/users/dtos/user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -35,8 +37,8 @@ export class WaterIngestionController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  getWaterIngestion() {
-    return this.getWaterIngestionUseCase.execute();
+  getWaterIngestion(@AuthenticatedUser() user: UserDto) {
+    return this.getWaterIngestionUseCase.execute(user);
   }
 
   @ApiResponse({
@@ -52,7 +54,7 @@ export class WaterIngestionController {
   })
   @Patch()
   @HttpCode(HttpStatus.CREATED)
-  updateWaterIngestion() {
-    return this.updateWaterIngestionUseCase.execute();
+  updateWaterIngestion(@AuthenticatedUser() user: UserDto) {
+    return this.updateWaterIngestionUseCase.execute(user);
   }
 }

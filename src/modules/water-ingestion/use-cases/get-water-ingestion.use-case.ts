@@ -2,17 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { WaterIngestionRepository } from '../repositories/water-ingestion.repository';
 import { getUserDailyIngestion } from 'src/modules/water-ingestion/helpers/get-user-daily-ingestion.helper';
 import { GetWaterIngestionDto } from '../dtos/get-ingestion.dto';
-import { RequestContextService } from 'src/common/services/request-context.service';
+import { UserDto } from 'src/modules/users/dtos/user.dto';
 
 @Injectable()
 export class GetWaterIngestionUseCase {
-  constructor(
-    private readonly repository: WaterIngestionRepository,
-    private readonly requestContext: RequestContextService,
-  ) {}
+  constructor(private readonly repository: WaterIngestionRepository) {}
 
-  async execute(): Promise<GetWaterIngestionDto> {
-    const user = this.requestContext.getUser;
+  async execute(user: UserDto): Promise<GetWaterIngestionDto> {
     const waterIngestion = await this.repository.getWaterIngestion(user.id);
 
     if (waterIngestion) {

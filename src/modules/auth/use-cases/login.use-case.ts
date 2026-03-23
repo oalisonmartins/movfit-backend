@@ -13,7 +13,7 @@ export class LoginUseCase {
   ) {}
 
   async execute(data: LoginInputDto): Promise<LoginOutputDto> {
-    const user = await this.usersRepository.getByEmail(data.email);
+    const user = await this.usersRepository.getByEmailWithPassword(data.email);
 
     if (!user) {
       throw new HttpException(

@@ -1,18 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { getUserDailyIngestion } from 'src/modules/water-ingestion/helpers/get-user-daily-ingestion.helper';
 import { WaterIngestionRepository } from '../repositories/water-ingestion.repository';
-import { RequestContextService } from 'src/common/services/request-context.service';
+import { UserDto } from 'src/modules/users/dtos/user.dto';
 
 @Injectable()
 export class UpdateWaterIngestionUseCase {
-  constructor(
-    private readonly repository: WaterIngestionRepository,
-    private readonly requestContext: RequestContextService,
-  ) {}
+  constructor(private readonly repository: WaterIngestionRepository) {}
 
-  async execute() {
-    const user = this.requestContext.getUser;
-
+  async execute(user: UserDto) {
     if (
       user.biologicalSex === null ||
       user.goal === null ||
