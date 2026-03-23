@@ -53,7 +53,6 @@ export class WaterIngestionController {
     },
   })
   @Patch()
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
   updateWaterIngestion(@AuthenticatedUser() user: UserDto) {
     return this.updateWaterIngestionUseCase.execute(user);
