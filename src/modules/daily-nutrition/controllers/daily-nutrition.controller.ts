@@ -1,15 +1,23 @@
-import { Body, Controller, Get, HttpStatus, Patch, Req } from '@nestjs/common';
-import type { FastifyRequest } from 'fastify';
-import { PAYLOAD_KEY } from 'src/modules/auth/constants/auth.constant';
-import { TokenPayloadDto } from 'src/modules/auth/dtos/token-payload.dto';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { GetDailyNutritionUseCase } from '../use-cases/get-daily-nutrition.use-case';
 import { UpdateDailyNutritionDto } from '../dtos/update-daily-nutrition.dto';
 import { UpdateDailyNutritionUseCase } from '../use-cases/update-daily-nutrition.use-case';
 import { ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
+import type { User } from 'generated/prisma/client';
 
 @Controller({
   path: '/daily-nutrition',
-  version: '3',
+  version: '4',
 })
 export class DailyNutritionController {
   constructor(
@@ -51,9 +59,10 @@ export class DailyNutritionController {
     },
   })
   @Get()
-  getDailyNutrition(@Req() req: FastifyRequest) {
-    const payload: TokenPayloadDto = req[PAYLOAD_KEY];
-    return this.getDailyNutritionUseCase.execute(payload.sub);
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  getDailyNutrition(@AuthenticatedUser() user: User) {
+    return this.getDailyNutritionUseCase.execute(user.id);
   }
 
   @ApiResponse({
@@ -70,11 +79,12 @@ export class DailyNutritionController {
     },
   })
   @Patch()
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
   updateDailyNutrition(
-    @Req() req: FastifyRequest,
+    @AuthenticatedUser() user: User,
     @Body() dto: UpdateDailyNutritionDto,
   ) {
-    const payload: TokenPayloadDto = req[PAYLOAD_KEY];
-    return this.updateDailyNutritionUseCase.execute(payload.sub, dto);
+    return this.updateDailyNutritionUseCase.execute(user.id, dto);
   }
 }

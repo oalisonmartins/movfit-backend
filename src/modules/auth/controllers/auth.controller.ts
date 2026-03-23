@@ -1,21 +1,14 @@
-import {
-  Body,
-  Controller,
-  HttpStatus,
-  Post,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 import { LoginInputDto } from '../dtos/login.dto';
 import { LoginUseCase } from '../use-cases/login.use-case';
 import { ApiResponse } from '@nestjs/swagger';
 import { SignupUseCase } from '../use-cases/signup.use-case';
 import { SignupInputDto } from '../dtos/signup.dto';
-import { BiologicalSex, UserGoal } from 'generated/prisma/enums';
 
 @Controller({
   path: '/auth',
-  version: '3',
+  version: '4',
 })
 export class AuthController {
   constructor(
@@ -38,12 +31,13 @@ export class AuthController {
     },
   })
   @Post('/login')
-  async login(@Body(new ValidationPipe()) dto: LoginInputDto) {
+  @HttpCode(HttpStatus.CREATED)
+  async login(@Body() dto: LoginInputDto) {
     return this.loginUseCase.execute(dto);
   }
 
   @ApiResponse({
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     description: 'SignUp.',
     schema: {
       type: 'object',
@@ -57,7 +51,8 @@ export class AuthController {
     },
   })
   @Post('/sign-up')
-  async signUp(@Body(new ValidationPipe()) dto: SignupInputDto) {
+  @HttpCode(HttpStatus.OK)
+  async signUp(@Body() dto: SignupInputDto) {
     return this.signupUseCase.execute(dto);
   }
 }
