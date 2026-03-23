@@ -11,11 +11,5 @@ export type UpsertDailyNutritionData = {
 @Injectable()
 export abstract class DailyNutritionRepository {
   abstract getTotalMacros(userId: string): Promise<DailyNutrition | null>;
-
-  abstract upsertDailyNutrition({
-    userId,
-    carbsInGrams,
-    fatsInGrams,
-    proteinsInGrams,
-  }: UpsertDailyNutritionData): Promise<DailyNutrition>;
+  abstract upsert(data: UpsertDailyNutritionData): Promise<DailyNutrition>;
 }

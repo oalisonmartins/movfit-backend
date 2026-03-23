@@ -11,13 +11,14 @@ import { GetDailyNutritionUseCase } from '../use-cases/get-daily-nutrition.use-c
 import { UpdateDailyNutritionDto } from '../dtos/update-daily-nutrition.dto';
 import { UpdateDailyNutritionUseCase } from '../use-cases/update-daily-nutrition.use-case';
 import { ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
-import type { User } from 'generated/prisma/client';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
+import { UserDto } from '../../users/dtos/user.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller({
   path: '/daily-nutrition',
-  version: '4',
+  version: '1',
 })
 export class DailyNutritionController {
   constructor(
@@ -59,9 +60,8 @@ export class DailyNutritionController {
     },
   })
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  getDailyNutrition(@AuthenticatedUser() user: User) {
+  getDailyNutrition(@AuthenticatedUser() user: UserDto) {
     return this.getDailyNutritionUseCase.execute(user.id);
   }
 
@@ -79,12 +79,8 @@ export class DailyNutritionController {
     },
   })
   @Patch()
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  updateDailyNutrition(
-    @AuthenticatedUser() user: User,
-    @Body() dto: UpdateDailyNutritionDto,
-  ) {
-    return this.updateDailyNutritionUseCase.execute(user.id, dto);
+  updateDailyNutrition(@Body() dto: UpdateDailyNutritionDto) {
+    return this.updateDailyNutritionUseCase.execute(dto);
   }
 }

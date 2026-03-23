@@ -13,17 +13,18 @@ import { UpdateUserMetricsUseCase } from '../use-cases/update-user-metrics.use-c
 import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { BiologicalSex, UserGoal } from 'generated/prisma/enums';
-import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
-import type { User } from 'generated/prisma/client';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
+import { UserDto } from '../dtos/user.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller({
   path: '/users',
-  version: '4',
+  version: '1',
 })
 export class UsersController {
   constructor(
-    private readonly updateUserMetricsUseCase: UpdateUserMetricsUseCase,
+    private readonly updateMetricsUseCase: UpdateUserMetricsUseCase,
     private readonly getMeUseCase: GetMeUseCase,
   ) {}
 
@@ -33,24 +34,21 @@ export class UsersController {
     schema: {
       type: 'object',
       properties: {
+        id: { type: 'string', format: 'uuid', uniqueItems: true },
         name: { type: 'string' },
         email: { type: 'string', format: 'email', uniqueItems: true },
         birthDate: { type: 'string', format: 'date' },
-        goal: {
-          type: 'string',
-          enum: [UserGoal],
-        },
+        goal: { type: 'string', enum: [UserGoal] },
         biologicalSex: { type: 'string', enum: [BiologicalSex] },
         weightInGrams: { type: 'number' },
-        heightInCentimeters: { type: 'number', maximum: 240 },
+        heightInCentimeters: { type: 'number' },
         goalWeightInGrams: { type: 'number' },
       },
     },
   })
   @Get('/me')
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  getMe(@AuthenticatedUser() user: User) {
+  getMe(@AuthenticatedUser() user: UserDto) {
     return this.getMeUseCase.execute(user);
   }
 
@@ -60,24 +58,17 @@ export class UsersController {
     schema: {
       type: 'object',
       properties: {
-        goal: {
-          type: 'string',
-          enum: [UserGoal],
-        },
+        goal: { type: 'string', enum: [UserGoal] },
         biologicalSex: { type: 'string', enum: [BiologicalSex] },
         weightInGrams: { type: 'number' },
-        heightInCentimeters: { type: 'number', maximum: 240 },
+        heightInCentimeters: { type: 'number' },
         goalWeightInGrams: { type: 'number' },
       },
     },
   })
   @Patch('/metrics')
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  updateUserMetrics(
-    @AuthenticatedUser() user: User,
-    @Body() dto: UpdateUserMetricsInputDto,
-  ) {
-    return this.updateUserMetricsUseCase.execute(user.id, dto);
+  updateUserMetrics(@Body() dto: UpdateUserMetricsInputDto) {
+    return this.updateMetricsUseCase.execute(dto);
   }
 }

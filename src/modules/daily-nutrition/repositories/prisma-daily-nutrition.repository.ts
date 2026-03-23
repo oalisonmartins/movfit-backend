@@ -10,7 +10,7 @@ import { DailyNutrition } from '../entities/daily-nutrition.entity';
 export class PrismaDailyNutritionRepository implements DailyNutritionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private getTodayUTC() {
+  private get getTodayUTC() {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     return today;
@@ -23,32 +23,26 @@ export class PrismaDailyNutritionRepository implements DailyNutritionRepository 
     return undefined;
   }
 
-  async upsertDailyNutrition({
-    userId,
-    carbsInGrams,
-    fatsInGrams,
-    proteinsInGrams,
-  }: UpsertDailyNutritionData): Promise<DailyNutrition> {
-    const todayUTC = this.getTodayUTC();
-
+  async upsert(data: UpsertDailyNutritionData): Promise<DailyNutrition> {
     return await this.prisma.dailyNutrition.upsert({
       where: {
+        day: this.getTodayUTC,
         userId_day: {
-          userId,
-          day: todayUTC,
+          userId: data.userId,
+          day: this.getTodayUTC,
         },
       },
       create: {
-        userId,
-        day: todayUTC,
-        carbsInGrams: carbsInGrams ?? 0,
-        fatsInGrams: fatsInGrams ?? 0,
-        proteinsInGrams: proteinsInGrams ?? 0,
+        day: this.getTodayUTC,
+        userId: data.userId,
+        carbsInGrams: data.carbsInGrams ?? 0,
+        fatsInGrams: data.fatsInGrams ?? 0,
+        proteinsInGrams: data.proteinsInGrams ?? 0,
       },
       update: {
-        carbsInGrams: this.incrementIfDefined(carbsInGrams),
-        fatsInGrams: this.incrementIfDefined(fatsInGrams),
-        proteinsInGrams: this.incrementIfDefined(proteinsInGrams),
+        carbsInGrams: this.incrementIfDefined(data.carbsInGrams),
+        fatsInGrams: this.incrementIfDefined(data.fatsInGrams),
+        proteinsInGrams: this.incrementIfDefined(data.proteinsInGrams),
       },
       select: {
         day: true,
@@ -76,7 +70,10 @@ export class PrismaDailyNutritionRepository implements DailyNutritionRepository 
 
   async getTotalMacros(userId: string): Promise<DailyNutrition | null> {
     return await this.prisma.dailyNutrition.findFirst({
-      where: { userId },
+      where: {
+        userId,
+        day: this.getTodayUTC,
+      },
       select: {
         day: true,
         proteinsInGrams: true,

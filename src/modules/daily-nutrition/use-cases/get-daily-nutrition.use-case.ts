@@ -5,30 +5,28 @@ import {
 } from '@nestjs/common';
 import { DailyNutritionRepository } from '../repositories/daily-nutrition.repository';
 import { toPercentage } from 'src/common/helpers/to-percentage.helper';
+import { RequestContextService } from 'src/common/services/request-context.service';
 
 @Injectable()
 export class GetDailyNutritionUseCase {
-  constructor(private readonly repository: DailyNutritionRepository) {}
+  constructor(
+    private readonly repository: DailyNutritionRepository,
+    private readonly requestContext: RequestContextService,
+  ) {}
 
   async execute(userId: string) {
     let consumedMacros = await this.repository.getTotalMacros(userId);
 
     if (consumedMacros === null) {
-      consumedMacros = await this.repository.upsertDailyNutrition({ userId });
+      consumedMacros = await this.repository.upsert({ userId });
     }
 
     if (consumedMacros.user === undefined) {
-      throw new UnauthorizedException({
-        message: 'Unauthorized.',
-        code: 'UNAUTHORIZED_ERROR',
-      });
+      throw new UnauthorizedException('Unauthorized.');
     }
 
     if (consumedMacros.user?.activeDiet === null) {
-      throw new NotFoundException({
-        message: 'Active diet not found.',
-        code: 'ACTIVE_DIET_NOT_FOUND',
-      });
+      throw new NotFoundException('Unauthorized.');
     }
 
     const dailyNutrition = {

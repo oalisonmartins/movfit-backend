@@ -1,18 +1,17 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../repositories/users-repository';
 import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
+import { RequestContextService } from 'src/common/services/request-context.service';
 
 @Injectable()
 export class UpdateUserMetricsUseCase {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly repository: UsersRepository,
+    private readonly requestContext: RequestContextService,
+  ) {}
 
-  async execute(userId: string, data: UpdateUserMetricsInputDto) {
-    const user = await this.usersRepository.getById(userId);
-
-    if (!user) {
-      throw new HttpException('Unauthorized.', HttpStatus.UNAUTHORIZED);
-    }
-
-    return await this.usersRepository.updateMetrics(user.id, data);
+  async execute(data: UpdateUserMetricsInputDto) {
+    const userId = this.requestContext.getUserId;
+    return await this.repository.updateMetrics(userId, data);
   }
 }

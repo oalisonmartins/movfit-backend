@@ -8,7 +8,7 @@ import { SignupInputDto } from '../dtos/signup.dto';
 
 @Controller({
   path: '/auth',
-  version: '4',
+  version: '1',
 })
 export class AuthController {
   constructor(

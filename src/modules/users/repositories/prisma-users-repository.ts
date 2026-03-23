@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'generated/prisma/client';
 import {
   CreateUserData,
   CreateUserResultData,
   UpdateMetricsData,
   UpdateMetricsResultData,
   UsersRepository,
+  UserWithPasswordData,
 } from 'src/modules/users/repositories/users-repository';
 
 import { PrismaService } from 'src/infra/database/prisma/prisma.service';
 import { GetUserMetricsDto } from '../dtos/get-user-metrics.dto';
+import { UserDtoPayload } from 'src/modules/users/dtos/user.dto';
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
@@ -32,15 +33,43 @@ export class PrismaUsersRepository implements UsersRepository {
     });
   }
 
-  async getByEmail(email: string): Promise<User | null> {
+  async getByEmail(email: string): Promise<UserDtoPayload | null> {
     return await this.prisma.user.findUnique({
-      where: { email },
+      where: {
+        email,
+      },
+      omit: {
+        passwordHash: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
-  async getById(id: string): Promise<User | null> {
+  async getByEmailWithPassword(
+    email: string,
+  ): Promise<UserWithPasswordData | null> {
     return await this.prisma.user.findUnique({
-      where: { id },
+      where: {
+        email,
+      },
+      omit: {
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async getById(id: string): Promise<UserDtoPayload | null> {
+    return await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+      omit: {
+        passwordHash: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 

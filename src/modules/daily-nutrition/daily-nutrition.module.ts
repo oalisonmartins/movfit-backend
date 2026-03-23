@@ -6,6 +6,7 @@ import { PrismaDailyNutritionRepository } from './repositories/prisma-daily-nutr
 import { GetDailyNutritionUseCase } from './use-cases/get-daily-nutrition.use-case';
 import { WaterIngestionModule } from '../water-ingestion/water-ingestion.module';
 import { UpdateDailyNutritionUseCase } from './use-cases/update-daily-nutrition.use-case';
+import { RequestContextService } from 'src/common/services/request-context.service';
 
 @Module({
   imports: [WaterIngestionModule],
@@ -13,6 +14,7 @@ import { UpdateDailyNutritionUseCase } from './use-cases/update-daily-nutrition.
   exports: [DailyNutritionRepository],
   providers: [
     PrismaService,
+    RequestContextService,
     GetDailyNutritionUseCase,
     UpdateDailyNutritionUseCase,
     {

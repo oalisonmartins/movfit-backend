@@ -9,13 +9,14 @@ import {
 import { GetWaterIngestionUseCase } from '../use-cases/get-water-ingestion.use-case';
 import { UpdateWaterIngestionUseCase } from '../use-cases/update-water-ingestion.use-case';
 import { ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedUser } from 'src/modules/auth/decorators/authenticated-user.decorator';
-import type { User } from 'generated/prisma/client';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
+import { UserDto } from 'src/modules/users/dtos/user.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller({
   path: '/water-ingestion',
-  version: '4',
+  version: '1',
 })
 export class WaterIngestionController {
   constructor(
@@ -35,10 +36,9 @@ export class WaterIngestionController {
     },
   })
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  getWaterIngestion(@AuthenticatedUser() user: User) {
-    return this.getWaterIngestionUseCase.execute(user.id);
+  getWaterIngestion(@AuthenticatedUser() user: UserDto) {
+    return this.getWaterIngestionUseCase.execute(user);
   }
 
   @ApiResponse({
@@ -53,9 +53,8 @@ export class WaterIngestionController {
     },
   })
   @Patch()
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  updateWaterIngestion(@AuthenticatedUser() user: User) {
-    return this.updateWaterIngestionUseCase.execute(user.id);
+  updateWaterIngestion(@AuthenticatedUser() user: UserDto) {
+    return this.updateWaterIngestionUseCase.execute(user);
   }
 }
