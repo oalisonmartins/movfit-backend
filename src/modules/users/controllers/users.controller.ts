@@ -20,7 +20,7 @@ import type { User } from 'generated/prisma/client';
 @UseGuards(JwtAuthGuard)
 @Controller({
   path: '/users',
-  version: '4',
+  version: '1',
 })
 export class UsersController {
   constructor(

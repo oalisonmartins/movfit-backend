@@ -16,7 +16,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 @Controller({
   path: '/daily-nutrition',
-  version: '4',
+  version: '1',
 })
 export class DailyNutritionController {
   constructor(

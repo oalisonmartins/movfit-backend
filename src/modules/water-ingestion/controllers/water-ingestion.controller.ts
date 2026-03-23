@@ -14,7 +14,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 @Controller({
   path: '/water-ingestion',
-  version: '4',
+  version: '1',
 })
 export class WaterIngestionController {
   constructor(
