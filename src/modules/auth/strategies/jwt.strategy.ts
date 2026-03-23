@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UsersRepository } from 'src/modules/users/repositories/users-repository';
-import { PayloadDto } from '../dtos/payload.dto';
+import { Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import { ExtractJwt, Strategy } from 'passport-jwt'
+import { UsersRepository } from 'src/modules/users/repositories/users-repository'
+import { PayloadDto } from '../dtos/payload.dto'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,16 +13,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       issuer: String(process.env.JWT_TOKEN_ISSUER),
       audience: String(process.env.JWT_TOKEN_AUDIENCE),
       ignoreExpiration: false,
-    });
+    })
   }
 
   async validate(payload: PayloadDto) {
-    const user = await this.usersRepository.getById(payload.sub);
+    const user = await this.usersRepository.getById(payload.sub)
 
     if (!user) {
-      return null;
+      return null
     }
 
-    return user;
+    return user
   }
 }

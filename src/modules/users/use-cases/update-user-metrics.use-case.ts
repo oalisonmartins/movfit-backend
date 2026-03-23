@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../repositories/users-repository';
-import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
-import { RequestContextService } from 'src/common/services/request-context.service';
+import { Injectable } from '@nestjs/common'
+import { RequestContextService } from 'src/common/services/request-context.service'
+import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto'
+import { UsersRepository } from '../repositories/users-repository'
 
 @Injectable()
 export class UpdateUserMetricsUseCase {
@@ -11,7 +11,7 @@ export class UpdateUserMetricsUseCase {
   ) {}
 
   async execute(data: UpdateUserMetricsInputDto) {
-    const userId = this.requestContext.getUserId;
-    return await this.repository.updateMetrics(userId, data);
+    const userId = this.requestContext.getUserId
+    return await this.repository.updateMetrics(userId, data)
   }
 }
