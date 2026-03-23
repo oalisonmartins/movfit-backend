@@ -6,15 +6,12 @@ import { DailyNutritionRepository } from '../repositories/daily-nutrition.reposi
 export class UpdateDailyNutritionUseCase {
   constructor(private readonly repository: DailyNutritionRepository) {}
 
-  async execute(
-    userId: string,
-    { carbsInGrams, fatsInGrams, proteinsInGrams }: UpdateDailyNutritionDto,
-  ) {
+  async execute(userId: string, data: UpdateDailyNutritionDto) {
     return await this.repository.upsertDailyNutrition({
       userId,
-      carbsInGrams,
-      fatsInGrams,
-      proteinsInGrams,
+      carbsInGrams: data.carbsInGrams,
+      fatsInGrams: data.fatsInGrams,
+      proteinsInGrams: data.proteinsInGrams,
     });
   }
 }
