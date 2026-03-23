@@ -35,18 +35,19 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  dailyNutrition DailyNutrition[]
-  waterIngestion WaterIngestion?
-  weightHistory  WeightHistory[]
-  activeDiet     Diet?
-  workoutConfig  WorkoutConfig?
+  weightHistory         WeightHistory[]
+  waterConsumptionHistory WaterConsumptionHistory[]
+  dailyNutrition        DailyNutrition[]
+  waterConsumption        WaterConsumption?
+  activeDiet            Diet?
+  workoutConfig         WorkoutConfig?
 
   @@map("users")
 }
 
 model DailyNutrition {
   id              String   @id @default(uuid())
-  day            DateTime
+  day             DateTime
   proteinsInGrams Int      @default(0) @map("proteins_in_grams")
   carbsInGrams    Int      @default(0) @map("carbs_in_grams")
   fatsInGrams     Int      @default(0) @map("fats_in_grams")
@@ -137,9 +138,9 @@ model WorkoutConfig {
   @@map("workouts_config")
 }
 
-model WaterIngestion {
+model WaterConsumption {
   id           String   @id @default(uuid())
-  goalInMl     Int?     @map("goal_in_ml")
+  goalInMl     Int      @default(2000) @map("goal_in_ml")
   consumedInMl Int      @default(0) @map("consumed_in_ml")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -147,5 +148,16 @@ model WaterIngestion {
   userId String @unique @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("water_ingestions")
+  @@map("water_consumption")
+}
+
+model WaterConsumptionHistory {
+  id         String   @id @default(uuid())
+  amountInMl Int      @map("amount_in_ml")
+  date       DateTime
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("water_consumption_history")
 }
