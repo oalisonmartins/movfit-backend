@@ -1,11 +1,10 @@
-type GetUserAgeProps = {
-  birthDate: Date;
-};
+export function calculateAge(birthDate: Date) {
+  const today = new Date()
 
-export function getUserAge({ birthDate }: GetUserAgeProps) {
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  birthDate.setUTCHours(0, 0, 0, 0);
+  today.setUTCHours(0, 0, 0, 0)
+  birthDate.setUTCHours(0, 0, 0, 0)
 
-  return today.getUTCFullYear() - birthDate.getUTCFullYear();
+  const userAge = today.getUTCFullYear() - birthDate.getUTCFullYear()
+
+  return userAge
 }
