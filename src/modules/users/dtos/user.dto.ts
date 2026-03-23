@@ -1,22 +1,22 @@
-import { UserGoal, BiologicalSex } from 'generated/prisma/enums';
-import { UserGetPayload } from 'generated/prisma/models';
+import { BiologicalSex, UserGoal } from 'generated/prisma/enums'
+export class UserDto {
+  waterConsumption: {
+    goalInMl: number
+    consumedInMl: number
+  } | null
 
-export type UserDtoPayload = UserGetPayload<{
-  omit: {
-    passwordHash: true;
-    createdAt: true;
-    updatedAt: true;
-  };
-}>;
+  waterConsumptionHistory: {
+    amountInMl: number
+    date: Date
+  }[]
 
-export class UserDto implements UserDtoPayload {
-  name: string;
-  id: string;
-  email: string;
-  goal: UserGoal | null;
-  biologicalSex: BiologicalSex | null;
-  birthDate: Date;
-  weightInGrams: number | null;
-  heightInCentimeters: number | null;
-  goalWeightInGrams: number | null;
+  id: string
+  name: string
+  email: string
+  goal: UserGoal | null
+  biologicalSex: BiologicalSex | null
+  birthDate: Date
+  weightInGrams: number | null
+  heightInCentimeters: number | null
+  goalWeightInGrams: number | null
 }

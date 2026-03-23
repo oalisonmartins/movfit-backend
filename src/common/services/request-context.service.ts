@@ -1,19 +1,19 @@
-import { Injectable, Scope } from '@nestjs/common';
-import type { User } from 'generated/prisma/client';
+import { Injectable, Scope } from '@nestjs/common'
+import { UserDto } from 'src/modules/users/dtos/user.dto'
 
 @Injectable({ scope: Scope.REQUEST })
 export class RequestContextService {
-  private _user: User;
+  private _user: UserDto
 
-  set setUser(user: User) {
-    this._user = user;
+  set setUser(user: UserDto) {
+    this._user = user
   }
 
-  get getUser(): User {
-    return this._user;
+  get getUser(): UserDto {
+    return this._user
   }
 
   get getUserId(): string {
-    return this._user.id;
+    return this._user.id
   }
 }
