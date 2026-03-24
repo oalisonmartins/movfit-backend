@@ -118,21 +118,36 @@ model WeightHistory {
   @@map("weights_history")
 }
 
-enum WorkoutGoal {
-  GAIN_MASS
-  DEFINITION
-  LOSE_WEIGHT
+enum FocusMuscle {
+  CHEST
+  BACK
+  SHOULDERS
+  BICEPS
+  TRICEPS
+  FOREARMS
+  CORE
+  ABS
+  OBLIQUES
+  GLUTES
+  QUADRICEPS
+  HAMSTRINGS
+  CALVES
+  ADDUCTORS
+  ABDUCTORS
+  TRAPS
+  LATS
+  LOWER_BACK
+  NECK
+  FULL_BODY
 }
 
 model WorkoutConfig {
-  id                     String   @id @default(uuid())
-  freeDaysPerWeek        Int      @map("free_days_per_week")
-  freeTimeByDayInSeconds Int      @map("free_time_by_day_in_seconds")
-  focusMuscles           String[] @map("focus_muscles")
-  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz
-
-  goal WorkoutGoal
+  id                     String        @id @default(uuid())
+  freeDaysPerWeek        Int           @map("free_days_per_week")
+  freeTimeByDayInSeconds Int           @map("free_time_by_day_in_seconds")
+  focusMuscles           FocusMuscle[] @map("focus_muscles")
+  createdAt              DateTime      @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt              DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
   userId String @unique @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
