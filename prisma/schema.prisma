@@ -282,3 +282,14 @@ model WaterConsumptionHistory {
 
   @@map("water_consumption_histories")
 }
+
+model WaterConsumptionHistory {
+  id         String   @id @default(uuid())
+  amountInMl Int      @map("amount_in_ml")
+  date       DateTime
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("water_consumption_history")
+}
