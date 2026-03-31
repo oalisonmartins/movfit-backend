@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common'
 import {
-  UpsertWaterConsumptionInputData,
-  WaterConsumptionData,
-} from '../types/water-consumption.types'
+  GetWaterConsumptionInput,
+  GetWaterConsumptionOutput,
+} from '../types/get-water-consumption.type'
+import {
+  UpsertWaterConsumptionInput,
+  UpsertWaterConsumptionOutput,
+} from '../types/upsert-consumption.type'
 
 @Injectable()
 export abstract class WaterConsumptionRepository {
-  abstract getWaterConsumption(userId: string): Promise<WaterConsumptionData | null>
-
+  abstract getWaterConsumption(
+    input: GetWaterConsumptionInput,
+  ): Promise<GetWaterConsumptionOutput | null>
   abstract upsertWaterConsumption(
-    data: UpsertWaterConsumptionInputData,
-  ): Promise<WaterConsumptionData>
+    input: UpsertWaterConsumptionInput,
+  ): Promise<UpsertWaterConsumptionOutput>
 }

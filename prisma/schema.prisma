@@ -32,14 +32,14 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   weightHistory           WeightHistory[]
+  waterConsumptions       WaterConsumption[]
   waterConsumptionHistory WaterConsumptionHistory[]
   dailyNutrition          DailyNutrition[]
   workoutPlans            WorkoutPlan[]
+  diets                   Diet[]
 
-  workoutConfig    WorkoutConfig?
-  waterConsumption WaterConsumption?
-  activeDiet       Diet?
-  profile          Profile?
+  workoutConfig WorkoutConfig?
+  profile       Profile?
 
   @@map("users")
 }
@@ -55,6 +55,7 @@ model Profile {
   weightInGrams       Int @map("weight_in_grams")
   targetWeightInGrams Int @map("target_weight_in_grams")
 
+  timezone  String   @default("America/Sao_Paulo")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
@@ -92,7 +93,7 @@ model Diet {
 
   goal   Goal
   meals  DietMeal[]
-  userId String     @unique @map("user_id")
+  userId String     @map("user_id")
   user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("diets")
@@ -259,16 +260,20 @@ model WorkoutSession {
 }
 
 model WaterConsumption {
-  id           String @id @default(uuid())
-  goalInMl     Int    @default(2000) @map("goal_in_ml")
-  consumedInMl Int    @default(0) @map("consumed_in_ml")
+  id           String   @id @default(uuid())
+  goalInMl     Int      @default(2000) @map("goal_in_ml")
+  consumedInMl Int      @default(0) @map("consumed_in_ml")
+  date         DateTime @db.Date
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  userId String @unique @map("user_id")
+  waterConsumptionHistories WaterConsumptionHistory[]
+
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, date])
   @@map("water_consumptions")
 }
 
@@ -277,19 +282,12 @@ model WaterConsumptionHistory {
   amountInMl Int      @map("amount_in_ml")
   date       DateTime @db.Date
 
+  waterConsumptionId String @map("water_consumption_id")
+  waterConsumption WaterConsumption @relation(fields: [waterConsumptionId], references: [id], onDelete: Cascade)
+
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 
   @@map("water_consumption_histories")
-}
-
-model WaterConsumptionHistory {
-  id         String   @id @default(uuid())
-  amountInMl Int      @map("amount_in_ml")
-  date       DateTime
-
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("water_consumption_history")
 }

@@ -7,8 +7,9 @@ import { PrismaWaterConsumptionRepository } from './repositories/prisma-water-co
 import { PrismaWaterConsumptionHistoryRepository } from './repositories/prisma-water-consumption-history.repository'
 import { WaterConsumptionRepository } from './repositories/water-consumption.repository'
 import { WaterConsumptionHistoryRepository } from './repositories/water-consumption-history.repository'
-import { GetWaterConsumptionProgressUseCase } from './use-cases/get-water-consumption-progress.use-case'
-import { RegisterWaterConsumptionUseCase } from './use-cases/register-water-consumption.use-case'
+import { GetTodayWaterConsumptionProgressUseCase } from './use-cases/get-today-water-consumption-progress.use-case'
+import { GetWaterConsumptionHistoryUseCase } from './use-cases/get-water-consumption-history.use-case'
+import { RegisterTodayWaterConsumptionUseCase } from './use-cases/register-today-water-consumption.use-case'
 
 @Module({
   imports: [UsersModule],
@@ -17,8 +18,9 @@ import { RegisterWaterConsumptionUseCase } from './use-cases/register-water-cons
   providers: [
     PrismaService,
     RequestContextService,
-    GetWaterConsumptionProgressUseCase,
-    RegisterWaterConsumptionUseCase,
+    RegisterTodayWaterConsumptionUseCase,
+    GetTodayWaterConsumptionProgressUseCase,
+    GetWaterConsumptionHistoryUseCase,
     {
       provide: WaterConsumptionRepository,
       useClass: PrismaWaterConsumptionRepository,

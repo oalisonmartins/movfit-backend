@@ -1,56 +1,49 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
+import { GetWorkoutConfigInput, GetWorkoutConfigOutput } from '../types/get-workout-config.type'
 import {
-  GetWorkoutConfigResultData,
-  RegisterWorkoutConfigData,
-  WorkoutConfigData,
-  WorkoutConfigRepository,
-} from './workout-config.repository'
+  RegisterWorkoutConfigInput,
+  RegisterWorkoutConfigOutput,
+} from '../types/register-workout-config.type'
+import { WorkoutConfigRepository } from './workout-config.repository'
 
 @Injectable()
 export class PrismaWorkoutConfigRepository implements WorkoutConfigRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getWorkoutConfig(userId: string): Promise<GetWorkoutConfigResultData | null> {
-    const result = await this.prisma.workoutConfig.findFirst({
-      where: {
-        userId,
-      },
+  async getWorkoutConfig(input: GetWorkoutConfigInput): Promise<GetWorkoutConfigOutput | null> {
+    const workoutConfig = await this.prisma.workoutConfig.findFirst({
+      where: { userId: input.userId },
       include: {
         user: {
           select: {
-            goal: true,
+            profile: {
+              omit: { createdAt: true, updatedAt: true },
+            },
           },
         },
       },
     })
-
-    if (!result) return null
-
-    return {
-      id: result.id,
-      focusMuscles: result.focusMuscles,
-      freeDaysPerWeek: result.freeDaysPerWeek,
-      freeTimeByDayInSeconds: result.freeTimeByDayInSeconds,
-      goal: result.user.goal,
-    }
+    return workoutConfig
   }
 
-  async registerWorkoutConfig(data: RegisterWorkoutConfigData): Promise<WorkoutConfigData> {
-    const result = await this.prisma.workoutConfig.create({
+  async registerWorkoutConfig(
+    input: RegisterWorkoutConfigInput,
+  ): Promise<RegisterWorkoutConfigOutput> {
+    const workoutConfig = await this.prisma.workoutConfig.create({
       data: {
-        userId: data.userId,
-        freeDaysPerWeek: data.freeDaysPerWeek,
-        freeTimeByDayInSeconds: data.freeTimeByDayInSeconds,
-        focusMuscles: data.focusMuscles,
+        userId: input.userId,
+        freeDaysPerWeek: input.freeDaysPerWeek,
+        freeTimeByDayInSeconds: input.freeTimeByDayInSeconds,
+        focusMuscles: input.focusMuscles,
+      },
+      select: {
+        id: true,
+        freeDaysPerWeek: true,
+        freeTimeByDayInSeconds: true,
+        focusMuscles: true,
       },
     })
-
-    return {
-      id: result.id,
-      freeDaysPerWeek: result.freeDaysPerWeek,
-      freeTimeByDayInSeconds: result.freeTimeByDayInSeconds,
-      focusMuscles: result.focusMuscles,
-    }
+    return workoutConfig
   }
 }

@@ -1,15 +1,15 @@
 import { Injectable, Scope } from '@nestjs/common'
-import { UserDto } from 'src/modules/users/dtos/user.dto'
+import { UserAuth } from 'src/modules/users/types/users.type'
 
 @Injectable({ scope: Scope.REQUEST })
 export class RequestContextService {
-  private _user: UserDto
+  private _user: UserAuth
 
-  set setUser(user: UserDto) {
+  set setUser(user: UserAuth) {
     this._user = user
   }
 
-  get getUser(): UserDto {
+  get getUser(): UserAuth {
     return this._user
   }
 

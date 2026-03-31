@@ -1,86 +1,55 @@
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, UseGuards } from '@nestjs/common'
+import { ApiResponse } from '@nestjs/swagger'
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
+import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
+import type { UserAuth } from 'src/modules/users/types/users.type'
+import { GetTodayNutritionProgressResponseDto } from '../dtos/get-today-nutrition-progress.dto'
 import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Patch,
-  UseGuards,
-} from '@nestjs/common';
-import { GetDailyNutritionUseCase } from '../use-cases/get-daily-nutrition.use-case';
-import { UpdateDailyNutritionDto } from '../dtos/update-daily-nutrition.dto';
-import { UpdateDailyNutritionUseCase } from '../use-cases/update-daily-nutrition.use-case';
-import { ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
-import { UserDto } from '../../users/dtos/user.dto';
+  UpdateTodayNutritionRequestDto,
+  UpdateTodayNutritionResponseDto,
+} from '../dtos/update-today-nutrition.dto'
+import { GetTodayNutritionProgressUseCase } from '../use-cases/get-today-nutrition-progress.use-case'
+import { UpdateTodayNutritionProgressUseCase } from '../use-cases/update-today-nutrition-progress.use-case'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OnboardingGuard)
 @Controller({
   path: '/daily-nutrition',
   version: '1',
 })
 export class DailyNutritionController {
   constructor(
-    private readonly getDailyNutritionUseCase: GetDailyNutritionUseCase,
-    private readonly updateDailyNutritionUseCase: UpdateDailyNutritionUseCase,
+    private readonly getTodayGetTodayNutritionProgressUseCase: GetTodayNutritionProgressUseCase,
+    private readonly updateUpdateTodayNutritionProgressUseCase: UpdateTodayNutritionProgressUseCase,
   ) {}
 
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'GetDailyNutrition',
-    schema: {
-      type: 'object',
-      properties: {
-        carbohydrates: {
-          type: 'object',
-          properties: {
-            goal: { type: 'number' },
-            consumed: { type: 'number' },
-            percentage: { type: 'number' },
-          },
-        },
-        proteins: {
-          type: 'object',
-          properties: {
-            goal: { type: 'number' },
-            consumed: { type: 'number' },
-            percentage: { type: 'number' },
-          },
-        },
-        fats: {
-          type: 'object',
-          properties: {
-            goal: { type: 'number' },
-            consumed: { type: 'number' },
-            percentage: { type: 'number' },
-          },
-        },
-      },
-    },
+    description: 'Get today nutrition progress.',
+    type: GetTodayNutritionProgressResponseDto,
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  getDailyNutrition(@AuthenticatedUser() user: UserDto) {
-    return this.getDailyNutritionUseCase.execute(user.id);
+  getTodayNutritionProgress(@AuthenticatedUser() user: UserAuth) {
+    return this.getTodayGetTodayNutritionProgressUseCase.execute({ userId: user.id })
   }
 
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'UpdateDailyNutrition',
-    schema: {
-      type: 'object',
-      properties: {
-        day: { type: 'string' },
-        fatsInGrams: { type: 'number' },
-        carbsInGrams: { type: 'number' },
-        proteinsInGrams: { type: 'number' },
-      },
-    },
+    description: 'Update today nutrition.',
+    type: UpdateTodayNutritionResponseDto,
   })
   @Patch()
   @HttpCode(HttpStatus.OK)
-  updateDailyNutrition(@Body() dto: UpdateDailyNutritionDto) {
-    return this.updateDailyNutritionUseCase.execute(dto);
+  updateTodayNutritionProgress(
+    @AuthenticatedUser() user: UserAuth,
+    @Body() dto: UpdateTodayNutritionRequestDto,
+  ) {
+    return this.updateUpdateTodayNutritionProgressUseCase.execute({
+      userId: user.id,
+      carbsInGrams: dto.carbsInGrams,
+      fatsInGrams: dto.fatsInGrams,
+      proteinsInGrams: dto.proteinsInGrams,
+    })
   }
 }

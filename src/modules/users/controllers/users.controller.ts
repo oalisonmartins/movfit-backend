@@ -1,21 +1,13 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Patch,
-  UseGuards,
-} from '@nestjs/common';
-
-import { GetMeUseCase } from '../use-cases/get-me.use-case';
-import { UpdateUserMetricsUseCase } from '../use-cases/update-user-metrics.use-case';
-import { UpdateUserMetricsInputDto } from '../dtos/update-user-metrics.dto';
-import { ApiResponse } from '@nestjs/swagger';
-import { BiologicalSex, UserGoal } from 'generated/prisma/enums';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator';
-import { UserDto } from '../dtos/user.dto';
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, UseGuards } from '@nestjs/common'
+import { ApiResponse } from '@nestjs/swagger'
+import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
+import { CompleteOnboardingDto } from '../dtos/complete-onboarding.dto'
+import { GetMeDto } from '../dtos/get-me.dto'
+import type { UserAuth } from '../types/users.type'
+import { CompleteOnboardingUseCase } from '../use-cases/complete-onboarding.use-case'
+import { GetDietsUseCase } from '../use-cases/get-diets.use-case'
+import { GetMeUseCase } from '../use-cases/get-me.use-case'
 
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -24,51 +16,44 @@ import { UserDto } from '../dtos/user.dto';
 })
 export class UsersController {
   constructor(
-    private readonly updateMetricsUseCase: UpdateUserMetricsUseCase,
     private readonly getMeUseCase: GetMeUseCase,
+    private readonly getDietsUseCase: GetDietsUseCase,
+    private readonly completeOnboardingUseCase: CompleteOnboardingUseCase,
   ) {}
 
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'GetMe',
-    schema: {
-      type: 'object',
-      properties: {
-        id: { type: 'string', format: 'uuid', uniqueItems: true },
-        name: { type: 'string' },
-        email: { type: 'string', format: 'email', uniqueItems: true },
-        birthDate: { type: 'string', format: 'date' },
-        goal: { type: 'string', enum: [UserGoal] },
-        biologicalSex: { type: 'string', enum: [BiologicalSex] },
-        weightInGrams: { type: 'number' },
-        heightInCentimeters: { type: 'number' },
-        goalWeightInGrams: { type: 'number' },
-      },
-    },
+    description: 'Get authenticated user details.',
+    type: GetMeDto,
   })
   @Get('/me')
   @HttpCode(HttpStatus.OK)
-  getMe(@AuthenticatedUser() user: UserDto) {
-    return this.getMeUseCase.execute(user);
+  getMe(@AuthenticatedUser() user: UserAuth) {
+    return this.getMeUseCase.execute({ userId: user.id })
+  }
+
+  @Get('/me/diets')
+  @HttpCode(HttpStatus.OK)
+  getDiets(@AuthenticatedUser() user: UserAuth) {
+    return this.getDietsUseCase.execute({ userId: user.id })
   }
 
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'UpdateUserMetrics',
-    schema: {
-      type: 'object',
-      properties: {
-        goal: { type: 'string', enum: [UserGoal] },
-        biologicalSex: { type: 'string', enum: [BiologicalSex] },
-        weightInGrams: { type: 'number' },
-        heightInCentimeters: { type: 'number' },
-        goalWeightInGrams: { type: 'number' },
-      },
-    },
+    description: 'Complete user onboarding.',
   })
-  @Patch('/metrics')
+  @Patch('/me/onboarding')
   @HttpCode(HttpStatus.OK)
-  updateUserMetrics(@Body() dto: UpdateUserMetricsInputDto) {
-    return this.updateMetricsUseCase.execute(dto);
+  completeOnboarding(@AuthenticatedUser() user: UserAuth, @Body() dto: CompleteOnboardingDto) {
+    return this.completeOnboardingUseCase.execute({
+      userId: user.id,
+      biologicalSex: dto.biologicalSex,
+      birthDate: dto.birthDate,
+      goal: dto.goal,
+      heightInCentimeters: dto.heightInCentimeters,
+      targetWeightInGrams: dto.targetWeightInGrams,
+      weightInGrams: dto.weightInGrams,
+      timezone: dto.timezone,
+    })
   }
 }

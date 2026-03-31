@@ -1,19 +1,10 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { UserDto } from 'src/modules/users/dtos/user.dto';
+import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common'
 
-export const AuthenticatedUser = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): UserDto => {
-    const request = ctx.switchToHttp().getRequest();
-    const user = request.user;
+export const AuthenticatedUser = createParamDecorator((_data: unknown, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest()
+  const user = request.user
 
-    if (!user.id) {
-      throw new UnauthorizedException('Unauthorized.');
-    }
+  if (!user) throw new UnauthorizedException('Unauthorized.')
 
-    return user;
-  },
-);
+  return user
+})
