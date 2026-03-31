@@ -3,8 +3,7 @@ import { JwtService } from '@nestjs/jwt'
 import bcrypt from 'bcryptjs'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
 import { Payload } from '../types/payload.type'
-import { SigninOutput } from '../types/signin.type'
-import { SignupInput } from '../types/signup.type'
+import { SigninInput, SigninOutput } from '../types/signin.type'
 
 @Injectable()
 export class SigninUseCase {
@@ -13,7 +12,7 @@ export class SigninUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(input: SignupInput): Promise<SigninOutput> {
+  async execute(input: SigninInput): Promise<SigninOutput> {
     const user = await this.usersRepository.findByEmailForAuth({
       email: input.email,
     })
