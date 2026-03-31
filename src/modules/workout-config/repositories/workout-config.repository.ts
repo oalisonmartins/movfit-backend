@@ -1,31 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { FocusMuscle, UserGoal } from 'generated/prisma/enums'
-
-export type RegisterWorkoutConfigData = {
-  userId: string
-  freeDaysPerWeek: number
-  freeTimeByDayInSeconds: number
-  focusMuscles?: FocusMuscle[]
-}
-
-export type WorkoutConfigData = {
-  id: string
-  freeDaysPerWeek: number
-  freeTimeByDayInSeconds: number
-  focusMuscles: FocusMuscle[]
-}
-
-export type GetWorkoutConfigResultData = {
-  id: string
-  freeDaysPerWeek: number
-  freeTimeByDayInSeconds: number
-  focusMuscles: FocusMuscle[]
-  goal: UserGoal
-}
+import { GetWorkoutConfigInput, GetWorkoutConfigOutput } from '../types/get-workout-config.type'
+import {
+  RegisterWorkoutConfigInput,
+  RegisterWorkoutConfigOutput,
+} from '../types/register-workout-config.type'
 
 @Injectable()
 export abstract class WorkoutConfigRepository {
-  abstract registerWorkoutConfig(data: RegisterWorkoutConfigData): Promise<WorkoutConfigData>
-
-  abstract getWorkoutConfig(userId: string): Promise<GetWorkoutConfigResultData | null>
+  abstract registerWorkoutConfig(
+    input: RegisterWorkoutConfigInput,
+  ): Promise<RegisterWorkoutConfigOutput>
+  abstract getWorkoutConfig(input: GetWorkoutConfigInput): Promise<GetWorkoutConfigOutput | null>
 }

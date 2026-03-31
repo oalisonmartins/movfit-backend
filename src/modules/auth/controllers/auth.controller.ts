@@ -1,10 +1,9 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-
-import { LoginInputDto } from '../dtos/login.dto';
-import { LoginUseCase } from '../use-cases/login.use-case';
-import { ApiResponse } from '@nestjs/swagger';
-import { SignupUseCase } from '../use-cases/signup.use-case';
-import { SignupInputDto } from '../dtos/signup.dto';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
+import { ApiResponse } from '@nestjs/swagger'
+import { SigninRequestDto, SigninResponseDto } from '../dtos/signin.dto'
+import { SignupRequestDto } from '../dtos/signup.dto'
+import { SigninUseCase } from '../use-cases/signin.use-case'
+import { SignupUseCase } from '../use-cases/signup.use-case'
 
 @Controller({
   path: '/auth',
@@ -12,47 +11,27 @@ import { SignupInputDto } from '../dtos/signup.dto';
 })
 export class AuthController {
   constructor(
-    private readonly loginUseCase: LoginUseCase,
+    private readonly signinUseCase: SigninUseCase,
     private readonly signupUseCase: SignupUseCase,
   ) {}
 
   @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Login',
-    schema: {
-      type: 'object',
-      properties: {
-        accessToken: {
-          type: 'string',
-          format: 'password',
-          uniqueItems: true,
-        },
-      },
-    },
+    status: HttpStatus.OK,
+    type: SigninResponseDto,
   })
-  @Post('/login')
-  @HttpCode(HttpStatus.CREATED)
-  async login(@Body() dto: LoginInputDto) {
-    return this.loginUseCase.execute(dto);
+  @Post('/signin')
+  @HttpCode(HttpStatus.OK)
+  async signin(@Body() dto: SigninRequestDto) {
+    return this.signinUseCase.execute(dto)
   }
 
   @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'SignUp.',
-    schema: {
-      type: 'object',
-      properties: {
-        accessToken: {
-          type: 'string',
-          format: 'password',
-          uniqueItems: true,
-        },
-      },
-    },
+    status: HttpStatus.CREATED,
+    type: SigninResponseDto,
   })
-  @Post('/sign-up')
-  @HttpCode(HttpStatus.OK)
-  async signUp(@Body() dto: SignupInputDto) {
-    return this.signupUseCase.execute(dto);
+  @Post('/signup')
+  @HttpCode(HttpStatus.CREATED)
+  async signup(@Body() dto: SignupRequestDto) {
+    return this.signupUseCase.execute(dto)
   }
 }

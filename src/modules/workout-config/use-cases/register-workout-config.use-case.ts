@@ -1,23 +1,20 @@
 import { Injectable } from '@nestjs/common'
-import { RequestContextService } from 'src/common/services/request-context.service'
-import { RegisterWorkoutConfigDto } from '../dtos/register-workout-config.dto'
 import { WorkoutConfigRepository } from '../repositories/workout-config.repository'
+import {
+  RegisterWorkoutConfigInput,
+  RegisterWorkoutConfigOutput,
+} from '../types/register-workout-config.type'
 
 @Injectable()
 export class RegisterWorkoutConfigUseCase {
-  constructor(
-    private readonly workoutConfigRepository: WorkoutConfigRepository,
-    private readonly requestContext: RequestContextService,
-  ) {}
+  constructor(private readonly workoutConfigRepository: WorkoutConfigRepository) {}
 
-  async execute(dto: RegisterWorkoutConfigDto) {
-    const userId = this.requestContext.getUserId
-
+  async execute(input: RegisterWorkoutConfigInput): Promise<RegisterWorkoutConfigOutput> {
     return this.workoutConfigRepository.registerWorkoutConfig({
-      userId,
-      freeDaysPerWeek: dto.freeDaysPerWeek,
-      freeTimeByDayInSeconds: dto.freeTimeByDayInSeconds,
-      focusMuscles: dto.focusMuscles,
+      userId: input.userId,
+      freeDaysPerWeek: input.freeDaysPerWeek,
+      freeTimeByDayInSeconds: input.freeTimeByDayInSeconds,
+      focusMuscles: input.focusMuscles,
     })
   }
 }

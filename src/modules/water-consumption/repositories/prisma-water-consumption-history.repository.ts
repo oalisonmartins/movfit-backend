@@ -1,40 +1,48 @@
 import { Injectable } from '@nestjs/common'
+import { WaterConsumptionHistory } from 'generated/prisma/client'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import {
-  GetTotalWaterConsumptionData,
-  GetTotalWaterConsumptionReturnData,
-  RegisterWaterConsumptionData,
-} from '../types/water-consumption.types'
+  GetTotalConsumptionInput,
+  GetTotalConsumptionOutput,
+} from '../types/get-total-consumption.type'
+import { GetConsumptionHistoryInput } from '../types/get-water-consumption-history.type'
+import { RegisterWaterConsumptionInput } from '../types/register-water-consumption.type'
 import { WaterConsumptionHistoryRepository } from './water-consumption-history.repository'
 
 @Injectable()
 export class PrismaWaterConsumptionHistoryRepository implements WaterConsumptionHistoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getTotalConsumption(
-    data: GetTotalWaterConsumptionData,
-  ): Promise<GetTotalWaterConsumptionReturnData> {
-    const result = await this.prisma.waterConsumptionHistory.aggregate({
-      where: {
-        userId: data.userId,
-        date: data.date,
-      },
-      _sum: {
-        amountInMl: true,
+  async getConsumptionHistory({
+    userId,
+  }: GetConsumptionHistoryInput): Promise<WaterConsumptionHistory[] | null> {
+    const waterConsumptionHistory = await this.prisma.waterConsumptionHistory.findMany({
+      where: { userId },
+      orderBy: {
+        date: 'desc',
       },
     })
-
-    return {
-      todayTotalConsumptionInMl: result._sum.amountInMl as number,
-    }
+    return waterConsumptionHistory
   }
 
-  async registerConsumption(data: RegisterWaterConsumptionData): Promise<void> {
+  async getTotalConsumption(input: GetTotalConsumptionInput): Promise<GetTotalConsumptionOutput> {
+    const totalConsumption = await this.prisma.waterConsumptionHistory.aggregate({
+      where: {
+        userId: input.userId,
+        date: input.date,
+      },
+      _sum: { amountInMl: true },
+    })
+    return totalConsumption._sum.amountInMl
+  }
+
+  async registerWaterConsumption(input: RegisterWaterConsumptionInput): Promise<void> {
     await this.prisma.waterConsumptionHistory.create({
       data: {
-        userId: data.userId,
-        amountInMl: data.amountConsumedInMl,
-        date: data.consumptionDate,
+        userId: input.userId,
+        waterConsumptionId: input.waterConsumptionId,
+        amountInMl: input.amountConsumedInMl,
+        date: input.consumptionDate,
       },
     })
   }

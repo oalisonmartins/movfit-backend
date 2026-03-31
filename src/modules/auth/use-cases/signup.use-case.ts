@@ -1,8 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import bcrypt from 'bcryptjs'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
-import { SignupInputDto, SignupOutputDto } from '../dtos/signup.dto'
+import { Payload } from '../types/payload.type'
+import { SignupInput, SignupOutput } from '../types/signup.type'
 
 @Injectable()
 export class SignupUseCase {
@@ -11,25 +12,30 @@ export class SignupUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(data: SignupInputDto): Promise<SignupOutputDto> {
-    const hash = await bcrypt.hash(data.password, 12)
-    const user = await this.usersRepository.getByEmail(data.email)
+  async execute(input: SignupInput): Promise<SignupOutput> {
+    const hashSalt = await bcrypt.genSalt(12)
+    const hash = await bcrypt.hash(input.password, hashSalt)
+
+    const user = await this.usersRepository.findByEmail({
+      email: input.email,
+    })
 
     if (user) {
-      throw new HttpException('Email already in use.', HttpStatus.CONFLICT)
+      throw new ConflictException('Email already in use.')
     }
 
-    const newUser = await this.usersRepository.create({
-      name: data.name,
-      email: data.email,
-      birthDate: data.birthDate,
+    const createdUser = await this.usersRepository.create({
+      name: input.name,
+      email: input.email,
       password: hash,
     })
 
+    const accessToken = await this.jwtService.signAsync<Payload>({
+      sub: createdUser.id,
+    })
+
     return {
-      accessToken: this.jwtService.sign({
-        sub: newUser.id,
-      }),
+      accessToken,
     }
   }
 }

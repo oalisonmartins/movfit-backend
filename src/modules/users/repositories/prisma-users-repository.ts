@@ -1,106 +1,138 @@
 import { Injectable } from '@nestjs/common'
-import { UserInclude, UserOmit, UserWhereUniqueInput } from 'generated/prisma/models'
+import { User } from 'generated/prisma/client'
+import { FindByUserIdInput } from 'src/common/types/find-by-user-id.type'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
+import { CompleteOnboardingInput } from '../types/complete-onboarding.type'
+import { CreateUserInput } from '../types/create-user.type'
+import { GetByEmailInput } from '../types/get-by-email.type'
 import {
-  CreateUserData,
-  CreateUserResultData,
-  UpdateMetricsData,
-  UpdateMetricsResultData,
-  UsersRepository,
-  UserWithPasswordData,
-} from 'src/modules/users/repositories/users-repository'
-import { GetUserMetricsDto } from '../dtos/get-user-metrics.dto'
-import { UserDto } from '../dtos/user.dto'
+  SelectTimezone,
+  UserAuth,
+  UserSelectOnlyDiets,
+  UserWithDietsAndTimezone,
+  UserWithProfile,
+  UserWithProfileAndWorkoutConfig,
+} from '../types/users.type'
+import { UsersRepository } from './users-repository'
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private readonly publicUserFields = {
-    passwordHash: true,
-    createdAt: true,
-    updatedAt: true,
-  } satisfies UserOmit
-
-  private readonly authUserFields = {
-    createdAt: true,
-    updatedAt: true,
-  } satisfies UserOmit
-
-  private readonly userRelations = {
-    waterConsumptionHistory: true,
-    waterConsumption: true,
-  } satisfies UserInclude
-
-  private findUserBy(where: UserWhereUniqueInput) {
-    return this.prisma.user.findUnique({
-      where,
-      omit: this.publicUserFields,
-      include: this.userRelations,
+  async findWithProfile(input: FindByUserIdInput): Promise<UserWithProfile | null> {
+    const userWithProfile = await this.prisma.user.findUnique({
+      where: { id: input.userId },
+      select: { profile: true },
     })
+    return userWithProfile
   }
 
-  async create(data: CreateUserData): Promise<CreateUserResultData> {
-    return await this.prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        birthDate: data.birthDate,
-        passwordHash: data.password,
+  async getDiets(input: FindByUserIdInput): Promise<UserSelectOnlyDiets | null> {
+    const diets = await this.prisma.user.findUnique({
+      where: { id: input.userId },
+      select: {
+        diets: {
+          include: {
+            meals: {
+              include: { consumedFoods: true },
+            },
+          },
+        },
       },
-      omit: {
+    })
+    return diets
+  }
+
+  async getMe(input: FindByUserIdInput): Promise<UserWithProfileAndWorkoutConfig | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: input.userId },
+      include: {
+        profile: true,
+        workoutConfig: true,
+      },
+    })
+    return user
+  }
+
+  async create(input: CreateUserInput): Promise<User> {
+    const user = await this.prisma.user.create({
+      data: {
+        name: input.name,
+        email: input.email,
+        passwordHash: input.password,
+      },
+    })
+    return user
+  }
+
+  async findByEmail(input: GetByEmailInput): Promise<UserAuth | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: input.email },
+      include: {
+        diets: true,
+        profile: true,
+        waterConsumptions: true,
+      },
+    })
+    return user
+  }
+
+  async findWithTimezone(input: FindByUserIdInput): Promise<SelectTimezone | null> {
+    const userTimezone = await this.prisma.user.findUnique({
+      where: { id: input.userId },
+      select: {
+        profile: {
+          select: { timezone: true },
+        },
+      },
+    })
+    return userTimezone
+  }
+
+  async findWithDietsAndTimezone(
+    input: FindByUserIdInput,
+  ): Promise<UserWithDietsAndTimezone | null> {
+    const userWithDietsAndTimezone = await this.prisma.user.findUnique({
+      where: { id: input.userId },
+      select: {
+        diets: true,
+        profile: {
+          select: { timezone: true },
+        },
+      },
+    })
+    return userWithDietsAndTimezone
+  }
+
+  async findById(input: FindByUserIdInput): Promise<UserAuth | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: input.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
         passwordHash: true,
-        weightInGrams: true,
-        goalWeightInGrams: true,
-        heightInCentimeters: true,
+        isOnboardingCompleted: true,
       },
     })
+    return user
   }
 
-  async getByEmail(email: string): Promise<UserDto | null> {
-    return this.findUserBy({ email })
-  }
-
-  async getById(id: string): Promise<UserDto | null> {
-    return this.findUserBy({ id })
-  }
-
-  async getByEmailForAuth(email: string): Promise<UserWithPasswordData | null> {
-    return await this.prisma.user.findUnique({
-      where: { email },
-      omit: this.authUserFields,
+  async findByEmailForAuth(input: GetByEmailInput): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: input.email },
     })
+    return user
   }
 
-  async updateMetrics(userId: string, data: UpdateMetricsData): Promise<UpdateMetricsResultData> {
-    return await this.prisma.user.update({
-      where: { id: userId },
+  async completeOnboarding(input: CompleteOnboardingInput): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: input.userId },
       data: {
-        goal: data.goal,
-        biologicalSex: data.biologicalSex,
-        heightInCentimeters: data.heightInCentimeters,
-        weightInGrams: data.weightInGrams,
-        goalWeightInGrams: data.goalWeightInGrams,
-      },
-      select: {
-        goal: true,
-        biologicalSex: true,
-        heightInCentimeters: true,
-        weightInGrams: true,
-        goalWeightInGrams: true,
-      },
-    })
-  }
-
-  async getMetrics(userId: string): Promise<GetUserMetricsDto | null> {
-    return await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        birthDate: true,
-        biologicalSex: true,
-        goal: true,
-        heightInCentimeters: true,
-        weightInGrams: true,
+        isOnboardingCompleted: true,
+        profile: {
+          create: input,
+        },
       },
     })
   }

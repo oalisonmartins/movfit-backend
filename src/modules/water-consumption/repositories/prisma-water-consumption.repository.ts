@@ -1,56 +1,63 @@
 import { Injectable } from '@nestjs/common'
-import { WaterConsumptionSelect } from 'generated/prisma/models'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import {
-  UpsertWaterConsumptionInputData,
-  WaterConsumptionData,
-} from '../types/water-consumption.types'
+  GetWaterConsumptionInput,
+  GetWaterConsumptionOutput,
+} from '../types/get-water-consumption.type'
+import {
+  UpsertWaterConsumptionInput,
+  UpsertWaterConsumptionOutput,
+} from '../types/upsert-consumption.type'
 import { WaterConsumptionRepository } from './water-consumption.repository'
 
 @Injectable()
 export class PrismaWaterConsumptionRepository implements WaterConsumptionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private readonly waterConsumptionSelect = {
-    goalInMl: true,
-    consumedInMl: true,
-  } satisfies WaterConsumptionSelect
-
-  async getWaterConsumption(userId: string): Promise<WaterConsumptionData | null> {
-    const result = await this.prisma.waterConsumption.findFirst({
-      where: { userId },
-      select: this.waterConsumptionSelect,
+  async getWaterConsumption(
+    input: GetWaterConsumptionInput,
+  ): Promise<GetWaterConsumptionOutput | null> {
+    const waterConsumption = await this.prisma.waterConsumption.findFirst({
+      where: {
+        userId: input.userId,
+        date: input.date,
+      },
+      select: {
+        id: true,
+        date: true,
+        goalInMl: true,
+        consumedInMl: true,
+      },
     })
-
-    if (!result) {
-      return null
-    }
-
-    return {
-      goalDailyConsumptionInMl: result.goalInMl,
-      todayConsumptionInMl: result.consumedInMl,
-    }
+    return waterConsumption
   }
 
   async upsertWaterConsumption(
-    data: UpsertWaterConsumptionInputData,
-  ): Promise<WaterConsumptionData> {
-    const result = await this.prisma.waterConsumption.upsert({
-      where: { userId: data.userId },
+    input: UpsertWaterConsumptionInput,
+  ): Promise<UpsertWaterConsumptionOutput> {
+    const newWaterConsumption = await this.prisma.waterConsumption.upsert({
+      where: {
+        userId_date: {
+          userId: input.userId,
+          date: input.consumptionDate,
+        },
+      },
       create: {
-        goalInMl: data.dailyConsumptionInMl,
-        userId: data.userId,
+        userId: input.userId,
+        date: input.consumptionDate,
+        goalInMl: input.dailyConsumptionInMl,
       },
       update: {
-        goalInMl: data.dailyConsumptionInMl,
-        consumedInMl: data.todayTotalConsumptionInMl,
+        goalInMl: input.dailyConsumptionInMl,
+        consumedInMl: input.todayTotalConsumptionInMl,
       },
-      select: this.waterConsumptionSelect,
+      select: {
+        id: true,
+        date: true,
+        goalInMl: true,
+        consumedInMl: true,
+      },
     })
-
-    return {
-      goalDailyConsumptionInMl: result.goalInMl,
-      todayConsumptionInMl: result.consumedInMl,
-    }
+    return newWaterConsumption
   }
 }
