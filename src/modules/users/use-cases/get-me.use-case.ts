@@ -1,36 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { FindByUserIdInput } from 'src/common/types/find-by-user-id.type'
-import { UsersRepository } from '../repositories/users-repository'
+import { Injectable } from '@nestjs/common'
+import { RequestContextService } from 'src/common/services/request-context.service'
+import { WorkoutConfigRepository } from 'src/modules/workout-config/repositories/workout-config.repository'
 import { GetMeResponse } from '../types/get-me.type'
 
 @Injectable()
 export class GetMeUseCase {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly requestContext: RequestContextService,
+    private readonly workoutConfigRepo: WorkoutConfigRepository,
+  ) {}
 
-  async execute(input: FindByUserIdInput): Promise<GetMeResponse> {
-    const user = await this.usersRepository.getMe({
-      userId: input.userId,
-    })
+  async execute(): Promise<GetMeResponse> {
+    const user = this.requestContext.getUser
+    const profile = this.requestContext.getProfile
 
-    if (!user) {
-      throw new NotFoundException('User not found.')
-    }
+    const workoutConfig = await this.workoutConfigRepo.getWorkoutConfig(user.id)
 
     return {
       email: user.email,
       name: user.name,
       profile: {
-        biologicalSex: user.profile?.biologicalSex,
-        birthDate: user.profile?.birthDate,
-        goal: user.profile?.goal,
-        heightInCentimeters: user.profile?.heightInCentimeters,
-        targetWeightInGrams: user.profile?.targetWeightInGrams,
-        weightInGrams: user.profile?.targetWeightInGrams,
+        biologicalSex: profile.biologicalSex,
+        birthDate: profile.birthDate,
+        goal: profile.goal,
+        heightInCentimeters: profile.heightInCentimeters,
+        targetWeightInGrams: profile.targetWeightInGrams,
+        weightInGrams: profile.weightInGrams,
       },
       workoutConfig: {
-        focusMuscles: user.workoutConfig?.focusMuscles,
-        freeDaysPerWeek: user.workoutConfig?.freeDaysPerWeek,
-        freeTimeByDayInSeconds: user.workoutConfig?.freeTimeByDayInSeconds,
+        id: workoutConfig?.id,
+        focusMuscles: workoutConfig?.focusMuscles,
+        freeDaysPerWeek: workoutConfig?.freeDaysPerWeek,
+        freeTimeByDayInSeconds: workoutConfig?.freeTimeByDayInSeconds,
       },
     }
   }

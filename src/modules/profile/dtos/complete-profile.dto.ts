@@ -2,7 +2,7 @@ import { Type } from 'class-transformer'
 import { IsDate, IsEnum, IsInt, IsTimeZone } from 'class-validator'
 import { BiologicalSex, Goal } from 'generated/prisma/enums'
 
-export class CompleteOnboardingDto {
+export class CompleteProfileDto {
   @IsEnum(Goal)
   readonly goal: Goal
 

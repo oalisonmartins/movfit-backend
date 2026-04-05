@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { FindByUserIdInput } from 'src/common/types/find-by-user-id.type'
 import { UsersRepository } from '../repositories/users-repository'
 import { UserGetDietsResponse } from '../types/get-diets.type'
 
@@ -7,10 +6,8 @@ import { UserGetDietsResponse } from '../types/get-diets.type'
 export class GetDietsUseCase {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async execute(input: FindByUserIdInput): Promise<UserGetDietsResponse | null> {
-    const user = await this.usersRepository.getDiets({
-      userId: input.userId,
-    })
+  async execute(userId: string): Promise<UserGetDietsResponse | null> {
+    const user = await this.usersRepository.getDiets(userId)
 
     if (!user) {
       throw new NotFoundException('User not found.')
@@ -34,13 +31,11 @@ export class GetDietsUseCase {
         carbsInGrams: meal.carbsInGrams,
         proteinsInGrams: meal.proteinsInGrams,
         fatsInGrams: meal.fatsInGrams,
-        foods: meal.consumedFoods.map((food) => ({
+        foods: meal.foods.map((food) => ({
           id: food.id,
           name: food.name,
           quantity: food.quantity,
-          weightPerUnitInGrams: food.weightPerUnitInGrams,
-          totalCalories: food.totalCalories,
-          coverImageUrl: food.coverImageUrl,
+          caloriesInKcal: food.caloriesInKcal,
         })),
       })),
     }))
