@@ -1,9 +1,9 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Patch, UseGuards } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator'
+import { CurrentUser } from 'src/common/decorators/current-user.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
-import type { UserAuth } from 'src/modules/users/types/users.type'
+import type { AuthUser } from 'src/common/types/auth-user.types'
 import { GetTodayNutritionProgressResponseDto } from '../dtos/get-today-nutrition-progress.dto'
 import {
   UpdateTodayNutritionRequestDto,
@@ -30,8 +30,8 @@ export class DailyNutritionController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  getTodayNutritionProgress(@AuthenticatedUser() user: UserAuth) {
-    return this.getTodayGetTodayNutritionProgressUseCase.execute({ userId: user.id })
+  getTodayNutritionProgress(@CurrentUser() user: AuthUser) {
+    return this.getTodayGetTodayNutritionProgressUseCase.execute(user.id)
   }
 
   @ApiResponse({
@@ -42,7 +42,7 @@ export class DailyNutritionController {
   @Patch()
   @HttpCode(HttpStatus.OK)
   updateTodayNutritionProgress(
-    @AuthenticatedUser() user: UserAuth,
+    @CurrentUser() user: AuthUser,
     @Body() dto: UpdateTodayNutritionRequestDto,
   ) {
     return this.updateUpdateTodayNutritionProgressUseCase.execute({

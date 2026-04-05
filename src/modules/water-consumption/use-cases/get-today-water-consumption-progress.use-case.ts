@@ -19,9 +19,7 @@ export class GetTodayWaterConsumptionProgressUseCase {
   async execute(
     input: GetTodayWaterConsumptionProgressInput,
   ): Promise<GetTodayWaterConsumptionProgressOutput> {
-    const user = await this.usersRepository.findWithProfile({
-      userId: input.userId,
-    })
+    const user = await this.usersRepository.findWithProfile(input.userId)
 
     if (!user?.profile) {
       throw new BadRequestException('Complete your profile and try again.')

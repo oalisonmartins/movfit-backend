@@ -14,7 +14,7 @@ export class RegisterTodayWaterConsumptionUseCase {
   ) {}
 
   async execute(input: RegisterTodayWaterConsumptionInput): Promise<void> {
-    const user = await this.usersRepository.findWithTimezone({ userId: input.userId })
+    const user = await this.usersRepository.findWithTimezone(input.userId)
 
     if (!user?.profile) {
       throw new BadRequestException('Complete your profile and try again.')

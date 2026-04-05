@@ -1,23 +1,23 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
+import { RequestContextService } from 'src/common/services/request-context.service'
 import { WorkoutConfigRepository } from '../repositories/workout-config.repository'
 import { GetWorkoutConfigInput, GetWorkoutConfigResponse } from '../types/get-workout-config.type'
 
 @Injectable()
 export class GetWorkoutConfigUseCase {
-  constructor(private readonly workoutConfigRepository: WorkoutConfigRepository) {}
+  constructor(
+    private readonly workoutConfigRepo: WorkoutConfigRepository,
+    private readonly requestContext: RequestContextService,
+  ) {}
 
-  async execute(input: GetWorkoutConfigInput): Promise<GetWorkoutConfigResponse> {
-    const workoutConfig = await this.workoutConfigRepository.getWorkoutConfig({
-      userId: input.userId,
-    })
+  async execute(input: GetWorkoutConfigInput): Promise<GetWorkoutConfigResponse | null> {
+    const workoutConfig = await this.workoutConfigRepo.getWorkoutConfig(input.userId)
 
     if (!workoutConfig) {
-      throw new NotFoundException('User workout config not found.')
+      return null
     }
 
-    if (!workoutConfig.user.profile) {
-      throw new UnauthorizedException('Complete onboarding and try again.')
-    }
+    const profile = this.requestContext.getProfile
 
     return {
       id: workoutConfig.id,
@@ -27,14 +27,14 @@ export class GetWorkoutConfigUseCase {
       user: {
         id: workoutConfig.userId,
         profile: {
-          id: workoutConfig.user.profile.id,
-          goal: workoutConfig.user.profile.goal,
-          biologicalSex: workoutConfig.user.profile.biologicalSex,
-          birthDate: workoutConfig.user.profile.birthDate,
-          heightInCentimeters: workoutConfig.user.profile.heightInCentimeters,
-          targetWeightInGrams: workoutConfig.user.profile.targetWeightInGrams,
-          timezone: workoutConfig.user.profile.timezone,
-          weightInGrams: workoutConfig.user.profile.weightInGrams,
+          id: profile.id,
+          goal: profile.goal,
+          biologicalSex: profile.biologicalSex,
+          birthDate: profile.birthDate,
+          heightInCentimeters: profile.heightInCentimeters,
+          targetWeightInGrams: profile.targetWeightInGrams,
+          timezone: profile.timezone,
+          weightInGrams: profile.weightInGrams,
         },
       },
     }

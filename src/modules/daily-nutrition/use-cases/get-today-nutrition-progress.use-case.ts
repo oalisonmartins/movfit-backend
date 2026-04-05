@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { toPercentage } from 'src/common/helpers/to-percentage.helper'
-import { FindByUserIdInput } from 'src/common/types/find-by-user-id.type'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
 import { DailyNutritionRepository } from '../repositories/daily-nutrition.repository'
 import { GetTodayNutritionProgressOutput } from '../types/get-today-nutrition-progress.type'
@@ -12,10 +11,8 @@ export class GetTodayNutritionProgressUseCase {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async execute(input: FindByUserIdInput): Promise<GetTodayNutritionProgressOutput> {
-    const user = await this.usersRepository.findWithDietsAndTimezone({
-      userId: input.userId,
-    })
+  async execute(userId: string): Promise<GetTodayNutritionProgressOutput> {
+    const user = await this.usersRepository.findWithDietsAndTimezone(userId)
 
     if (!user) {
       throw new NotFoundException('User not found.')
@@ -26,13 +23,13 @@ export class GetTodayNutritionProgressUseCase {
     }
 
     let todayNutrition = await this.dailyNutritionRepository.getTodayNutrition({
-      userId: input.userId,
+      userId,
       timezone: user.profile.timezone,
     })
 
     if (!todayNutrition) {
       todayNutrition = await this.dailyNutritionRepository.upsertTodayNutrition({
-        userId: input.userId,
+        userId,
         timezone: user.profile.timezone,
       })
     }

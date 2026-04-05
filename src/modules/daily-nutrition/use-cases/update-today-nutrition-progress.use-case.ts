@@ -14,9 +14,7 @@ export class UpdateTodayNutritionProgressUseCase {
   ) {}
 
   async execute(input: UpdateTodayNutritionInput): Promise<UpdateTodayNutritionOutput> {
-    const user = await this.usersRepository.findWithTimezone({
-      userId: input.userId,
-    })
+    const user = await this.usersRepository.findWithTimezone(input.userId)
 
     if (!user) {
       throw new NotFoundException('User not found.')

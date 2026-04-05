@@ -1,9 +1,20 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator'
+import { CurrentUser } from 'src/common/decorators/current-user.decorator'
+import { RequireProfile } from 'src/common/decorators/require-profile.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
-import type { UserAuth } from 'src/modules/users/types/users.type'
+import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
+import type { AuthUser } from 'src/common/types/auth-user.types'
 import { GetWorkoutConfigResponseDto } from '../dtos/get-workout-config-response.dto'
 import {
   RegisterWorkoutConfigRequestDto,
@@ -13,16 +24,15 @@ import { GetWorkoutConfigUseCase } from '../use-cases/get-workout-config.use-cas
 import { RegisterWorkoutConfigUseCase } from '../use-cases/register-workout-config.use-case'
 
 @UseGuards(JwtAuthGuard, OnboardingGuard)
-@Controller({
-  path: '/workout-config',
-  version: '1',
-})
+@Controller({ path: '/workout-config', version: '1' })
 export class WorkoutConfigController {
   constructor(
     private readonly registerWorkoutConfigUseCase: RegisterWorkoutConfigUseCase,
     private readonly getWorkoutConfigUseCase: GetWorkoutConfigUseCase,
   ) {}
 
+  @RequireProfile()
+  @UseInterceptors(ProfileInterceptor)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Get current user workout config.',
@@ -30,10 +40,8 @@ export class WorkoutConfigController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  getWorkoutConfig(@AuthenticatedUser() user: UserAuth) {
-    return this.getWorkoutConfigUseCase.execute({
-      userId: user.id,
-    })
+  getWorkoutConfig(@CurrentUser() user: AuthUser) {
+    return this.getWorkoutConfigUseCase.execute({ userId: user.id })
   }
 
   @ApiResponse({
@@ -43,15 +51,7 @@ export class WorkoutConfigController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  registerWorkoutConfig(
-    @AuthenticatedUser() user: UserAuth,
-    @Body() dto: RegisterWorkoutConfigRequestDto,
-  ) {
-    return this.registerWorkoutConfigUseCase.execute({
-      freeDaysPerWeek: dto.freeDaysPerWeek,
-      freeTimeByDayInSeconds: dto.freeTimeByDayInSeconds,
-      focusMuscles: dto.focusMuscles,
-      userId: user.id,
-    })
+  registerWorkoutConfig(@Body() dto: RegisterWorkoutConfigRequestDto) {
+    return this.registerWorkoutConfigUseCase.execute(dto)
   }
 }

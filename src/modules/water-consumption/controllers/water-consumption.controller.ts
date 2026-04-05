@@ -1,10 +1,10 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator'
+import { CurrentUser } from 'src/common/decorators/current-user.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
+import type { AuthUser } from 'src/common/types/auth-user.types'
 import { GetTodayNutritionProgressResponseDto } from 'src/modules/daily-nutrition/dtos/get-today-nutrition-progress.dto'
-import type { UserAuth } from 'src/modules/users/types/users.type'
 import { GetWaterConsumptionHistoryResponseDto } from '../dtos/get-water-consumption-history.dto'
 import { RegisterTodayWaterConsumptionDto } from '../dtos/register-today-water-consumption.dto'
 import { GetTodayWaterConsumptionProgressUseCase } from '../use-cases/get-today-water-consumption-progress.use-case'
@@ -30,7 +30,7 @@ export class WaterConsumptionController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  getTodayWaterConsumptionProgress(@AuthenticatedUser() user: UserAuth) {
+  getTodayWaterConsumptionProgress(@CurrentUser('basic') user: AuthUser) {
     return this.getTodayWaterConsumptionProgressUseCase.execute({
       userId: user.id,
     })
@@ -43,7 +43,7 @@ export class WaterConsumptionController {
   })
   @Get('/history')
   @HttpCode(HttpStatus.OK)
-  getWaterConsumptionHistory(@AuthenticatedUser() user: UserAuth) {
+  getWaterConsumptionHistory(@CurrentUser('basic') user: AuthUser) {
     return this.getWaterConsumptionHistoryUseCase.execute({
       userId: user.id,
     })
@@ -56,7 +56,7 @@ export class WaterConsumptionController {
   @Post()
   @HttpCode(HttpStatus.NO_CONTENT)
   registerTodayWaterConsumption(
-    @AuthenticatedUser() user: UserAuth,
+    @CurrentUser('basic') user: AuthUser,
     @Body() dto: RegisterTodayWaterConsumptionDto,
   ) {
     return this.registerRegisterTodayWaterConsumptionUseCase.execute({
