@@ -18,9 +18,7 @@ export type UserGetDietsResponse = Array<{
       id: string
       name: string
       quantity: number
-      weightPerUnitInGrams: number
-      totalCalories: number
-      coverImageUrl: string | null
+      caloriesInKcal: number
     }[]
   }[]
 }>

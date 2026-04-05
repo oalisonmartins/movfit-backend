@@ -18,7 +18,7 @@ export type UserWithDietsAndProfileAndWaterConsumption = UserGetPayload<{
 export type UserSelectOnlyDiets = UserGetPayload<{
   select: {
     diets: {
-      include: { meals: { include: { consumedFoods: true } } }
+      include: { meals: { include: { foods: true } } }
     }
   }
 }>
@@ -30,28 +30,9 @@ export type UserWithProfileAndWaterConsumption = UserGetPayload<{
   }
 }>
 
-export type PublicUser = UserGetPayload<{
-  select: {
-    id: true
-    name: true
-    email: true
-    isOnboardingCompleted: true
-  }
-}>
-
 export type UserWithProfile = UserGetPayload<{
   select: {
     profile: true
-  }
-}>
-
-export type UserAuth = UserGetPayload<{
-  select: {
-    id: true
-    name: true
-    email: true
-    passwordHash: true
-    isOnboardingCompleted: true
   }
 }>
 
