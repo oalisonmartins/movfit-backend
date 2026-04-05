@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { GetWorkoutConfigInput, GetWorkoutConfigOutput } from '../types/get-workout-config.type'
-import {
-  RegisterWorkoutConfigInput,
-  RegisterWorkoutConfigOutput,
-} from '../types/register-workout-config.type'
+import { WorkoutConfig } from 'generated/prisma/client'
+import { RegisterWorkoutConfigInput } from '../types/register-workout-config.type'
 
 @Injectable()
 export abstract class WorkoutConfigRepository {
+  abstract getWorkoutConfig(userId: string): Promise<WorkoutConfig | null>
+
   abstract registerWorkoutConfig(
+    userId: string,
     input: RegisterWorkoutConfigInput,
-  ): Promise<RegisterWorkoutConfigOutput>
-  abstract getWorkoutConfig(input: GetWorkoutConfigInput): Promise<GetWorkoutConfigOutput | null>
+  ): Promise<WorkoutConfig>
 }

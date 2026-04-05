@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
+import { WorkoutConfig } from 'generated/prisma/client'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { GetWorkoutConfigInput, GetWorkoutConfigOutput } from '../types/get-workout-config.type'
 import {
   RegisterWorkoutConfigInput,
   RegisterWorkoutConfigOutput,
@@ -11,39 +11,30 @@ import { WorkoutConfigRepository } from './workout-config.repository'
 export class PrismaWorkoutConfigRepository implements WorkoutConfigRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getWorkoutConfig(input: GetWorkoutConfigInput): Promise<GetWorkoutConfigOutput | null> {
+  async getWorkoutConfig(userId: string): Promise<WorkoutConfig | null> {
     const workoutConfig = await this.prisma.workoutConfig.findFirst({
-      where: { userId: input.userId },
-      include: {
-        user: {
-          select: {
-            profile: {
-              omit: { createdAt: true, updatedAt: true },
-            },
-          },
-        },
-      },
+      where: { userId },
     })
+
+    if (!workoutConfig) {
+      return null
+    }
+
     return workoutConfig
   }
 
   async registerWorkoutConfig(
+    userId: string,
     input: RegisterWorkoutConfigInput,
-  ): Promise<RegisterWorkoutConfigOutput> {
-    const workoutConfig = await this.prisma.workoutConfig.create({
+  ): Promise<WorkoutConfig> {
+    const newWorkoutConfig = await this.prisma.workoutConfig.create({
       data: {
-        userId: input.userId,
+        userId,
         freeDaysPerWeek: input.freeDaysPerWeek,
         freeTimeByDayInSeconds: input.freeTimeByDayInSeconds,
         focusMuscles: input.focusMuscles,
       },
-      select: {
-        id: true,
-        freeDaysPerWeek: true,
-        freeTimeByDayInSeconds: true,
-        focusMuscles: true,
-      },
     })
-    return workoutConfig
+    return newWorkoutConfig
   }
 }
