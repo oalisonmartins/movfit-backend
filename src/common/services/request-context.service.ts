@@ -1,16 +1,35 @@
 import { Injectable, Scope } from '@nestjs/common'
-import { UserAuth } from 'src/modules/users/types/users.type'
+import { Profile, WorkoutConfig } from 'generated/prisma/client'
+import { AuthUser } from '../types/auth-user.types'
 
 @Injectable({ scope: Scope.REQUEST })
 export class RequestContextService {
-  private _user: UserAuth
+  private _user: AuthUser
+  private _profile: Profile
+  private _workoutConfig: WorkoutConfig
 
-  set setUser(user: UserAuth) {
+  set setUser(user: AuthUser) {
     this._user = user
   }
 
-  get getUser(): UserAuth {
+  set setProfile(profile: Profile) {
+    this._profile = profile
+  }
+
+  set setWorkoutConfig(workoutConfig: WorkoutConfig) {
+    this._workoutConfig = workoutConfig
+  }
+
+  get getUser(): AuthUser {
     return this._user
+  }
+
+  get getProfile(): Profile {
+    return this._profile
+  }
+
+  get getWorkoutConfig(): WorkoutConfig {
+    return this._workoutConfig
   }
 
   get getUserId(): string {
