@@ -6,12 +6,7 @@ import {
 } from 'src/common/types/public-user.types'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { CreateUserInput } from '../types/create-user.type'
-import {
-  SelectTimezone,
-  UserSelectOnlyDiets,
-  UserWithDietsAndTimezone,
-  UserWithProfile,
-} from '../types/users.type'
+import { SelectTimezone, UserWithDietsAndTimezone, UserWithProfile } from '../types/users.type'
 import { UsersRepository } from './users-repository'
 
 @Injectable()
@@ -136,22 +131,6 @@ export class PrismaUsersRepository implements UsersRepository {
       select: { profile: true },
     })
     return userWithProfile
-  }
-
-  async getDiets(userId: string): Promise<UserSelectOnlyDiets | null> {
-    const diets = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        diets: {
-          include: {
-            meals: {
-              include: { foods: true },
-            },
-          },
-        },
-      },
-    })
-    return diets
   }
 
   async findWithTimezone(userId: string): Promise<SelectTimezone | null> {
