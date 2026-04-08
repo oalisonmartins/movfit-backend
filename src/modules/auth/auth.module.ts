@@ -1,6 +1,5 @@
-import 'dotenv/config'
-
 import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { UsersModule } from '../users/users.module'
 import { AuthController } from './controller/auth.controller'
@@ -11,22 +10,26 @@ import { SignupUseCase } from './use-cases/signup.use-case'
 @Module({
   imports: [
     UsersModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET as string,
-      signOptions: {
-        issuer: process.env.JWT_TOKEN_ISSUER as string,
-        audience: process.env.JWT_TOKEN_AUDIENCE as string,
-        expiresIn: '7d',
-      },
-      verifyOptions: {
-        issuer: process.env.JWT_TOKEN_ISSUER as string,
-        audience: process.env.JWT_TOKEN_AUDIENCE as string,
-        ignoreExpiration: false,
-      },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        secret: config.getOrThrow('JWT_SECRET'),
+        signOptions: {
+          issuer: config.getOrThrow('JWT_TOKEN_ISSUER'),
+          audience: config.getOrThrow('JWT_TOKEN_AUDIENCE'),
+          expiresIn: '7d',
+        },
+        verifyOptions: {
+          issuer: config.getOrThrow('JWT_TOKEN_ISSUER'),
+          audience: config.getOrThrow('JWT_TOKEN_AUDIENCE'),
+          ignoreExpiration: false,
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
   exports: [SigninUseCase, SignupUseCase],
-  providers: [SigninUseCase, SignupUseCase, JwtStrategy],
+  providers: [JwtStrategy, SigninUseCase, SignupUseCase],
 })
 export class AuthModule {}

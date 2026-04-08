@@ -1,6 +1,9 @@
-export type RegisterWaterConsumptionInput = {
-  userId: string
-  waterConsumptionId: string
+export type RegisterWaterConsumptionRequest = {
   amountConsumedInMl: number
-  consumptionDate: Date
+}
+
+export type RegisterWaterConsumptionInput = {
+  dailyWaterConsumptionId: string
+  dateOfConsumption: Date
+  amountConsumedInMl: number
 }

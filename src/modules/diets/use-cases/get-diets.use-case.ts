@@ -7,11 +7,9 @@ export class GetDietsUseCase {
 
   async execute(userId: string) {
     const diets = await this.dietsRepo.getAll(userId)
-
     if (diets.length === 0) {
       return []
     }
-
     return diets.map((diet) => ({
       id: diet.id,
       isActive: diet.isActive,

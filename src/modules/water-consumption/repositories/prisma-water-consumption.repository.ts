@@ -1,63 +1,46 @@
 import { Injectable } from '@nestjs/common'
+import { WaterConsumption } from 'generated/prisma/client'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import {
-  GetWaterConsumptionInput,
-  GetWaterConsumptionOutput,
-} from '../types/get-water-consumption.type'
-import {
-  UpsertWaterConsumptionInput,
-  UpsertWaterConsumptionOutput,
-} from '../types/upsert-consumption.type'
+import { GetWaterConsumptionHistoryRequest } from '../types/get-water-consumption-history.type'
+import { RegisterWaterConsumptionInput } from '../types/register-water-consumption.type'
 import { WaterConsumptionRepository } from './water-consumption.repository'
 
 @Injectable()
 export class PrismaWaterConsumptionRepository implements WaterConsumptionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getWaterConsumption(
-    input: GetWaterConsumptionInput,
-  ): Promise<GetWaterConsumptionOutput | null> {
-    const waterConsumption = await this.prisma.waterConsumption.findFirst({
+  async getHistory(
+    userId: string,
+    input: GetWaterConsumptionHistoryRequest,
+  ): Promise<WaterConsumption[]> {
+    const waterConsumptions = await this.prisma.waterConsumption.findMany({
       where: {
-        userId: input.userId,
-        date: input.date,
-      },
-      select: {
-        id: true,
-        date: true,
-        goalInMl: true,
-        consumedInMl: true,
-      },
-    })
-    return waterConsumption
-  }
-
-  async upsertWaterConsumption(
-    input: UpsertWaterConsumptionInput,
-  ): Promise<UpsertWaterConsumptionOutput> {
-    const newWaterConsumption = await this.prisma.waterConsumption.upsert({
-      where: {
-        userId_date: {
-          userId: input.userId,
-          date: input.consumptionDate,
+        userId,
+        dateOfConsumption: {
+          gte: input.fromDate,
+          lte: input.toDate,
         },
       },
-      create: {
-        userId: input.userId,
-        date: input.consumptionDate,
-        goalInMl: input.dailyConsumptionInMl,
-      },
-      update: {
-        goalInMl: input.dailyConsumptionInMl,
-        consumedInMl: input.todayTotalConsumptionInMl,
-      },
-      select: {
-        id: true,
-        date: true,
-        goalInMl: true,
-        consumedInMl: true,
-      },
     })
-    return newWaterConsumption
+    return waterConsumptions
+  }
+
+  async register(userId: string, input: RegisterWaterConsumptionInput): Promise<WaterConsumption> {
+    const waterConsumption = await this.prisma.$transaction(async (tx) => {
+      const waterConsumption = await tx.waterConsumption.create({
+        data: {
+          userId,
+          dailyWaterConsumptionId: input.dailyWaterConsumptionId,
+          amountConsumedInMl: input.amountConsumedInMl,
+          dateOfConsumption: input.dateOfConsumption,
+        },
+      })
+      await tx.dailyWaterConsumption.update({
+        where: { userId, id: input.dailyWaterConsumptionId },
+        data: { consumedInMl: { increment: input.amountConsumedInMl } },
+      })
+      return waterConsumption
+    })
+    return waterConsumption
   }
 }

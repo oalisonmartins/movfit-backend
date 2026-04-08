@@ -14,19 +14,14 @@ export class SigninUseCase {
 
   async execute(input: SigninRequest): Promise<SigninResponse> {
     const user = await this.usersRepo.getByEmailForAuth(input.email)
-
     if (!user) {
       throw new BadRequestException('Invalid e-mail or password.')
     }
-
     const isPasswordMatch = await bcrypt.compare(input.password, user.passwordHash)
-
     if (!isPasswordMatch) {
       throw new BadRequestException('Invalid e-mail or password.')
     }
-
     const accessToken = await this.jwtService.signAsync<Payload>({ sub: user.id })
-
     return { accessToken }
   }
 }

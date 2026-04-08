@@ -9,11 +9,17 @@ export class PrismaProfileRepository implements ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async completeProfile(userId: string, input: CompleteProfileRequest) {
-    await this.prisma.profile.upsert({
-      where: { userId },
-      create: { userId, ...input },
-      update: input,
-    })
+    await this.prisma.$transaction([
+      this.prisma.profile.upsert({
+        where: { userId },
+        create: { userId, ...input },
+        update: input,
+      }),
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { isOnboardingCompleted: true },
+      }),
+    ])
   }
   async getProfile(userId: string): Promise<Profile | null> {
     const profile = await this.prisma.profile.findFirst({

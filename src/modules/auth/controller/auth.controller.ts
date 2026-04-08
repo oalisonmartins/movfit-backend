@@ -5,10 +5,7 @@ import { SignupRequestDto } from '../dtos/signup.dto'
 import { SigninUseCase } from '../use-cases/signin.use-case'
 import { SignupUseCase } from '../use-cases/signup.use-case'
 
-@Controller({
-  path: '/auth',
-  version: '1',
-})
+@Controller({ path: '/auth', version: '1' })
 export class AuthController {
   constructor(
     private readonly signinUseCase: SigninUseCase,

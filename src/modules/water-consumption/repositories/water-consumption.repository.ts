@@ -1,19 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import {
-  GetWaterConsumptionInput,
-  GetWaterConsumptionOutput,
-} from '../types/get-water-consumption.type'
-import {
-  UpsertWaterConsumptionInput,
-  UpsertWaterConsumptionOutput,
-} from '../types/upsert-consumption.type'
+import { WaterConsumption } from 'generated/prisma/client'
+import { GetWaterConsumptionHistoryRequest } from '../types/get-water-consumption-history.type'
+import { RegisterWaterConsumptionInput } from '../types/register-water-consumption.type'
 
 @Injectable()
 export abstract class WaterConsumptionRepository {
-  abstract getWaterConsumption(
-    input: GetWaterConsumptionInput,
-  ): Promise<GetWaterConsumptionOutput | null>
-  abstract upsertWaterConsumption(
-    input: UpsertWaterConsumptionInput,
-  ): Promise<UpsertWaterConsumptionOutput>
+  abstract getHistory(
+    userId: string,
+    input: GetWaterConsumptionHistoryRequest,
+  ): Promise<WaterConsumption[]>
+  abstract register(userId: string, input: RegisterWaterConsumptionInput): Promise<WaterConsumption>
 }

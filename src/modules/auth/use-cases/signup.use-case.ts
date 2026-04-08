@@ -15,17 +15,12 @@ export class SignupUseCase {
   async execute(input: SignupRequest): Promise<SignupResponse> {
     const hashSalt = await bcrypt.genSalt(12)
     const hash = await bcrypt.hash(input.password, hashSalt)
-
     const user = await this.usersRepo.getByEmail(input.email)
-
     if (user) {
       throw new ConflictException('E-mail already in use.')
     }
-
     const newUser = await this.usersRepo.create({ ...input, password: hash })
-
     const accessToken = await this.jwtService.signAsync<Payload>({ sub: newUser.id })
-
     return { accessToken }
   }
 }

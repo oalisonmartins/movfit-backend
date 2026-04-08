@@ -7,7 +7,7 @@ import { AppModule } from './app.module'
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
 
-  app.enableCors({ origin: '*' })
+  app.enableCors({ origin: '*', methods: '*' })
 
   app.enableVersioning({ type: VersioningType.URI })
 

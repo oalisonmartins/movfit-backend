@@ -15,14 +15,6 @@ export type UserWithDietsAndProfileAndWaterConsumption = UserGetPayload<{
   }
 }>
 
-export type UserSelectOnlyDiets = UserGetPayload<{
-  select: {
-    diets: {
-      include: { meals: { include: { foods: true } } }
-    }
-  }
-}>
-
 export type UserWithProfileAndWaterConsumption = UserGetPayload<{
   include: {
     profile: true

@@ -13,9 +13,7 @@ export class GetMeUseCase {
   async execute(): Promise<GetMeResponse> {
     const user = this.requestContext.getUser
     const profile = this.requestContext.getProfile
-
     const workoutConfig = await this.workoutConfigRepo.getWorkoutConfig(user.id)
-
     return {
       email: user.email,
       name: user.name,
