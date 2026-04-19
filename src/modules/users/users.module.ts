@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
+import { TransactionService } from 'src/common/services/transaction.service'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { ProfileModule } from '../profile/profile.module'
 import { WorkoutConfigModule } from '../workout-config/workout-config.module'
@@ -14,6 +16,8 @@ import { GetMeUseCase } from './use-cases/get-me.use-case'
   controllers: [UsersController],
   providers: [
     PrismaService,
+    TransactionService,
+    TransactionContextService,
     RequestContextService,
     GetMeUseCase,
     {

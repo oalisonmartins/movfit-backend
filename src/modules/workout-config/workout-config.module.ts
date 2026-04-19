@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
+import { TransactionService } from 'src/common/services/transaction.service'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { ProfileModule } from '../profile/profile.module'
 import { WorkoutConfigController } from './controller/workout-config.controller'
@@ -14,6 +16,8 @@ import { RegisterWorkoutConfigUseCase } from './use-cases/register-workout-confi
   exports: [WorkoutConfigRepository],
   providers: [
     PrismaService,
+    TransactionService,
+    TransactionContextService,
     RequestContextService,
     RegisterWorkoutConfigUseCase,
     GetWorkoutConfigUseCase,

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
+import { TransactionService } from 'src/common/services/transaction.service'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { ProfileModule } from '../profile/profile.module'
 import { UsersModule } from '../users/users.module'
@@ -15,6 +17,8 @@ import { CalculateDailyWaterConsumptionUseCase } from './use-cases/calculate-dai
   exports: [DailyWaterConsumptionRepository],
   providers: [
     PrismaService,
+    TransactionService,
+    TransactionContextService,
     RequestContextService,
     CalculateDailyWaterConsumptionUseCase,
     {

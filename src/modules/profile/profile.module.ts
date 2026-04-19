@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
+import { TransactionService } from 'src/common/services/transaction.service'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { ProfileController } from './controller/profile.controller'
 import { PrismaProfileRepository } from './repositories/prisma-profile.repository'
@@ -11,8 +13,10 @@ import { CompleteProfileUseCase } from './use-cases/complete-profile.use-case'
   exports: [ProfileRepository],
   providers: [
     PrismaService,
-    CompleteProfileUseCase,
+    TransactionService,
+    TransactionContextService,
     RequestContextService,
+    CompleteProfileUseCase,
     {
       provide: ProfileRepository,
       useClass: PrismaProfileRepository,
