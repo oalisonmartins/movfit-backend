@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 
 @Injectable()
 export class OnboardingGuard implements CanActivate {
@@ -7,7 +7,7 @@ export class OnboardingGuard implements CanActivate {
     const user = request.user
 
     if (!user.isOnboardingCompleted) {
-      return false
+      throw new UnauthorizedException('Unauthorized: finish your onboarding.')
     }
 
     return true
