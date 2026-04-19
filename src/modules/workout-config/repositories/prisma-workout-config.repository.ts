@@ -1,33 +1,28 @@
 import { Injectable } from '@nestjs/common'
 import { WorkoutConfig } from 'generated/prisma/client'
+import { BaseRepository } from 'src/common/repositories/base.repository'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import {
-  RegisterWorkoutConfigInput,
-  RegisterWorkoutConfigOutput,
-} from '../types/register-workout-config.type'
+import { RegisterWorkoutConfigInput } from '../types/register-workout-config.type'
 import { WorkoutConfigRepository } from './workout-config.repository'
 
 @Injectable()
-export class PrismaWorkoutConfigRepository implements WorkoutConfigRepository {
-  constructor(private readonly prisma: PrismaService) {}
-
-  async getWorkoutConfig(userId: string): Promise<WorkoutConfig | null> {
-    const workoutConfig = await this.prisma.workoutConfig.findFirst({
-      where: { userId },
-    })
-
-    if (!workoutConfig) {
-      return null
-    }
-
-    return workoutConfig
+export class PrismaWorkoutConfigRepository extends BaseRepository implements WorkoutConfigRepository {
+  constructor(
+    readonly prisma: PrismaService,
+    readonly transactionContext: TransactionContextService,
+  ) {
+    super(prisma, transactionContext)
   }
 
-  async registerWorkoutConfig(
-    userId: string,
-    input: RegisterWorkoutConfigInput,
-  ): Promise<WorkoutConfig> {
-    const newWorkoutConfig = await this.prisma.workoutConfig.create({
+  async getWorkoutConfig(userId: string): Promise<WorkoutConfig | null> {
+    return await this.db.workoutConfig.findFirst({
+      where: { userId },
+    })
+  }
+
+  async registerWorkoutConfig(userId: string, input: RegisterWorkoutConfigInput): Promise<WorkoutConfig> {
+    return await this.db.workoutConfig.create({
       data: {
         userId,
         freeDaysPerWeek: input.freeDaysPerWeek,
@@ -35,6 +30,5 @@ export class PrismaWorkoutConfigRepository implements WorkoutConfigRepository {
         focusMuscles: input.focusMuscles,
       },
     })
-    return newWorkoutConfig
   }
 }
