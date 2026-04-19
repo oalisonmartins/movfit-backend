@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common'
 import { Meal } from 'generated/prisma/client'
+import { BaseRepository } from 'src/common/repositories/base.repository'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { CreateMealInput } from '../types/create-meal.type'
 import { MealsRepository } from './meals.repository'
 
 @Injectable()
-export class PrismaMealsRepository implements MealsRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class PrismaMealsRepository extends BaseRepository implements MealsRepository {
+  constructor(
+    readonly prisma: PrismaService,
+    readonly transactionContext: TransactionContextService,
+  ) {
+    super(prisma, transactionContext)
+  }
 
   async create(input: CreateMealInput): Promise<Meal> {
-    const meal = await this.prisma.meal.create({
+    return await this.db.meal.create({
       data: {
         dietId: input.dietId,
         name: input.name,
@@ -33,6 +40,5 @@ export class PrismaMealsRepository implements MealsRepository {
         },
       },
     })
-    return meal
   }
 }
