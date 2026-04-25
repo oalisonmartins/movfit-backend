@@ -8,7 +8,7 @@ import { WorkoutConfigModule } from '../workout-config/workout-config.module'
 import { UsersController } from './controller/users.controller'
 import { PrismaUsersRepository } from './repositories/prisma-users-repository'
 import { UsersRepository } from './repositories/users-repository'
-import { GetMeUseCase } from './use-cases/get-me.use-case'
+import { MeUseCase } from './use-cases/me.use-case'
 
 @Module({
   imports: [WorkoutConfigModule, ProfileModule],
@@ -19,7 +19,7 @@ import { GetMeUseCase } from './use-cases/get-me.use-case'
     TransactionService,
     TransactionContextService,
     RequestContextService,
-    GetMeUseCase,
+    MeUseCase,
     {
       provide: UsersRepository,
       useClass: PrismaUsersRepository,
