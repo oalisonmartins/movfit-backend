@@ -9,7 +9,7 @@ import { WorkoutConfigModule } from '../workout-config/workout-config.module'
 import { DailyWaterConsumptionController } from './controller/daily-water-consumption.controller'
 import { DailyWaterConsumptionRepository } from './repositories/daily-water-consumption.repository'
 import { PrismaDailyWaterConsumptionRepository } from './repositories/prisma-daily-water-consumption.repository'
-import { CalculateDailyWaterConsumptionUseCase } from './use-cases/calculate-daily-water-consumption.use-case'
+import { GetDailyWaterConsumptionUseCase } from './use-cases/get-daily-water-consumption.use-case'
 
 @Module({
   imports: [UsersModule, ProfileModule, WorkoutConfigModule],
@@ -20,7 +20,7 @@ import { CalculateDailyWaterConsumptionUseCase } from './use-cases/calculate-dai
     TransactionService,
     TransactionContextService,
     RequestContextService,
-    CalculateDailyWaterConsumptionUseCase,
+    GetDailyWaterConsumptionUseCase,
     {
       provide: DailyWaterConsumptionRepository,
       useClass: PrismaDailyWaterConsumptionRepository,
