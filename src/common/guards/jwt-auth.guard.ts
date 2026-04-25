@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from '@nestjs/common'
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { RequestContextService } from '../services/request-context.service'
 
@@ -11,12 +11,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isAuthenticated = (await super.canActivate(context)) as boolean
 
-    if (isAuthenticated) {
-      const request = context.switchToHttp().getRequest()
-      const user = request.user
-      this.requestContext.setUser = user
-    }
+    if (!isAuthenticated) throw new UnauthorizedException('Guard unauthorization: unauthenticated user.')
 
-    return isAuthenticated
+    const request = context.switchToHttp().getRequest()
+    const user = request.user
+
+    this.requestContext.setUser = user
+    return true
   }
 }

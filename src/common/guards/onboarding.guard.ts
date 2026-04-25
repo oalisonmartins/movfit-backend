@@ -4,11 +4,9 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 export class OnboardingGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
-    const user = request.user
+    const { isOnboardingCompleted } = request.user
 
-    if (!user.isOnboardingCompleted) {
-      throw new UnauthorizedException('Unauthorized: finish your onboarding.')
-    }
+    if (!isOnboardingCompleted) throw new UnauthorizedException('Guard unauthorization: incompleted onboarding.')
 
     return true
   }
