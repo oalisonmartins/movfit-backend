@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Patch, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger/dist'
 import { CurrentUser } from 'src/common/decorators/current-user.decorator'
 import { RequireDailyWaterConsumption } from 'src/common/decorators/require-daily-water-consumption.decorator'
 import { RequireProfile } from 'src/common/decorators/require-profile.decorator'
@@ -7,8 +8,15 @@ import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
 import { DailyWaterConsumptionInterceptor } from 'src/common/interceptors/daily-water-consumption.interceptor'
 import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
 import type { AuthUser } from 'src/common/types/auth-user.types'
-import { GetWaterConsumptionHistoryQueryDTO } from '../dtos/get-water-consumption-history-query.dto'
-import { RegisterWaterConsumptionRequestDTO } from '../dtos/register-water-consumption.dto'
+import {
+  GetWaterConsumptionHistoryQueryDTO,
+  GetWaterConsumptionHistoryResponseDTO,
+} from '../dtos/get-water-consumption-history.dto'
+import { GetWaterConsumptionProgressResponseDTO } from '../dtos/get-water-consumption-progress.dto'
+import {
+  RegisterWaterConsumptionRequestDTO,
+  RegisterWaterConsumptionResponseDTO,
+} from '../dtos/register-water-consumption.dto'
 import { GetWaterConsumptionHistoryUseCase } from '../use-cases/get-water-consumption-history.use-case'
 import { GetWaterConsumptionProgressUseCase } from '../use-cases/get-water-consumption-progress.use-case'
 import { RegisterWaterConsumptionUseCase } from '../use-cases/register-water-consumption.use-case'
@@ -23,10 +31,8 @@ export class WaterConsumptionController {
   ) {}
 
   @Get('/history')
-  getWaterConsumptionHistory(
-    @CurrentUser() user: AuthUser,
-    @Query() query: GetWaterConsumptionHistoryQueryDTO,
-  ) {
+  @ApiOkResponse({ type: [GetWaterConsumptionHistoryResponseDTO], isArray: true })
+  getWaterConsumptionHistory(@CurrentUser() user: AuthUser, @Query() query: GetWaterConsumptionHistoryQueryDTO) {
     return this.getWaterConsumptionHistoryUseCase.execute(user.id, query)
   }
 
@@ -34,14 +40,17 @@ export class WaterConsumptionController {
   @RequireProfile()
   @UseInterceptors(DailyWaterConsumptionInterceptor, ProfileInterceptor)
   @Get('/progress')
-  getWaterConsumptionProgress(@CurrentUser() user: AuthUser) {
-    return this.getWaterConsumptionProgressUseCase.execute(user.id)
+  @ApiOkResponse({ type: GetWaterConsumptionProgressResponseDTO })
+  getWaterConsumptionProgress() {
+    return this.getWaterConsumptionProgressUseCase.execute()
   }
 
   @RequireDailyWaterConsumption()
   @RequireProfile()
   @UseInterceptors(DailyWaterConsumptionInterceptor, ProfileInterceptor)
   @Patch()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse({ type: RegisterWaterConsumptionResponseDTO })
   registerWaterConsumption(@Body() dto: RegisterWaterConsumptionRequestDTO) {
     return this.registerWaterConsumptionUseCase.execute(dto)
   }
