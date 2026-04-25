@@ -6,6 +6,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
+import { constants } from 'src/common/constants'
 import { DailyWaterConsumptionRepository } from 'src/modules/daily-water-consumption/repositories/daily-water-consumption.repository'
 import { RequestContextService } from '../services/request-context.service'
 
@@ -19,7 +20,7 @@ export class DailyWaterConsumptionInterceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const requireDailyWaterconsumption = this.reflector.get(
-      'REQUIRE_DAILY_WATER_CONSUMPTION',
+      constants.REQUIRE_DAILY_WATER_CONSUMPTION_KEY,
       context.getHandler(),
     )
 
@@ -29,11 +30,8 @@ export class DailyWaterConsumptionInterceptor implements NestInterceptor {
 
       const dailyWaterConsumption = await this.dailyWaterConsumptionRepo.get(user.id)
 
-      if (!dailyWaterConsumption) {
-        throw new InternalServerErrorException(
-          'Daily water consumption inconsistency: expected daily water consumption but not found.',
-        )
-      }
+      if (!dailyWaterConsumption)
+        throw new InternalServerErrorException('Interception error: DailyWaterConsumption not found.')
 
       this.requestContext.setDailyWaterConsumption = dailyWaterConsumption
 

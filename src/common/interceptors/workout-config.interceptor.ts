@@ -6,6 +6,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
+import { constants } from 'src/common/constants'
 import { WorkoutConfigRepository } from 'src/modules/workout-config/repositories/workout-config.repository'
 import { RequestContextService } from '../services/request-context.service'
 
@@ -18,19 +19,15 @@ export class WorkoutConfigInterceptor implements NestInterceptor {
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler) {
-    const requireWorkoutConfig = this.reflector.get('REQUIRE_WORKOUT_CONFIG', context.getHandler())
+    const requireWorkoutConfig = this.reflector.get(constants.REQUIRE_WORKOUT_CONFIG_KEY, context.getHandler())
 
     if (requireWorkoutConfig) {
       const request = context.switchToHttp().getRequest()
       const user = request.user
 
-      const workoutConfig = await this.workoutConfigRepo.getWorkoutConfig(user.id)
+      const workoutConfig = await this.workoutConfigRepo.get(user.id)
 
-      if (!workoutConfig) {
-        throw new InternalServerErrorException(
-          'Workout config inconsistency: expected workout config but not found.',
-        )
-      }
+      if (!workoutConfig) throw new InternalServerErrorException('Interception error: WorkoutConfig not found.')
 
       this.requestContext.setWorkoutConfig = workoutConfig
 
