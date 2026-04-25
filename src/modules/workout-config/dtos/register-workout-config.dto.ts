@@ -2,37 +2,31 @@ import { ApiProperty } from '@nestjs/swagger'
 import { ArrayMaxSize, IsArray, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator'
 import { FocusMuscle } from 'generated/prisma/enums'
 
-export class RegisterWorkoutConfigRequestDto {
-  @ApiProperty({ type: 'integer' })
+export class RegisterWorkoutConfigRequestDTO {
   @IsInt()
   @Min(1)
   @Max(7)
   readonly freeDaysPerWeek: number
 
-  @ApiProperty({ type: 'integer' })
   @IsInt()
   @Min(1)
-  @Max(86400)
+  @Max(86_400)
   readonly freeTimeByDayInSeconds: number
 
-  @ApiProperty({ enum: FocusMuscle, isArray: true })
-  @IsEnum(FocusMuscle, { each: true })
+  @IsOptional()
   @IsArray()
   @ArrayMaxSize(2)
-  @IsOptional()
+  @IsEnum(FocusMuscle, { each: true })
   readonly focusMuscles?: FocusMuscle[]
 }
 
-export class RegisterWorkoutConfigResponseDto {
-  @ApiProperty({ type: 'string', format: 'uuid', uniqueItems: true })
+export class RegisterWorkoutConfigResponseDTO {
+  @ApiProperty({ type: 'string', format: 'uuid' })
   readonly id: string
-
-  @ApiProperty({ type: 'integer' })
+  @ApiProperty({ type: 'integer', minimum: 1, maximum: 7 })
   readonly freeDaysPerWeek: number
-
-  @ApiProperty({ type: 'integer' })
+  @ApiProperty({ type: 'integer', minimum: 1, maximum: 86_400 })
   readonly freeTimeByDayInSeconds: number
-
-  @ApiProperty({ enum: FocusMuscle, isArray: true })
+  @ApiProperty({ enum: FocusMuscle, isArray: true, maxItems: 2 })
   readonly focusMuscles: FocusMuscle[]
 }

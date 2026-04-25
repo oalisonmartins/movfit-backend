@@ -11,24 +11,30 @@ export class GetWaterConsumptionProgressUseCase {
     private readonly requestContext: RequestContextService,
   ) {}
 
-  async execute(userId: string) {
+  async execute() {
+    const userId = this.requestContext.getUserId
+
     const { timezone } = this.requestContext.getProfile
-    const today = getTodayInTimezone(timezone)
-    const todayWaterConsumptions = await this.waterConsumptionRepo.getHistory(userId, {
-      fromDate: today,
-      toDate: today,
+    const todayInTimezone = getTodayInTimezone(timezone)
+
+    const todayConsumptionsInMl = await this.waterConsumptionRepo.history(userId, {
+      fromDate: todayInTimezone,
+      toDate: todayInTimezone,
     })
-    const totalConsumedInMlToday = todayWaterConsumptions.reduce(
+
+    const todayTotalConsumptionInMl = todayConsumptionsInMl.reduce(
       (total, current) => total + current.amountConsumedInMl,
       0,
     )
+
     const dailyWaterConsumption = this.requestContext.getDailyWaterConsumption
+
     return {
       targetConsumptionInMl: dailyWaterConsumption.targetInMl,
-      totalConsumedInMl: totalConsumedInMlToday,
-      consumptionProgressPercent: toPercentage({
+      totalConsumptionInMl: todayTotalConsumptionInMl,
+      progress: toPercentage({
         goal: dailyWaterConsumption.targetInMl,
-        current: totalConsumedInMlToday,
+        current: todayTotalConsumptionInMl,
       }),
     }
   }

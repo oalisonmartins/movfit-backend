@@ -1,38 +1,8 @@
-import { BiologicalSex, FocusMuscle, Goal } from 'generated/prisma/enums'
-import { WorkoutConfigGetPayload } from 'generated/prisma/models'
+import { FocusMuscle } from 'generated/prisma/enums'
 
-export type GetWorkoutConfigInput = {
-  userId: string
-}
-
-export type GetWorkoutConfigOutput = WorkoutConfigGetPayload<{
-  include: {
-    user: {
-      select: {
-        profile: {
-          omit: { createdAt: true; updatedAt: true }
-        }
-      }
-    }
-  }
-}>
-
-export type GetWorkoutConfigResponse = {
+export type GetWorkoutConfigOutput = {
   id: string
   freeDaysPerWeek: number
   freeTimeByDayInSeconds: number
   focusMuscles: FocusMuscle[]
-  user: {
-    id: string
-    profile: {
-      id: string
-      goal: Goal
-      biologicalSex: BiologicalSex
-      birthDate: Date
-      heightInCentimeters: number
-      weightInGrams: number
-      targetWeightInGrams: number
-      timezone: string
-    }
-  }
 }

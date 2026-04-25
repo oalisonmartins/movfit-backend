@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { getTodayInTimezone } from 'src/common/helpers/get-today-in-timezone.helper'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { WaterConsumptionRepository } from '../repositories/water-consumption.repository'
-import { RegisterWaterConsumptionRequest } from '../types/register-water-consumption.type'
+import { RegisterWaterConsumptionInput } from '../types/register-water-consumption.types'
 
 @Injectable()
 export class RegisterWaterConsumptionUseCase {
@@ -11,20 +11,23 @@ export class RegisterWaterConsumptionUseCase {
     private readonly requestContext: RequestContextService,
   ) {}
 
-  async execute(input: RegisterWaterConsumptionRequest) {
-    const dailyWaterConsumption = this.requestContext.getDailyWaterConsumption
-    const { timezone } = this.requestContext.getProfile
+  async execute(input: RegisterWaterConsumptionInput) {
     const userId = this.requestContext.getUserId
-    const today = getTodayInTimezone(timezone)
-    const waterConsumption = await this.waterConsumptionRepo.register(userId, {
-      amountConsumedInMl: input.amountConsumedInMl,
+    const dailyWaterConsumption = this.requestContext.getDailyWaterConsumption
+
+    const { timezone } = this.requestContext.getProfile
+    const todayInTimezone = getTodayInTimezone(timezone)
+
+    const updatedConsumption = await this.waterConsumptionRepo.register(userId, {
       dailyWaterConsumptionId: dailyWaterConsumption.id,
-      dateOfConsumption: today,
+      amountConsumedInMl: input.amountConsumedInMl,
+      dateOfConsumption: todayInTimezone,
     })
+
     return {
-      id: waterConsumption.id,
-      amountConsumedInMl: waterConsumption.amountConsumedInMl,
-      dateOfConsumption: waterConsumption.dateOfConsumption,
+      id: updatedConsumption.id,
+      amountConsumedInMl: updatedConsumption.amountConsumedInMl,
+      dateOfConsumption: updatedConsumption.dateOfConsumption,
     }
   }
 }
