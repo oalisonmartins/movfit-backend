@@ -1,35 +1,33 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { UsersRepository } from 'src/modules/users/repositories/users-repository'
+import { Injectable } from '@nestjs/common'
+import { RequestContextService } from 'src/common/services/request-context.service'
 import { DailyNutritionRepository } from '../repositories/daily-nutrition.repository'
-import {
-  UpdateTodayNutritionInput,
-  UpdateTodayNutritionOutput,
-} from '../types/update-today-nutrition.type'
+import { UpdateTodayNutritionInput, UpdateTodayNutritionOutput } from '../types/update-today-nutrition.type'
 
 @Injectable()
 export class UpdateTodayNutritionProgressUseCase {
   constructor(
-    private readonly dailyNutritionRepository: DailyNutritionRepository,
-    private readonly usersRepository: UsersRepository,
+    private readonly dailyNutritionRepo: DailyNutritionRepository,
+    private readonly requestContext: RequestContextService,
   ) {}
 
   async execute(input: UpdateTodayNutritionInput): Promise<UpdateTodayNutritionOutput> {
-    const user = await this.usersRepository.findWithTimezone(input.userId)
+    const userId = this.requestContext.getUserId
+    const { timezone } = this.requestContext.getProfile
 
-    if (!user) {
-      throw new NotFoundException('User not found.')
-    }
-
-    if (!user.profile?.timezone) {
-      throw new BadRequestException('Timezone is not defined.')
-    }
-
-    return await this.dailyNutritionRepository.upsertTodayNutrition({
-      userId: input.userId,
-      timezone: user.profile.timezone,
+    const updatedTodayDailyNutrition = await this.dailyNutritionRepo.upsert({
+      userId,
+      timezone,
       carbsInGrams: input.carbsInGrams,
       fatsInGrams: input.fatsInGrams,
       proteinsInGrams: input.proteinsInGrams,
     })
+
+    return {
+      id: updatedTodayDailyNutrition.id,
+      day: updatedTodayDailyNutrition.day,
+      carbsInGrams: updatedTodayDailyNutrition.carbsInGrams,
+      fatsInGrams: updatedTodayDailyNutrition.fatsInGrams,
+      proteinsInGrams: updatedTodayDailyNutrition.proteinsInGrams,
+    }
   }
 }
