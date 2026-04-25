@@ -1,4 +1,4 @@
-export type GetWaterConsumptionHistoryRequest = {
+export type GetWaterConsumptionHistoryInput = {
   fromDate: Date
   toDate: Date
 }
