@@ -4,6 +4,8 @@ import { TransactionService } from 'src/common/services/transaction.service'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { DailyWaterConsumptionModule } from '../daily-water-consumption/daily-water-consumption.module'
+import { DietsModule } from '../diets/diets.module'
+import { ProfileModule } from '../profile/profile.module'
 import { UsersModule } from '../users/users.module'
 import { DailyNutritionController } from './controller/daily-nutrition.controller'
 import { DailyNutritionRepository } from './repositories/daily-nutrition.repository'
@@ -12,7 +14,7 @@ import { GetTodayNutritionProgressUseCase } from './use-cases/get-today-nutritio
 import { UpdateTodayNutritionProgressUseCase } from './use-cases/update-today-nutrition-progress.use-case'
 
 @Module({
-  imports: [DailyWaterConsumptionModule, UsersModule],
+  imports: [DailyWaterConsumptionModule, UsersModule, ProfileModule, DietsModule],
   controllers: [DailyNutritionController],
   exports: [DailyNutritionRepository],
   providers: [
