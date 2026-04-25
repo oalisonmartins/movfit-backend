@@ -5,7 +5,7 @@ import { BaseRepository } from 'src/common/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { GetTodayNutritionInput } from '../types/get-today-nutrition.type'
-import { UpsertTodayNutritionInput, UpsertTodayNutritionOutput } from '../types/upsert-today-nutrition.type'
+import { UpsertTodayNutritionInput } from '../types/upsert-today-nutrition.type'
 import { DailyNutritionRepository } from './daily-nutrition.repository'
 
 @Injectable()
@@ -21,9 +21,8 @@ export class PrismaDailyNutritionRepository extends BaseRepository implements Da
     return value !== undefined ? { increment: value } : undefined
   }
 
-  // TODO: Update this shit too
-  async upsertTodayNutrition(input: UpsertTodayNutritionInput): Promise<UpsertTodayNutritionOutput> {
-    const dailyNutrition = await this.db.dailyNutrition.upsert({
+  async upsert(input: UpsertTodayNutritionInput): Promise<DailyNutrition> {
+    return await this.db.dailyNutrition.upsert({
       where: {
         userId_day: {
           userId: input.userId,
@@ -42,23 +41,15 @@ export class PrismaDailyNutritionRepository extends BaseRepository implements Da
         fatsInGrams: this.incrementIfDefined(input.fatsInGrams),
         proteinsInGrams: this.incrementIfDefined(input.proteinsInGrams),
       },
-      select: {
-        day: true,
-        carbsInGrams: true,
-        fatsInGrams: true,
-        proteinsInGrams: true,
-      },
     })
-    return dailyNutrition
   }
 
-  async getTodayNutrition(input: GetTodayNutritionInput): Promise<DailyNutrition | null> {
-    const dailyNutrition = await this.db.dailyNutrition.findFirst({
+  async get(input: GetTodayNutritionInput): Promise<DailyNutrition | null> {
+    return await this.db.dailyNutrition.findFirst({
       where: {
         userId: input.userId,
         day: getTodayInTimezone(input.timezone),
       },
     })
-    return dailyNutrition
   }
 }
