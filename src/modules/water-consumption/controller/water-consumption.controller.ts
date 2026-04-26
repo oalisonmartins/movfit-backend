@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger/dist'
+import { Throttle } from '@nestjs/throttler/dist'
 import { CurrentUser } from 'src/common/decorators/current-user.decorator'
 import { RequireDailyWaterConsumption } from 'src/common/decorators/require-daily-water-consumption.decorator'
 import { RequireProfile } from 'src/common/decorators/require-profile.decorator'
@@ -30,27 +31,28 @@ export class WaterConsumptionController {
     private readonly registerWaterConsumptionUseCase: RegisterWaterConsumptionUseCase,
   ) {}
 
-  @Get('/history')
   @ApiOkResponse({ type: [GetWaterConsumptionHistoryResponseDTO], isArray: true })
+  @Get('/history')
   getWaterConsumptionHistory(@CurrentUser() user: AuthUser, @Query() query: GetWaterConsumptionHistoryQueryDTO) {
     return this.getWaterConsumptionHistoryUseCase.execute(user.id, query)
   }
 
-  @RequireDailyWaterConsumption()
   @RequireProfile()
+  @RequireDailyWaterConsumption()
   @UseInterceptors(DailyWaterConsumptionInterceptor, ProfileInterceptor)
-  @Get('/progress')
   @ApiOkResponse({ type: GetWaterConsumptionProgressResponseDTO })
+  @Get('/progress')
   getWaterConsumptionProgress() {
     return this.getWaterConsumptionProgressUseCase.execute()
   }
 
-  @RequireDailyWaterConsumption()
+  @Throttle({ heavy: { ttl: 60000, limit: 5 } })
   @RequireProfile()
+  @RequireDailyWaterConsumption()
   @UseInterceptors(DailyWaterConsumptionInterceptor, ProfileInterceptor)
-  @Patch()
-  @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: RegisterWaterConsumptionResponseDTO })
+  @HttpCode(HttpStatus.CREATED)
+  @Patch()
   registerWaterConsumption(@Body() dto: RegisterWaterConsumptionRequestDTO) {
     return this.registerWaterConsumptionUseCase.execute(dto)
   }
