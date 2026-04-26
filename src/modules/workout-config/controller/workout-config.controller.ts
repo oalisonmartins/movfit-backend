@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
+import { Throttle } from '@nestjs/throttler/dist'
 import { CurrentUser } from 'src/common/decorators/current-user.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
@@ -17,15 +18,16 @@ export class WorkoutConfigController {
     private readonly getWorkoutConfigUseCase: GetWorkoutConfigUseCase,
   ) {}
 
-  @Get()
   @ApiOkResponse({ type: GetWorkoutConfigResponseDTO })
+  @Get()
   getWorkoutConfig(@CurrentUser() user: AuthUser) {
     return this.getWorkoutConfigUseCase.execute(user.id)
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
+  @Throttle({ heavy: { ttl: 60000, limit: 5 } })
   @ApiCreatedResponse({ type: RegisterWorkoutConfigResponseDTO })
+  @HttpCode(HttpStatus.CREATED)
+  @Post()
   registerWorkoutConfig(@Body() body: RegisterWorkoutConfigRequestDTO) {
     return this.registerWorkoutConfigUseCase.execute(body)
   }
