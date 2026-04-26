@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { APP_GUARD } from '@nestjs/core'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler/dist'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './modules/auth/auth.module'
@@ -15,6 +17,32 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
 @Module({
   controllers: [AppController],
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000,
+        limit: 60,
+        blockDuration: 5000,
+      },
+      {
+        name: 'auth',
+        ttl: 60000,
+        limit: 5,
+        blockDuration: 30000,
+      },
+      {
+        name: 'heavy',
+        ttl: 60000,
+        limit: 5,
+        blockDuration: 15000,
+      },
+      {
+        name: 'reports',
+        ttl: 60000,
+        limit: 10,
+        blockDuration: 10000,
+      },
+    ]),
     ConfigModule.forRoot(),
     UsersModule,
     AuthModule,
@@ -26,6 +54,12 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
     DietsModule,
     FoodsModule,
   ],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
