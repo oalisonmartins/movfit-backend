@@ -9,6 +9,6 @@ export class AppController {
   @SkipThrottle()
   @Get()
   healthCheck() {
-    return this.appService.getHealthCheck()
+    return this.appService.check()
   }
 }
