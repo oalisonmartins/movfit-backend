@@ -1,12 +1,7 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  InternalServerErrorException,
-  NestInterceptor,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
+import { InterceptorException } from 'src/common/exceptions/interceptor.exception'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { DietsRepository } from 'src/modules/diets/repositories/diets.repository'
 
@@ -27,7 +22,15 @@ export class ActiveDietInterceptor implements NestInterceptor {
 
       const activeDiet = await this.dietsRepository.findActive(user.id)
 
-      if (!activeDiet) throw new InternalServerErrorException('Interception error: ActiveDiet not found.')
+      if (!activeDiet) {
+        throw new InterceptorException(
+          {
+            message: 'Você precisa ter uma dieta ativa para continuar.',
+            code: 'ACTIVE_DIET_REQUIRED',
+          },
+          HttpStatus.FORBIDDEN,
+        )
+      }
 
       this.requestContext.setActiveDiet = activeDiet
       return next.handle()

@@ -1,12 +1,7 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  InternalServerErrorException,
-  NestInterceptor,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
+import { InterceptorException } from 'src/common/exceptions/interceptor.exception'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { WorkoutConfigRepository } from 'src/modules/workout-config/repositories/workout-config.repository'
 
@@ -27,7 +22,15 @@ export class WorkoutConfigInterceptor implements NestInterceptor {
 
       const workoutConfig = await this.workoutConfigRepository.findOne(user.id)
 
-      if (!workoutConfig) throw new InternalServerErrorException('Interception error: WorkoutConfig not found.')
+      if (!workoutConfig) {
+        throw new InterceptorException(
+          {
+            message: 'Você precisa preencher as configurações do seu treino para continuar.',
+            code: 'WORKOUT_CONFIG_REQUIRED',
+          },
+          HttpStatus.FORBIDDEN,
+        )
+      }
 
       this.requestContext.setWorkoutConfig = workoutConfig
 

@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 
 @Injectable()
 export class OnboardingGuard implements CanActivate {
@@ -6,7 +6,12 @@ export class OnboardingGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
     const { isOnboardingCompleted } = request.user
 
-    if (!isOnboardingCompleted) throw new UnauthorizedException('Guard unauthorization: incompleted onboarding.')
+    if (!isOnboardingCompleted) {
+      throw new ForbiddenException({
+        message: 'Finalize a tela de onboarding para prosseguir.',
+        code: 'COMPLETE_ONBOARDING',
+      })
+    }
 
     return true
   }

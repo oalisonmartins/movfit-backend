@@ -1,12 +1,7 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  InternalServerErrorException,
-  NestInterceptor,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
+import { InterceptorException } from 'src/common/exceptions/interceptor.exception'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { DailyWaterConsumptionRepository } from 'src/modules/daily-water-consumption/repositories/daily-water-consumption.repository'
 
@@ -30,8 +25,15 @@ export class DailyWaterConsumptionInterceptor implements NestInterceptor {
 
       const dailyWaterConsumption = await this.dailyWaterConsumptionRepository.findOne(user.id)
 
-      if (!dailyWaterConsumption)
-        throw new InternalServerErrorException('Interception error: DailyWaterConsumption not found.')
+      if (!dailyWaterConsumption) {
+        throw new InterceptorException(
+          {
+            message: 'Você precisa ter uma meta diária de água definida para continuar.',
+            code: 'DAILY_WATER_CONSUMPTION_IS_REQUIRED',
+          },
+          HttpStatus.FORBIDDEN,
+        )
+      }
 
       this.requestContext.setDailyWaterConsumption = dailyWaterConsumption
 

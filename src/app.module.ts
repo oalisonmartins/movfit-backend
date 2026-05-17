@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { APP_GUARD } from '@nestjs/core'
+import { APP_FILTER, APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler/dist'
+import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter'
+import { InterceptorsFilter } from 'src/common/filters/interceptors.filter'
 import { AuthModule } from 'src/modules/auth/auth.module'
 import { DailyNutritionModule } from 'src/modules/daily-nutrition/daily-nutrition.module'
 import { DailyWaterConsumptionModule } from 'src/modules/daily-water-consumption/daily-water-consumption.module'
@@ -59,6 +61,14 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: InterceptorsFilter,
     },
   ],
 })
