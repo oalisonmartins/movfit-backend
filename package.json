@@ -47,7 +47,6 @@
     "@nestjs/cli": "^11.0.21",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.19",
-    "@types/jest": "^30.0.0",
     "@types/node": "^22.19.17",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.3",
@@ -68,6 +67,7 @@
       "json",
       "ts"
     ],
+
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
@@ -77,6 +77,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }
