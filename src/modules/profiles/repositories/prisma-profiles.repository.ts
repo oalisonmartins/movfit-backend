@@ -41,8 +41,6 @@ export class PrismaProfileRepository extends BaseRepository implements ProfileRe
         },
       })
 
-      console.log('CONSOLE:', userId)
-
       await tx.user.update({
         where: {
           id: upsertedProfile.userId,
