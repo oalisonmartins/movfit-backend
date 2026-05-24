@@ -35,9 +35,12 @@ export class PrismaDietsRepository extends BaseRepository implements DietsReposi
     })
   }
 
-  async findAll(userId: string): Promise<Diet[]> {
+  async findMany(userId: string, isActive?: boolean): Promise<Diet[]> {
     return await this.db.diet.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(isActive !== undefined && { isActive }),
+      },
       orderBy: [{ createdAt: 'desc' }],
     })
   }

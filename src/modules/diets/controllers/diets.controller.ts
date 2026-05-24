@@ -6,7 +6,6 @@ import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
 import type { AuthUser } from 'src/common/types/auth-user.types'
 import { CreateDietUseCase } from 'src/modules/diets/use-cases/create-diet.use-case'
 import { DeleteDietUseCase } from 'src/modules/diets/use-cases/delete-diet.use-case'
-import { GetActiveDietUseCase } from 'src/modules/diets/use-cases/get-active-diet.use-case'
 import { GetDietsUseCase } from 'src/modules/diets/use-cases/get-diets.use-case'
 import {
   CreateDietRequestDTO,
@@ -21,7 +20,6 @@ import {
 export class DietsController {
   constructor(
     private readonly getDietsUseCase: GetDietsUseCase,
-    private readonly getActiveDietUseCase: GetActiveDietUseCase,
     private readonly createDietUseCase: CreateDietUseCase,
     private readonly deleteDietUseCase: DeleteDietUseCase,
   ) {}
@@ -29,11 +27,7 @@ export class DietsController {
   @ApiOkResponse({ type: GetDietsResponseDTO })
   @Get()
   getDiets(@CurrentUser() user: AuthUser, @Query() query: GetDietsQueryDTO) {
-    const { isActive = false } = query
-    if (isActive) {
-      return this.getActiveDietUseCase.execute(user.id)
-    }
-    return this.getDietsUseCase.execute(user.id)
+    return this.getDietsUseCase.execute(user.id, query.isActive)
   }
 
   @ApiCreatedResponse({ type: CreateDietResponseDTO })

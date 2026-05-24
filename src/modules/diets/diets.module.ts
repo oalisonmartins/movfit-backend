@@ -8,7 +8,6 @@ import { DietsRepository } from 'src/modules/diets/repositories/diets.repository
 import { PrismaDietsRepository } from 'src/modules/diets/repositories/prisma-diets.repository'
 import { CreateDietUseCase } from 'src/modules/diets/use-cases/create-diet.use-case'
 import { DeleteDietUseCase } from 'src/modules/diets/use-cases/delete-diet.use-case'
-import { GetActiveDietUseCase } from 'src/modules/diets/use-cases/get-active-diet.use-case'
 import { GetDietsUseCase } from 'src/modules/diets/use-cases/get-diets.use-case'
 import { FoodsModule } from 'src/modules/foods/foods.module'
 import { MealsModule } from 'src/modules/meals/meals.module'
@@ -24,7 +23,6 @@ import { ProfilesModule } from 'src/modules/profiles/profiles.module'
     TransactionContextService,
     RequestContextService,
     GetDietsUseCase,
-    GetActiveDietUseCase,
     CreateDietUseCase,
     DeleteDietUseCase,
     {
