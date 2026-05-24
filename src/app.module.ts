@@ -5,13 +5,13 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler/dist'
 import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter'
 import { InterceptorsFilter } from 'src/common/filters/interceptors.filter'
 import { AuthModule } from 'src/modules/auth/auth.module'
-import { DailyNutritionModule } from 'src/modules/daily-nutrition/daily-nutrition.module'
 import { DailyWaterConsumptionModule } from 'src/modules/daily-water-consumption/daily-water-consumption.module'
 import { DietsModule } from 'src/modules/diets/diets.module'
 import { FoodsModule } from 'src/modules/foods/foods.module'
+import { NutritionModule } from 'src/modules/nutritions/nutrition.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { ProfileModule } from './modules/profile/profile.module'
+import { ProfileModule } from './modules/profiles/profile.module'
 import { UsersModule } from './modules/users/users.module'
 import { WaterConsumptionHistoryModule } from './modules/water-consumption/water-consumption.module'
 import { WorkoutConfigModule } from './modules/workout-config/workout-config.module'
@@ -45,16 +45,18 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
         blockDuration: 10000,
       },
     ]),
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     AuthModule,
-    DailyNutritionModule,
     DailyWaterConsumptionModule,
     WaterConsumptionHistoryModule,
     WorkoutConfigModule,
     ProfileModule,
     DietsModule,
     FoodsModule,
+    NutritionModule,
   ],
   providers: [
     AppService,
