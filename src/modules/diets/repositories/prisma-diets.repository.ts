@@ -30,8 +30,21 @@ export class PrismaDietsRepository extends BaseRepository implements DietsReposi
   }
 
   async findOne(dietId: string, userId: string): Promise<Diet | null> {
-    return await this.db.diet.findFirst({
+    return await this.db.diet.findUnique({
       where: { id: dietId, userId },
+    })
+  }
+
+  async findOneByMealAndUserId(mealId: string, userId: string): Promise<Diet | null> {
+    return await this.db.diet.findFirst({
+      where: {
+        userId,
+        meals: {
+          some: {
+            id: mealId,
+          },
+        },
+      },
     })
   }
 
@@ -42,12 +55,6 @@ export class PrismaDietsRepository extends BaseRepository implements DietsReposi
         ...(isActive !== undefined && { isActive }),
       },
       orderBy: [{ createdAt: 'desc' }],
-    })
-  }
-
-  async findActive(userId: string): Promise<Diet | null> {
-    return await this.db.diet.findFirst({
-      where: { userId, isActive: { equals: true } },
     })
   }
 

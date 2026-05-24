@@ -15,6 +15,23 @@ export class PrismaMealsRepository extends BaseRepository implements MealsReposi
     super(prisma, transactionContext)
   }
 
+  async findOne(userId: string, scheduleTimeInSeconds: number): Promise<Meal | null> {
+    return await this.db.meal.findFirst({
+      where: {
+        userId,
+        scheduleTimeInSeconds: {
+          lte: scheduleTimeInSeconds,
+        },
+        diet: {
+          isActive: true,
+        },
+      },
+      orderBy: {
+        scheduleTimeInSeconds: 'desc',
+      },
+    })
+  }
+
   async create(input: CreateMealInput): Promise<Meal> {
     return await this.db.meal.create({
       data: {

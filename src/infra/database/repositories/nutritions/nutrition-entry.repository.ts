@@ -3,7 +3,8 @@ import { TransactionContextService } from 'src/common/services/transaction-conte
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { NutritionEntryRepository } from 'src/modules/nutritions/repositories/nutrition-entry.repository'
-import { AddNutritionEntryInput, NutritionEntryWithFood } from 'src/modules/nutritions/types/add-nutrition-entry.types'
+import { CreateNutritionEntryInput } from 'src/modules/nutritions/types/create-nutrition-entry.types'
+import { NutritionEntryWithFood } from 'src/modules/nutritions/types/nutrition-entry-with-food.types'
 
 @Injectable()
 export class PrismaNutritionEntryRepository extends BaseRepository implements NutritionEntryRepository {
@@ -14,7 +15,7 @@ export class PrismaNutritionEntryRepository extends BaseRepository implements Nu
     super(prisma, transactionContext)
   }
 
-  async create(userId: string, data: AddNutritionEntryInput): Promise<NutritionEntryWithFood> {
+  async create(userId: string, data: CreateNutritionEntryInput): Promise<NutritionEntryWithFood> {
     return await this.db.$transaction(async (tx) => {
       const newEntry = await tx.nutritionEntry.create({
         data: {
