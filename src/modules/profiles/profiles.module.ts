@@ -3,13 +3,13 @@ import { RequestContextService } from 'src/common/services/request-context.servi
 import { TransactionService } from 'src/common/services/transaction.service'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { ProfileController } from 'src/modules/profile/controller/profile.controller'
-import { PrismaProfileRepository } from 'src/modules/profile/repositories/prisma-profile.repository'
-import { ProfileRepository } from 'src/modules/profile/repositories/profile.repository'
-import { CompleteProfileUseCase } from 'src/modules/profile/use-cases/complete-profile.use-case'
+import { ProfilesController } from 'src/modules/profiles/controller/profiles.controller'
+import { PrismaProfileRepository } from 'src/modules/profiles/repositories/prisma-profiles.repository'
+import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
+import { CompleteProfileUseCase } from 'src/modules/profiles/use-cases/complete-profile.use-case'
 
 @Module({
-  controllers: [ProfileController],
+  controllers: [ProfilesController],
   exports: [ProfileRepository],
   providers: [
     PrismaService,
@@ -23,4 +23,4 @@ import { CompleteProfileUseCase } from 'src/modules/profile/use-cases/complete-p
     },
   ],
 })
-export class ProfileModule {}
+export class ProfilesModule {}

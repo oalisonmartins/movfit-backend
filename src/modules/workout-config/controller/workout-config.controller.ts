@@ -14,7 +14,7 @@ import { GetWorkoutConfigUseCase } from 'src/modules/workout-config/use-cases/ge
 import { RegisterWorkoutConfigUseCase } from 'src/modules/workout-config/use-cases/register-workout-config.use-case'
 
 @UseGuards(JwtAuthGuard, OnboardingGuard)
-@Controller({ path: '/workout-config', version: '1' })
+@Controller('workout-config')
 export class WorkoutConfigController {
   constructor(
     private readonly registerWorkoutConfigUseCase: RegisterWorkoutConfigUseCase,

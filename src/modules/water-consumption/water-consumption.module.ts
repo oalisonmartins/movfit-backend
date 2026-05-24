@@ -4,7 +4,7 @@ import { TransactionService } from 'src/common/services/transaction.service'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { DailyWaterConsumptionModule } from 'src/modules/daily-water-consumption/daily-water-consumption.module'
-import { ProfileModule } from 'src/modules/profile/profile.module'
+import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { WaterConsumptionController } from 'src/modules/water-consumption/controller/water-consumption.controller'
 import { PrismaWaterConsumptionRepository } from 'src/modules/water-consumption/repositories/prisma-water-consumption.repository'
 import { WaterConsumptionRepository } from 'src/modules/water-consumption/repositories/water-consumption.repository'
@@ -13,7 +13,7 @@ import { GetWaterConsumptionProgressUseCase } from 'src/modules/water-consumptio
 import { RegisterWaterConsumptionUseCase } from 'src/modules/water-consumption/use-cases/register-water-consumption.use-case'
 
 @Module({
-  imports: [DailyWaterConsumptionModule, ProfileModule],
+  imports: [DailyWaterConsumptionModule, ProfilesModule],
   controllers: [WaterConsumptionController],
   providers: [
     PrismaService,

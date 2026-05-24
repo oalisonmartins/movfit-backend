@@ -11,7 +11,7 @@ import { FoodsModule } from 'src/modules/foods/foods.module'
 import { NutritionModule } from 'src/modules/nutritions/nutrition.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { ProfileModule } from './modules/profiles/profile.module'
+import { ProfilesModule } from './modules/profiles/profiles.module'
 import { UsersModule } from './modules/users/users.module'
 import { WaterConsumptionHistoryModule } from './modules/water-consumption/water-consumption.module'
 import { WorkoutConfigModule } from './modules/workout-config/workout-config.module'
@@ -53,7 +53,7 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
     DailyWaterConsumptionModule,
     WaterConsumptionHistoryModule,
     WorkoutConfigModule,
-    ProfileModule,
+    ProfilesModule,
     DietsModule,
     FoodsModule,
     NutritionModule,

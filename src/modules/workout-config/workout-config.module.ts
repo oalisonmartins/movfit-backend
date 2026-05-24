@@ -3,7 +3,7 @@ import { RequestContextService } from 'src/common/services/request-context.servi
 import { TransactionService } from 'src/common/services/transaction.service'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { ProfileModule } from 'src/modules/profile/profile.module'
+import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { WorkoutConfigController } from 'src/modules/workout-config/controller/workout-config.controller'
 import { PrismaWorkoutConfigRepository } from 'src/modules/workout-config/repositories/prisma-workout-config.repository'
 import { WorkoutConfigRepository } from 'src/modules/workout-config/repositories/workout-config.repository'
@@ -11,7 +11,7 @@ import { GetWorkoutConfigUseCase } from 'src/modules/workout-config/use-cases/ge
 import { RegisterWorkoutConfigUseCase } from 'src/modules/workout-config/use-cases/register-workout-config.use-case'
 
 @Module({
-  imports: [ProfileModule],
+  imports: [ProfilesModule],
   controllers: [WorkoutConfigController],
   exports: [WorkoutConfigRepository],
   providers: [

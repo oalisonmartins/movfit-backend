@@ -12,10 +12,10 @@ import { GetActiveDietUseCase } from 'src/modules/diets/use-cases/get-active-die
 import { GetDietsUseCase } from 'src/modules/diets/use-cases/get-diets.use-case'
 import { FoodsModule } from 'src/modules/foods/foods.module'
 import { MealsModule } from 'src/modules/meals/meals.module'
-import { ProfileModule } from 'src/modules/profile/profile.module'
+import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 
 @Module({
-  imports: [MealsModule, FoodsModule, ProfileModule],
+  imports: [MealsModule, FoodsModule, ProfilesModule],
   controllers: [DietsController],
   exports: [DietsRepository],
   providers: [

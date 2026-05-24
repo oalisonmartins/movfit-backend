@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
 import { InterceptorException } from 'src/common/exceptions/interceptor.exception'
 import { RequestContextService } from 'src/common/services/request-context.service'
-import { ProfileRepository } from 'src/modules/profile/repositories/profile.repository'
+import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
 
 @Injectable()
 export class ProfileInterceptor implements NestInterceptor {

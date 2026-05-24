@@ -11,10 +11,10 @@ import { NutritionEntryRepository } from 'src/modules/nutritions/repositories/nu
 import { NutritionLogRepository } from 'src/modules/nutritions/repositories/nutrition-log.repository'
 import { AddNutritionEntryUseCase } from 'src/modules/nutritions/use-cases/add-nutrition-entry.use-case'
 import { GetNutritionProgressUseCase } from 'src/modules/nutritions/use-cases/get-nutrition-progress.use-case'
-import { ProfileModule } from 'src/modules/profiles/profile.module'
+import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 
 @Module({
-  imports: [ProfileModule, DietsModule],
+  imports: [ProfilesModule, DietsModule],
   controllers: [NutritionEntryController, NutritionLogController],
   providers: [
     PrismaService,

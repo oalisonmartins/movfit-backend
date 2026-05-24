@@ -7,12 +7,12 @@ import { DailyWaterConsumptionController } from 'src/modules/daily-water-consump
 import { DailyWaterConsumptionRepository } from 'src/modules/daily-water-consumption/repositories/daily-water-consumption.repository'
 import { PrismaDailyWaterConsumptionRepository } from 'src/modules/daily-water-consumption/repositories/prisma-daily-water-consumption.repository'
 import { GetDailyWaterConsumptionUseCase } from 'src/modules/daily-water-consumption/use-cases/get-daily-water-consumption.use-case'
-import { ProfileModule } from 'src/modules/profile/profile.module'
+import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { UsersModule } from 'src/modules/users/users.module'
 import { WorkoutConfigModule } from 'src/modules/workout-config/workout-config.module'
 
 @Module({
-  imports: [UsersModule, ProfileModule, WorkoutConfigModule],
+  imports: [UsersModule, ProfilesModule, WorkoutConfigModule],
   controllers: [DailyWaterConsumptionController],
   exports: [DailyWaterConsumptionRepository],
   providers: [
