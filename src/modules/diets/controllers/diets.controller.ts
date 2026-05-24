@@ -41,7 +41,6 @@ export class DietsController {
   @Post()
   createDiet(@Body() body: CreateDietRequestDTO) {
     return this.createDietUseCase.execute({
-      name: body.name,
       goal: body.goal,
       meals: body.meals,
     })

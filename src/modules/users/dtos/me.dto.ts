@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { BiologicalSex, DietGoal, FocusMuscle, Goal, PortionUnit } from 'generated/prisma/enums'
+import { BiologicalSex, DietGoal, FocusMuscle, Goal } from 'generated/prisma/enums'
 
 export class ProfileDTO {
   @ApiProperty({ title: 'ID', type: 'string', format: 'uuid' })
@@ -51,8 +51,8 @@ export class FoodDTO {
   @ApiProperty({ title: 'Portion amount (qty)', type: 'integer', minimum: 1 })
   readonly amount: number
 
-  @ApiProperty({ title: 'Portion unit (g,l,unit,kg,ml)', enum: PortionUnit })
-  readonly unit: PortionUnit
+  @ApiProperty({ title: 'Amount (g)', type: 'number' })
+  readonly amountInGrams: number
 
   @ApiProperty({ title: 'Proteins (g)', type: 'integer', minimum: 1 })
   readonly proteinsInGrams: number

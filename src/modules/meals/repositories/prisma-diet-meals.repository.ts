@@ -18,23 +18,15 @@ export class PrismaMealsRepository extends BaseRepository implements MealsReposi
   async create(input: CreateMealInput): Promise<Meal> {
     return await this.db.meal.create({
       data: {
+        userId: input.userId,
         dietId: input.dietId,
         name: input.name,
-        timeInMinutes: input.timeInMinutes,
-        totalCaloriesInKcal: input.totalCaloriesInKcal,
-        totalCarbsInGrams: input.totalCarbsInGrams,
-        totalProteinsInGrams: input.totalProteinsInGrams,
-        totalFatsInGrams: input.totalFatsInGrams,
+        scheduleTimeInSeconds: input.scheduleTimeInSeconds,
         foods: {
           createMany: {
             data: input.foods.map((mealFood) => ({
               foodId: mealFood.foodId,
-              amount: mealFood.amount,
-              unit: mealFood.unit,
-              caloriesInKcal: mealFood.caloriesInKcal,
-              carbsInGrams: mealFood.carbsInGrams,
-              fatsInGrams: mealFood.fatsInGrams,
-              proteinsInGrams: mealFood.proteinsInGrams,
+              amountInGrams: mealFood.amountInGrams,
             })),
           },
         },

@@ -13,65 +13,58 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator'
-import { DietGoal, PortionUnit } from 'generated/prisma/enums'
+import { DietGoal } from 'generated/prisma/enums'
 
 class FoodDTO {
   @IsUUID()
-  foodId: string
+  readonly foodId: string
 
   @IsInt()
   @Min(1)
-  amount: number
-
-  @IsEnum(PortionUnit)
-  unit: PortionUnit
+  readonly amountInGrams: number
 }
 
 class MealDTO {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
-  name: string
+  readonly name: string
 
   @IsInt()
   @Min(0)
-  @Max(1439)
-  timeInMinutes: number
+  @Max(86399)
+  readonly scheduleTimeInSeconds: number
 
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => FoodDTO)
-  foods: FoodDTO[]
+  readonly foods: FoodDTO[]
 }
 
 class MacrosDTO {
   @ApiProperty({ type: 'integer' })
-  readonly caloriesInKcal: number
+  readonly calorieInKcal: number
 
   @ApiProperty({ type: 'integer' })
-  readonly proteinsInGrams: number
+  readonly proteinInGrams: number
 
   @ApiProperty({ type: 'integer' })
-  readonly carbsInGrams: number
+  readonly carbInGrams: number
 
   @ApiProperty({ type: 'integer' })
-  readonly fatsInGrams: number
+  readonly fatInGrams: number
 }
 
 export class CreateDietRequestDTO {
-  @IsString()
-  @IsNotEmpty()
-  name: string
-
   @IsEnum(DietGoal)
-  goal: DietGoal
+  readonly goal: DietGoal
 
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => MealDTO)
-  meals: MealDTO[]
+  readonly meals: MealDTO[]
 }
 
 export class CreateDietResponseDTO {

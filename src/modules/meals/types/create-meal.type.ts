@@ -1,26 +1,24 @@
-import { PortionUnit } from 'generated/prisma/enums'
-
 export type MealFood = {
   foodId: string
 
-  amount: number
-  unit: PortionUnit
+  amountInGrams: number
 
-  caloriesInKcal: number
-  proteinsInGrams: number
-  carbsInGrams: number
-  fatsInGrams: number
+  calorieInKcal: number
+  proteinInGrams: number
+  carbInGrams: number
+  fatInGrams: number
 }
 
 export type CreateMealInput = {
+  userId: string
   dietId: string
-  timeInMinutes: number
+  scheduleTimeInSeconds: number
   name: string
 
-  totalCaloriesInKcal: number
-  totalCarbsInGrams: number
-  totalProteinsInGrams: number
-  totalFatsInGrams: number
+  totalCalorieInKcal: number
+  totalCarbInGrams: number
+  totalProteinInGrams: number
+  totalFatInGrams: number
 
   foods: MealFood[]
 }

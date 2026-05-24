@@ -1,25 +1,22 @@
-import { DietGoal, PortionUnit } from 'generated/prisma/enums'
+import { DietGoal } from 'generated/prisma/enums'
 
 export type CreateDietRepositoryInput = {
   userId: string
-  name: string
   goal: DietGoal
-  totalCaloriesInKcal: number
-  totalProteinsInGrams: number
-  totalCarbsInGrams: number
-  totalFatsInGrams: number
+  totalCalorieInKcal: number
+  totalProteinInGrams: number
+  totalCarbInGrams: number
+  totalFatInGrams: number
 }
 
 export type CreateDietInput = {
-  name: string
   goal: DietGoal
   meals: {
     name: string
-    timeInMinutes: number
+    scheduleTimeInSeconds: number
     foods: {
       foodId: string
-      amount: number
-      unit: PortionUnit
+      amountInGrams: number
     }[]
   }[]
 }
@@ -28,9 +25,9 @@ export type CreateDietOutput = {
   id: string
   goal: DietGoal
   macros: {
-    caloriesInKcal: number
-    proteinsInGrams: number
-    carbsInGrams: number
-    fatsInGrams: number
+    calorieInKcal: number
+    proteinInGrams: number
+    carbInGrams: number
+    fatInGrams: number
   }
 }

@@ -17,10 +17,10 @@ export class GetActiveDietUseCase {
       goal: activeDiet.goal,
       createdAt: activeDiet.createdAt,
       macros: {
-        caloriesInKcal: activeDiet.totalCaloriesInKcal,
-        proteinsInGrams: activeDiet.totalProteinsInGrams,
-        carbsInGrams: activeDiet.totalCarbsInGrams,
-        fatsInGrams: activeDiet.totalFatsInGrams,
+        caloriesInKcal: activeDiet.totalCalorieInKcal,
+        proteinsInGrams: activeDiet.totalProteinInGrams,
+        carbsInGrams: activeDiet.totalCarbInGrams,
+        fatsInGrams: activeDiet.totalFatInGrams,
       },
     }
   }

@@ -19,10 +19,10 @@ export class PrismaDietsRepository extends BaseRepository implements DietsReposi
     return await this.db.diet.create({
       data: {
         userId: input.userId,
-        totalCaloriesInKcal: input.totalCaloriesInKcal,
-        totalProteinsInGrams: input.totalProteinsInGrams,
-        totalCarbsInGrams: input.totalCarbsInGrams,
-        totalFatsInGrams: input.totalFatsInGrams,
+        totalCalorieInKcal: input.totalCalorieInKcal,
+        totalProteinInGrams: input.totalProteinInGrams,
+        totalCarbInGrams: input.totalCarbInGrams,
+        totalFatInGrams: input.totalFatInGrams,
         goal: input.goal,
         isActive: true,
       },
