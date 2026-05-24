@@ -20,20 +20,6 @@ enum Goal {
   MAINTAIN_WEIGHT
 }
 
-enum PortionUnit {
-  G
-  KG
-  ML
-  L
-  UNIT
-}
-
-enum NormalizedBase {
-  PER_100G
-  PER_100ML
-  PER_UNIT
-}
-
 enum DietGoal {
   BULKING
   CUTTING
@@ -42,8 +28,8 @@ enum DietGoal {
 
 model User {
   id           String @id @default(uuid())
-  name         String
-  email        String @unique
+  name         String @db.VarChar(255)
+  email        String @db.VarChar(255)
   passwordHash String @map("password_hash")
 
   isOnboardingCompleted Boolean @default(false) @map("is_onboarding_completed")
@@ -51,18 +37,23 @@ model User {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  weightHistory         WeightHistory[]
+  profile       Profile?
+  weightLogs         WeightLog[]
+  
   dailyWaterConsumption DailyWaterConsumption?
   waterConsumptions     WaterConsumption[]
-  dailyNutrition        DailyNutrition[]
-  workoutPlans          WorkoutPlan[]
+  
   diets                 Diet[]
+  meals                 Meal[]
+  foods                 Food[]
 
+  workoutPlans          WorkoutPlan[]
   workoutConfig WorkoutConfig?
-  profile       Profile?
-  foods         Food[]
-  recipes       Recipe[]
 
+  nutritionEntries NutritionEntry[]
+  nutritionLogs    NutritionLog[]
+
+  @@unique([email])
   @@map("users")
 }
 
@@ -74,90 +65,124 @@ model Profile {
   birthDate           DateTime      @map("birth_date") @db.Date()
   heightInCentimeters Int           @map("height_in_centimeters")
 
-  weightInGrams       Int @map("weight_in_grams")
-  targetWeightInGrams Int @map("target_weight_in_grams")
+  weightInKg       Float @map("weight_in_kg")
+  targetWeightInKg Float @map("target_weight_in_kg")
 
-  timezone  String   @default("America/Sao_Paulo")
+  timezone String @default("America/Sao_Paulo")
+
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  userId String @unique @map("user_id")
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId])
   @@map("profiles")
 }
 
-model DailyNutrition {
-  id  String   @id @default(uuid())
-  day DateTime @db.Date
+model NutritionLog {
+  id   String   @id @default(uuid())
+  date DateTime @db.Date
 
-  proteinsInGrams Int @default(0) @map("proteins_in_grams")
-  carbsInGrams    Int @default(0) @map("carbs_in_grams")
-  fatsInGrams     Int @default(0) @map("fats_in_grams")
-
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, day])
-  @@map("daily_nutritions")
-}
-
-model Diet {
-  id       String  @id @default(uuid())
-  isActive Boolean @default(true) @map("is_active")
-
-  totalCaloriesInKcal  Int @map("total_calories_in_kcal")
-  totalProteinsInGrams Int @map("total_proteins_in_grams")
-  totalCarbsInGrams    Int @map("total_carbs_in_grams")
-  totalFatsInGrams     Int @map("total_fats_in_grams")
-
-  goal DietGoal
-
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
-
-  meals Meal[]
+  calorieInKcal  Float @default(0) @map("calorie_in_kcal")
+  proteinInGrams Float @default(0) @map("protein_in_grams")
+  carbInGrams    Float @default(0) @map("carb_in_grams")
+  fatInGrams     Float @default(0) @map("fat_in_grams")
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("diets")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("nutrition_logs")
 }
 
-model Meal {
-  id            String @id @default(uuid())
-  name          String
-  timeInMinutes Int    @map("time_in_minutes")
+model NutritionEntry {
+  id String @id @default(uuid())
 
-  totalCaloriesInKcal  Int @map("total_calories_in_kcal")
-  totalProteinsInGrams Int @map("total_proteins_in_grams")
-  totalCarbsInGrams    Int @map("total_carbs_in_grams")
-  totalFatsInGrams     Int @map("total_fats_in_grams")
+  amountInGrams Float @map("amount_in_grams")
+  date DateTime @db.Date
 
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  foods DietFood[]
+  foodId String @map("food_id")
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
 
   dietId String @map("diet_id")
   diet   Diet   @relation(fields: [dietId], references: [id], onDelete: Cascade)
 
-  @@map("diet_meals")
-}
-
-model DietFood {
-  id String @id @default(uuid())
-
-  amount Int
-  unit   PortionUnit
-
-  caloriesInKcal  Int @map("calories_in_kcal")
-  proteinsInGrams Int @map("proteins_in_grams")
-  carbsInGrams    Int @map("carbs_in_grams")
-  fatsInGrams     Int @map("fats_in_grams")
+  mealId String @map("meal_id")
+  meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId, dietId])
+  @@index([mealId, foodId])
+  @@map("nutrition_entries")
+}
+
+model Diet {
+  id String @id @default(uuid())
+
+  goal     DietGoal
+  isActive Boolean  @default(true) @map("is_active")
+
+  totalCalorieInKcal  Float  @map("total_calorie_in_kcal")
+  totalProteinInGrams Float  @map("total_protein_in_grams")
+  totalCarbInGrams    Float  @map("total_carb_in_grams")
+  totalFatInGrams     Float  @map("total_fat_in_grams")
+  meals               Meal[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nutritionEntries NutritionEntry[]
+
+  @@index([userId, isActive])
+  @@map("diets")
+}
+
+model Meal {
+  id String @id @default(uuid())
+
+  name          String
+  scheduleTimeInSeconds Int    @map("schedule_time_in_seconds")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  userId String @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dietId String @map("diet_id")
+  diet   Diet   @relation(fields: [dietId], references: [id], onDelete: Cascade)
+
+  nutritionEntires NutritionEntry[]
+  foods            MealFood[]
+
+  @@unique([dietId, name])
+  @@index([userId, dietId])
+  @@map("meals")
+}
+
+enum FoodSource {
+  TACO
+  USDA
+  CUSTOM
+}
+
+model MealFood {
+  id String @id @default(uuid())
+
+  amountInGrams Float @map("amount_in_grams")
 
   mealId String @map("meal_id")
   meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
@@ -165,81 +190,49 @@ model DietFood {
   foodId String @map("food_id")
   food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
 
-  @@map("diet_foods")
+  @@unique([mealId, foodId])
+  @@map("meals_foods")
 }
 
 model Food {
-  id          String  @id @default(uuid())
-  name        String  @db.VarChar(255)
-  category    String  @db.VarChar(100)
-  description String?
+  id            String     @id @default(uuid())
+  name          String
+  source        FoodSource @default(CUSTOM)
+  description   String?
+  coverImageUrl String?    @map("cover_image_url")
+  isRecipe      Boolean    @default(false) @map("is_recipe")
 
-  normalizedBase            NormalizedBase @map("normalized_base")
-  normalizedCaloriesInKcal  Int            @map("normalized_calories_in_kcal")
-  normalizedProteinsInGrams Int            @map("normalized_proteins_in_grams")
-  normalizedCarbsInGrams    Int            @map("normalized_carbs_in_grams")
-  normalizedFatsInGrams     Int            @map("normalized_fats_in_grams")
-
-  isCustom Boolean @default(false) @map("is_custom")
+  caloriePer100gInKcal  Float @map("calorie_per_100g_in_kcal")
+  proteinPer100gInGrams Float @map("protein_per_100g_in_grams")
+  carbPer100gInGrams    Float @map("carb_per_100g_in_grams")
+  fatPer100gInGrams     Float @map("fat_per_100g_in_grams")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
-  dietFoods   DietFood[]
-  recipeItems RecipeItem[]
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealFoods        MealFood[]
+  nutritionEntries NutritionEntry[]
 
-  @@index([userId, category])
-  @@index([userId, isCustom])
+  @@unique([userId, name])
   @@index([userId, name])
   @@map("foods")
 }
 
-model Recipe {
-  id   String @id @default(uuid())
-  name String
-
-  items RecipeItem[]
-
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
-
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("recipes")
-}
-
-model RecipeItem {
-  id String @id @default(uuid())
-
-  amount Int
-  unit   PortionUnit
-
-  recipeId String @map("recipe_id")
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-
-  foodId String @map("food_id")
-  food   Food   @relation(fields: [foodId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@index([foodId])
-  @@map("recipe_items")
-}
-
-model WeightHistory {
+model WeightLog {
   id            String   @id @default(uuid())
-  weightInGrams Int      @map("weight_in_grams")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  weightInKg Float      @map("weight_in_kg")
+  date DateTime @db.Date
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("weight_histories")
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("weight_logs")
 }
 
 enum FocusMuscle {
