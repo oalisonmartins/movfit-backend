@@ -19,8 +19,6 @@ export class InterceptorsFilter implements ExceptionFilter {
       403: 'Forbidden error',
     }
 
-    console.log(exception.getResponse())
-
     return reply.status(statusCode).send({
       status: statusCode,
       error: errorsLabel[statusCode] ?? 'Unknown error',
@@ -34,8 +32,6 @@ export class InterceptorsFilter implements ExceptionFilter {
   private extractExceptionResponse(exception: HttpException) {
     const rawResponse = exception.getResponse()
 
-    console.log(rawResponse, typeof rawResponse)
-
     if (typeof rawResponse === 'string') {
       return {
         message: rawResponse,
@@ -44,7 +40,6 @@ export class InterceptorsFilter implements ExceptionFilter {
     }
 
     const payload = rawResponse as Partial<FilterErrorPayload>
-    console.log(payload.response?.message)
 
     return {
       message: payload.response?.message ?? 'Unknown error',

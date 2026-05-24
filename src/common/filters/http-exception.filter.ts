@@ -32,8 +32,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private extractExceptionResponse(exception: HttpException) {
     const rawResponse = exception.getResponse()
 
-    console.log(rawResponse, typeof rawResponse)
-
     if (typeof rawResponse === 'string') {
       return {
         message: rawResponse,
