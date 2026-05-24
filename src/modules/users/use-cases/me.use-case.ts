@@ -22,8 +22,8 @@ export class MeUseCase {
         birthDate: profile.birthDate.toLocaleDateString('pt-BR', { timeZone: profile.timezone }),
         goal: profile.goal,
         heightInCentimeters: profile.heightInCentimeters,
-        targetWeightInGrams: profile.targetWeightInGrams,
-        weightInGrams: profile.weightInGrams,
+        targetWeightInKg: profile.targetWeightInKg,
+        weightInKg: profile.weightInKg,
       },
       workoutConfig: {
         id: workoutConfig.id,

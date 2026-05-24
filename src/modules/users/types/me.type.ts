@@ -10,8 +10,8 @@ export type MeOutput = {
     biologicalSex: BiologicalSex
     birthDate: string
     heightInCentimeters: number
-    weightInGrams: number
-    targetWeightInGrams: number
+    weightInKg: number
+    targetWeightInKg: number
     timezone: string
   }
   workoutConfig: {

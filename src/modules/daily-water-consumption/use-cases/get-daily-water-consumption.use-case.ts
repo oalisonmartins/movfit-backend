@@ -20,11 +20,10 @@ export class GetDailyWaterConsumptionUseCase {
   async execute() {
     const userId = this.requestContext.getUserId
     const { freeDaysPerWeek, freeTimeByDayInSeconds } = this.requestContext.getWorkoutConfig
-    const { weightInGrams, goal, biologicalSex, birthDate } = this.requestContext.getProfile
+    const { weightInKg, goal, biologicalSex, birthDate } = this.requestContext.getProfile
 
     const activityFactor = this.getActivityFactor(freeDaysPerWeek, freeTimeByDayInSeconds)
     const ageFactor = this.getAgeFactor(birthDate)
-    const weightInKg = weightInGrams / 1000
     const biologicalSexFactor = biologicalSex === 'MALE' ? 1.1 : 1.0
 
     const consumptionTargetInMl = Math.round(
