@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config'
 import { APP_FILTER, APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler/dist'
 import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter'
-import { InterceptorsFilter } from 'src/common/filters/interceptors.filter'
 import { AuthModule } from 'src/modules/auth/auth.module'
 import { DailyWaterConsumptionModule } from 'src/modules/daily-water-consumption/daily-water-consumption.module'
 import { DietsModule } from 'src/modules/diets/diets.module'
@@ -17,61 +16,57 @@ import { WaterConsumptionHistoryModule } from './modules/water-consumption/water
 import { WorkoutConfigModule } from './modules/workout-config/workout-config.module'
 
 @Module({
-  controllers: [AppController],
-  imports: [
-    ThrottlerModule.forRoot([
-      {
-        name: 'default',
-        ttl: 60000,
-        limit: 60,
-        blockDuration: 5000,
-      },
-      {
-        name: 'auth',
-        ttl: 60000,
-        limit: 5,
-        blockDuration: 30000,
-      },
-      {
-        name: 'heavy',
-        ttl: 60000,
-        limit: 5,
-        blockDuration: 15000,
-      },
-      {
-        name: 'reports',
-        ttl: 60000,
-        limit: 10,
-        blockDuration: 10000,
-      },
-    ]),
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    UsersModule,
-    AuthModule,
-    DailyWaterConsumptionModule,
-    WaterConsumptionHistoryModule,
-    WorkoutConfigModule,
-    ProfilesModule,
-    DietsModule,
-    FoodsModule,
-    NutritionModule,
-  ],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: InterceptorsFilter,
-    },
-  ],
+	controllers: [AppController],
+	imports: [
+		ThrottlerModule.forRoot([
+			{
+				name: 'default',
+				ttl: 60000,
+				limit: 60,
+				blockDuration: 5000,
+			},
+			{
+				name: 'auth',
+				ttl: 60000,
+				limit: 5,
+				blockDuration: 30000,
+			},
+			{
+				name: 'heavy',
+				ttl: 60000,
+				limit: 5,
+				blockDuration: 15000,
+			},
+			{
+				name: 'reports',
+				ttl: 60000,
+				limit: 10,
+				blockDuration: 10000,
+			},
+		]),
+		ConfigModule.forRoot({
+			isGlobal: true,
+		}),
+		UsersModule,
+		AuthModule,
+		DailyWaterConsumptionModule,
+		WaterConsumptionHistoryModule,
+		WorkoutConfigModule,
+		ProfilesModule,
+		DietsModule,
+		FoodsModule,
+		NutritionModule,
+	],
+	providers: [
+		AppService,
+		{
+			provide: APP_GUARD,
+			useClass: ThrottlerGuard,
+		},
+		{
+			provide: APP_FILTER,
+			useClass: HttpExceptionFilter,
+		},
+	],
 })
 export class AppModule {}
