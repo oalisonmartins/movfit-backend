@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger/dist'
-import { Transform, Type } from 'class-transformer'
-import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator'
-import { NutritionalInfosDTO } from 'src/modules/foods/dtos/save-food.dto'
+import { Type } from 'class-transformer'
+import { IsBoolean, IsInt, IsOptional } from 'class-validator'
+import { TransformBooleanQuery } from 'src/modules/foods/decorators/transform-boolean-query.decorator'
 
 export class FoodDTO {
   @ApiProperty({ title: 'ID', type: 'string', format: 'uuid' })
@@ -10,45 +10,49 @@ export class FoodDTO {
   @ApiProperty({ title: 'Name', type: 'string' })
   readonly name: string
 
-  @ApiProperty({ title: 'Category', type: 'string' })
-  readonly category: string
+  @ApiProperty({ title: 'Cover image URL', type: 'string', format: 'uri', nullable: true })
+  readonly coverImageUrl?: string
 
-  @ApiProperty({ title: 'Normalized nutritional infos', type: NutritionalInfosDTO })
-  readonly normalizedNutritionalInfos: NutritionalInfosDTO
+  @ApiProperty({ title: 'Is recipe?', type: 'boolean', default: false })
+  readonly isRecipe: boolean
+
+  @ApiProperty({ title: 'Short description', type: 'string', nullable: true })
+  readonly description?: string
+
+  @ApiProperty({ title: 'Calorie per 100g (kcal)', type: 'number' })
+  readonly caloriePer100gInKcal: number
+
+  @ApiProperty({ title: 'Protein per 100g (g)', type: 'number' })
+  readonly proteinPer100gInGrams: number
+
+  @ApiProperty({ title: 'Carb per 100g (g)', type: 'number' })
+  readonly carbPer100gInGrams: number
+
+  @ApiProperty({ title: 'Fat per 100g (g)', type: 'number' })
+  readonly fatPer100gInGrams: number
 }
 
 export class SearchFoodsQueryDTO {
-  @IsString()
   @IsOptional()
-  readonly category?: string
-
   @IsInt()
-  @IsOptional()
   @Type(() => Number)
   readonly limit?: number
 
-  @IsInt()
   @IsOptional()
+  @IsInt()
   @Type(() => Number)
   readonly offset?: number
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => {
-    if (value === undefined) {
-      return undefined
-    } else if (value === 'false') {
-      return false
-    }
-    return true
-  })
+  @TransformBooleanQuery()
   readonly isRecipe?: boolean
 }
 
 export class SearchFoodsResponseDTO {
-  @ApiProperty({ title: 'Founded foods', type: 'integer' })
-  readonly foundedFoods: number
+  @ApiProperty({ title: 'Total foods', type: 'integer', default: 0 })
+  readonly total: number
 
-  @ApiProperty({ title: 'Foods', type: [FoodDTO], isArray: true })
+  @ApiProperty({ title: 'Foods list', type: [FoodDTO], isArray: true })
   readonly foods: FoodDTO[]
 }

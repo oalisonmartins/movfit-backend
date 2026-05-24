@@ -3,11 +3,3 @@ export type FindAllFoodsInput = {
   offset: number
   isRecipe?: boolean
 }
-
-export type FindAllFoodsByCategoryInput = FindAllFoodsInput & {
-  category: string
-}
-
-export type FindAllFoodsRepositoryInput = FindAllFoodsInput & {
-  userId: string
-}

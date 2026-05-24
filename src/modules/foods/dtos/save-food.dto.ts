@@ -1,29 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger/dist'
-import { Type } from 'class-transformer'
-import { IsEnum, IsInt, IsNotEmpty, IsObject, IsString, Min, ValidateNested } from 'class-validator'
-import { PortionUnit } from 'generated/prisma/enums'
-
-class PortionDTO {
-  @IsInt()
-  @Min(1)
-  readonly amount: number
-
-  @IsEnum(PortionUnit)
-  readonly unit: PortionUnit
-}
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator'
+import { FoodSource } from 'generated/prisma/enums'
 
 export class NutritionalInfosDTO {
   @ApiProperty({ title: 'Calories in kcal', type: 'number' })
-  caloriesInKcal: number
+  calorieInKcal: number
 
   @ApiProperty({ title: 'Proteins in grams', type: 'number' })
-  proteinsInGrams: number
+  proteinInGrams: number
 
   @ApiProperty({ title: 'Carbs in grams', type: 'number' })
-  carbsInGrams: number
+  carbInGrams: number
 
   @ApiProperty({ title: 'Fats in grams', type: 'number' })
-  fatsInGrams: number
+  fatInGrams: number
 }
 
 export class SaveFoodRequestDTO {
@@ -31,26 +21,37 @@ export class SaveFoodRequestDTO {
   @IsNotEmpty()
   readonly name: string
 
+  @IsOptional()
+  @IsBoolean()
+  readonly isRecipe?: boolean
+
+  @IsOptional()
   @IsString()
+  readonly description?: string
+
+  @IsOptional()
+  @IsString()
+  readonly coverImageUrl?: string
+
+  @IsEnum(FoodSource)
   @IsNotEmpty()
-  readonly category: string
-
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => PortionDTO)
-  readonly portion: PortionDTO
+  readonly source: FoodSource
 
   @IsInt()
-  readonly caloriesInKcal: number
+  @Min(0)
+  readonly caloriePer100gInKcal: number
 
   @IsInt()
-  readonly proteinsInGrams: number
+  @Min(0)
+  readonly proteinPer100gInGrams: number
 
   @IsInt()
-  readonly carbsInGrams: number
+  @Min(0)
+  readonly carbPer100gInGrams: number
 
   @IsInt()
-  readonly fatsInGrams: number
+  @Min(0)
+  readonly fatPer100gInGrams: number
 }
 
 export class SaveFoodResponseDTO {
@@ -60,21 +61,12 @@ export class SaveFoodResponseDTO {
   @ApiProperty({ title: 'Name', type: 'string' })
   readonly name: string
 
-  @ApiProperty({ title: 'Category', type: 'string' })
-  readonly category: string
-
   @ApiProperty({ title: 'Description', type: 'string', nullable: true })
   readonly description: string | null
 
   @ApiProperty({ title: 'Amount', type: 'integer' })
-  readonly amount: number
-
-  @ApiProperty({ title: 'Unit', enum: PortionUnit })
-  readonly unit: PortionUnit
+  readonly amountInGrams: number
 
   @ApiProperty({ title: 'Nutritional infos', type: NutritionalInfosDTO })
   readonly nutritionalInfos: NutritionalInfosDTO
-
-  @ApiProperty({ title: 'Normalized nutritional infos', type: NutritionalInfosDTO })
-  readonly normalizedNutritionalInfos: NutritionalInfosDTO
 }

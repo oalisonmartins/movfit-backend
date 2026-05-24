@@ -1,22 +1,22 @@
 export type SearchFoodsInput = {
   userId: string
-  category?: string
   isRecipe?: boolean
   limit: number
   offset: number
 }
 
+export type Food = {
+  id: string
+  name: string
+  coverImageUrl: string | null
+  description: string | null
+  caloriePer100gInKcal: number
+  proteinPer100gInGrams: number
+  carbPer100gInGrams: number
+  fatPer100gInGrams: number
+}
+
 export type SearchFoodsOutput = {
-  foundedFoods: number
-  foods: {
-    id: string
-    name: string
-    category: string
-    normalizedNutritionalInfos: {
-      caloriesInKcal: number
-      proteinsInGrams: number
-      carbsInGrams: number
-      fatsInGrams: number
-    }
-  }[]
+  total: number
+  foods: Food[]
 }

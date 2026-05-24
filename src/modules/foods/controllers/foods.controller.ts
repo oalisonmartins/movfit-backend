@@ -15,7 +15,7 @@ import { SaveFoodUseCase } from 'src/modules/foods/use-cases/save-food.use-case'
 import { SearchFoodsUseCase } from 'src/modules/foods/use-cases/search-foods.use-case'
 
 @UseGuards(JwtAuthGuard, OnboardingGuard)
-@Controller({ path: '/foods', version: '1' })
+@Controller('foods')
 export class FoodsController {
   constructor(
     private readonly searchFoodsUseCase: SearchFoodsUseCase,
@@ -25,13 +25,11 @@ export class FoodsController {
   @ApiOkResponse({ type: SearchFoodsResponseDTO })
   @Get()
   searchFoods(@CurrentUser() user: AuthUser, @Query() query: SearchFoodsQueryDTO) {
-    const { limit = 10, offset = 0 } = query
     return this.searchFoodsUseCase.execute({
       userId: user.id,
       isRecipe: query.isRecipe,
-      category: query.category,
-      limit,
-      offset,
+      limit: query.limit ?? 10,
+      offset: query.offset ?? 0,
     })
   }
 

@@ -1,38 +1,27 @@
-import { NormalizedBase, PortionUnit } from 'generated/prisma/enums'
-import { FoodNutritionalInfos } from 'src/modules/foods/types/food-nutritional-infos.types'
+import { FoodSource } from 'generated/prisma/enums'
 
 export type SaveFoodInput = {
-  userId: string
+  userId?: string
   name: string
-  category: string
-  portion: {
-    amount: number
-    unit: PortionUnit
-  }
-  caloriesInKcal: number
-  proteinsInGrams: number
-  carbsInGrams: number
-  fatsInGrams: number
+  source: FoodSource
+  isRecipe?: boolean
+  description?: string
+  coverImageUrl?: string
+  caloriePer100gInKcal: number
+  proteinPer100gInGrams: number
+  carbPer100gInGrams: number
+  fatPer100gInGrams: number
 }
 
 export type SaveFoodOutput = {
   id: string
   name: string
-  category: string
+  source: FoodSource
+  isRecipe: boolean
   description: string | null
-  amount: number
-  unit: PortionUnit
-  nutritionalInfos: FoodNutritionalInfos
-  normalizedNutritionalInfos: FoodNutritionalInfos
-}
-
-export type SaveFoodRepositoryInput = {
-  userId: string
-  name: string
-  category: string
-  normalizedBase: NormalizedBase
-  normalizedCaloriesInKcal: number
-  normalizedProteinsInGrams: number
-  normalizedCarbsInGrams: number
-  normalizedFatsInGrams: number
+  coverImageUrl: string | null
+  caloriePer100gInKcal: number
+  proteinPer100gInGrams: number
+  carbPer100gInGrams: number
+  fatPer100gInGrams: number
 }
