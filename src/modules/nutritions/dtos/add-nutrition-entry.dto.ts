@@ -1,5 +1,5 @@
 import { IsDate, IsInt, IsString, IsUUID, Min } from 'class-validator'
-import { TransformDate } from 'src/modules/profiles/decorators/transform-date.decorator'
+import { TransformDate } from 'src/common/decorators/transform-date.decorator'
 
 export class AddNutritionEntryRequestDto {
   @IsString({ message: 'Insira o ID de um alimento válido.' })

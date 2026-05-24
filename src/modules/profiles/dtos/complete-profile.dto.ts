@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger/dist'
 import { IsDate, IsEnum, IsInt, IsString, IsTimeZone } from 'class-validator'
 import { BiologicalSex, Goal } from 'generated/prisma/enums'
-import { TransformDate } from 'src/modules/profiles/decorators/transform-date.decorator'
+import { TransformDate } from 'src/common/decorators/transform-date.decorator'
 
 export class CompleteProfileRequestDTO {
   @IsEnum(Goal)

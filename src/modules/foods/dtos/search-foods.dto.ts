@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger/dist'
 import { Type } from 'class-transformer'
 import { IsBoolean, IsInt, IsOptional } from 'class-validator'
-import { TransformBooleanQuery } from 'src/modules/foods/decorators/transform-boolean-query.decorator'
+import { TransformBooleanQuery } from 'src/common/decorators/transform-boolean-query.decorator'
 
 export class FoodDTO {
   @ApiProperty({ title: 'ID', type: 'string', format: 'uuid' })
