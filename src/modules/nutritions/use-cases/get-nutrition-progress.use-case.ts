@@ -11,7 +11,6 @@ export class GetNutritionProgressUseCase {
   ) {}
 
   async execute(input: GetNutritionProgressInput) {
-    console.log(input.date)
     const userId = this.requestContext.getUserId
     const { totalCalorieInKcal, totalCarbInGrams, totalFatInGrams, totalProteinInGrams } =
       this.requestContext.getActiveDiet
