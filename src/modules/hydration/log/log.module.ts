@@ -7,7 +7,9 @@ import { PrismaHydrationLogRepository } from 'src/infra/database/repositories/hy
 import { HydrationLogController } from 'src/modules/hydration/log/controllers/log.controller'
 import { HydrationLogRepository } from 'src/modules/hydration/log/repositories/log.repository'
 import { CreateHydrationLogUseCase } from 'src/modules/hydration/log/use-cases/create-log.use-case'
+import { GetHydrationHistoryUseCase } from 'src/modules/hydration/log/use-cases/get-history.use-case'
 import { GetHydrationLogUseCase } from 'src/modules/hydration/log/use-cases/get-log.use-case'
+import { GetHydrationProgressUseCase } from 'src/modules/hydration/log/use-cases/get-progress.use-case'
 import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { WorkoutConfigModule } from 'src/modules/workout-config/workout-config.module'
 
@@ -18,6 +20,8 @@ import { WorkoutConfigModule } from 'src/modules/workout-config/workout-config.m
   providers: [
     CreateHydrationLogUseCase,
     GetHydrationLogUseCase,
+    GetHydrationProgressUseCase,
+    GetHydrationHistoryUseCase,
     RequestContextService,
     TransactionContextService,
     TransactionService,

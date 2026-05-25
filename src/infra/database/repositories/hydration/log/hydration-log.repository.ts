@@ -40,4 +40,23 @@ export class PrismaHydrationLogRepository extends BaseRepository implements Hydr
       },
     })
   }
+
+  async findMany(userId: string, from: Date, to: Date): Promise<HydrationLogWithEntries[] | null> {
+    return await this.db.hydrationLog.findMany({
+      where: {
+        userId,
+        date: {
+          gte: from,
+          lte: to,
+        },
+      },
+      include: {
+        hydrationEntries: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+    })
+  }
 }

@@ -6,4 +6,5 @@ import { HydrationLogWithEntries } from 'src/modules/hydration/log/types/log-wit
 export abstract class HydrationLogRepository {
   abstract create(userId: string, input: { dailyGoalInMl: number; date: Date }): Promise<HydrationLog>
   abstract findOne(userId: string, date?: Date): Promise<HydrationLogWithEntries | null>
+  abstract findMany(userId: string, from: Date, to: Date): Promise<HydrationLogWithEntries[] | null>
 }
