@@ -3,8 +3,8 @@ import { User } from 'generated/prisma/client'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { CreateUserInput } from '../types/create-user.type'
-import { UsersRepository } from './users-repository'
+import { UsersRepository } from '../../../../modules/users/repositories/users-repository'
+import { CreateUserInput } from '../../../../modules/users/types/create-user.type'
 
 @Injectable()
 export class PrismaUsersRepository extends BaseRepository implements UsersRepository {

@@ -3,8 +3,8 @@ import { RequestContextService } from 'src/common/services/request-context.servi
 import { TransactionService } from 'src/common/services/transaction.service'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
+import { PrismaProfileRepository } from 'src/infra/database/repositories/profiles/profiles.repository'
 import { ProfilesController } from 'src/modules/profiles/controller/profiles.controller'
-import { PrismaProfileRepository } from 'src/modules/profiles/repositories/prisma-profiles.repository'
 import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
 import { CompleteProfileUseCase } from 'src/modules/profiles/use-cases/complete-profile.use-case'
 

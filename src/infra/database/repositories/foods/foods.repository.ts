@@ -3,9 +3,9 @@ import { Food } from 'generated/prisma/client'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { FindAllFoodsInput } from '../types/find-all-foods.types'
-import { SaveFoodInput } from '../types/save-food.types'
-import { FoodsRepository } from './foods.repository'
+import { FoodsRepository } from '../../../../modules/foods/repositories/foods.repository'
+import { FindAllFoodsInput } from '../../../../modules/foods/types/find-all-foods.types'
+import { SaveFoodInput } from '../../../../modules/foods/types/save-food.types'
 
 @Injectable()
 export class PrismaFoodsRepository extends BaseRepository implements FoodsRepository {

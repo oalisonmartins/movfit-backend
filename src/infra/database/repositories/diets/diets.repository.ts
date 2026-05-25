@@ -3,8 +3,8 @@ import { Diet } from 'generated/prisma/client'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { CreateDietRepositoryInput } from '../types/create-diet.types'
-import { DietsRepository } from './diets.repository'
+import { DietsRepository } from '../../../../modules/diets/repositories/diets.repository'
+import { CreateDietRepositoryInput } from '../../../../modules/diets/types/create-diet.types'
 
 @Injectable()
 export class PrismaDietsRepository extends BaseRepository implements DietsRepository {

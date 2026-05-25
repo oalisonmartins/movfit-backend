@@ -3,8 +3,8 @@ import { DailyWaterConsumption } from 'generated/prisma/client'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { UpsertDailyWaterConsumptionInput } from '../types/upsert-daily-water-consumption.types'
-import { DailyWaterConsumptionRepository } from './daily-water-consumption.repository'
+import { DailyWaterConsumptionRepository } from '../../../../modules/daily-water-consumption/repositories/daily-water-consumption.repository'
+import { UpsertDailyWaterConsumptionInput } from '../../../../modules/daily-water-consumption/types/upsert-daily-water-consumption.types'
 
 @Injectable()
 export class PrismaDailyWaterConsumptionRepository extends BaseRepository implements DailyWaterConsumptionRepository {
