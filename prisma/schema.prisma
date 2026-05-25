@@ -37,17 +37,17 @@ model User {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  profile       Profile?
-  weightLogs         WeightLog[]
-  
-  dailyWaterConsumption DailyWaterConsumption?
-  waterConsumptions     WaterConsumption[]
-  
-  diets                 Diet[]
-  meals                 Meal[]
-  foods                 Food[]
+  profile    Profile?
+  weightLogs WeightLog[]
 
-  workoutPlans          WorkoutPlan[]
+  hydrationLogs    HydrationLog[]
+  hydrationEntries HydrationEntry[]
+
+  diets Diet[]
+  meals Meal[]
+  foods Food[]
+
+  workoutPlans  WorkoutPlan[]
   workoutConfig WorkoutConfig?
 
   nutritionEntries NutritionEntry[]
@@ -80,6 +80,8 @@ model Profile {
   @@map("profiles")
 }
 
+// NUTRITION
+
 model NutritionLog {
   id   String   @id @default(uuid())
   date DateTime @db.Date
@@ -103,8 +105,8 @@ model NutritionLog {
 model NutritionEntry {
   id String @id @default(uuid())
 
-  amountInGrams Float @map("amount_in_grams")
-  date DateTime @db.Date
+  amountInGrams Float    @map("amount_in_grams")
+  date          DateTime @db.Date
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -118,8 +120,8 @@ model NutritionEntry {
   mealId String @map("meal_id")
   meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   @@index([userId, dietId])
   @@index([mealId, foodId])
@@ -153,14 +155,14 @@ model Diet {
 model Meal {
   id String @id @default(uuid())
 
-  name          String
+  name                  String
   scheduleTimeInSeconds Int    @map("schedule_time_in_seconds")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   userId String @map("user_id")
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   dietId String @map("diet_id")
   diet   Diet   @relation(fields: [dietId], references: [id], onDelete: Cascade)
@@ -222,10 +224,10 @@ model Food {
 }
 
 model WeightLog {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  weightInKg Float      @map("weight_in_kg")
-  date DateTime @db.Date
+  weightInKg Float    @map("weight_in_kg")
+  date       DateTime @db.Date
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -234,6 +236,8 @@ model WeightLog {
   @@index([userId, date])
   @@map("weight_logs")
 }
+
+// WORKOUT
 
 enum FocusMuscle {
   CHEST
@@ -353,35 +357,41 @@ model WorkoutSession {
   @@map("workout_sessions")
 }
 
-model DailyWaterConsumption {
-  id           String @id @default(uuid())
-  targetInMl   Int    @map("target_in_ml")
-  consumedInMl Int    @default(0) @map("consumed_in_ml")
+// HYDRATION:
 
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+model HydrationLog {
+  id String @id @default(uuid())
 
-  waterConsumptions WaterConsumption[]
-
-  userId String @unique @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("daily_water_consumptions")
-}
-
-model WaterConsumption {
-  id                 String   @id @default(uuid())
-  amountConsumedInMl Int      @map("amount_consumed_in_ml")
-  dateOfConsumption  DateTime @map("date_of_consumption") @db.Timestamptz()
+  date              DateTime @db.Date
+  dailyGoalInMl     Int      @map("daily_goal_in_ml")
+  totalConsumedInMl Int      @default(0) @map("total_consumed_in_ml")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
-  dailyWaterConsumptionId String                @map("daily_water_consumption_id")
-  dailyWaterConsumption   DailyWaterConsumption @relation(fields: [dailyWaterConsumptionId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  hydrationEntries HydrationEntry[]
+
+  @@unique([userId, date])
+  @@map("hydration_logs")
+}
+
+model HydrationEntry {
+  id String @id @default(uuid())
+
+  amountInMl Int @map("amount_in_ml")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("water_consumptions")
+  hydrationLogId String       @map("hydration_log_id")
+  hydrationLog   HydrationLog @relation(fields: [hydrationLogId], references: [id], onDelete: Cascade)
+
+  @@index([hydrationLogId])
+  @@map("hydration_entries")
 }
