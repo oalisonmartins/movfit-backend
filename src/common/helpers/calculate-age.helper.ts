@@ -4,7 +4,5 @@ export const calculateAge = (birthDate: Date) => {
   today.setUTCHours(0, 0, 0, 0)
   birthDate.setUTCHours(0, 0, 0, 0)
 
-  const userAge = today.getUTCFullYear() - birthDate.getUTCFullYear()
-
-  return userAge
+  return today.getUTCFullYear() - birthDate.getUTCFullYear()
 }
