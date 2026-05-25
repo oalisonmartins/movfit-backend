@@ -1,30 +1,31 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { TransactionService } from 'src/common/services/transaction.service'
-import { DietsRepository } from 'src/modules/diets/repositories/diets.repository'
 import { CreateDietInput, CreateDietOutput } from 'src/modules/diets/types'
 import { FoodsRepository } from 'src/modules/foods/repositories/foods.repository'
-import { MealsRepository } from 'src/modules/meals/repositories/meals.repository'
 
 @Injectable()
 export class CreateDietUseCase {
   constructor(
-    private readonly dietsRepository: DietsRepository,
-    private readonly mealsRepository: MealsRepository,
     private readonly foodsRepository: FoodsRepository,
     private readonly requestContext: RequestContextService,
     private readonly transaction: TransactionService,
   ) {}
 
   async execute(input: CreateDietInput): Promise<CreateDietOutput> {
-    const { goal: dietGoal, meals: dietMeals } = input
-
     const userId = this.requestContext.getUserId
 
+    const { goal: dietGoal, meals: dietMeals } = input
     const mealsTimes = dietMeals.map((dietMeal) => dietMeal.scheduleTimeInSeconds)
 
     if (new Set(mealsTimes).size !== mealsTimes.length) {
-      throw new BadRequestException('Duplicate meal time')
+      throw new HttpException(
+        {
+          message: 'Já existe uma refeição nesse horário',
+          code: 'MEAL_TIME_CONFLICT',
+        },
+        HttpStatus.CONFLICT,
+      )
     }
 
     const sortedMeals = dietMeals.sort((a, b) => a.scheduleTimeInSeconds - b.scheduleTimeInSeconds)
@@ -101,7 +102,6 @@ export class CreateDietUseCase {
         },
       })
 
-      // TODO: Swith to "mealsRepo.createMany" method.
       for (const meal of computedMeals) {
         await tx.meal.create({
           data: {
@@ -124,12 +124,10 @@ export class CreateDietUseCase {
       return {
         id: createdDiet.id,
         goal: createdDiet.goal,
-        macros: {
-          calorieInKcal: createdDiet.totalCalorieInKcal,
-          proteinInGrams: createdDiet.totalProteinInGrams,
-          carbInGrams: createdDiet.totalCarbInGrams,
-          fatInGrams: createdDiet.totalFatInGrams,
-        },
+        totalCalorieInKcal: createdDiet.totalCalorieInKcal,
+        totalProteinInGrams: createdDiet.totalProteinInGrams,
+        totalCarbInGrams: createdDiet.totalCarbInGrams,
+        totalFatInGrams: createdDiet.totalFatInGrams,
       }
     })
   }

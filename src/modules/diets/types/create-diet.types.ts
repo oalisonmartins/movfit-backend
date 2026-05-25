@@ -24,10 +24,8 @@ export type CreateDietInput = {
 export type CreateDietOutput = {
   id: string
   goal: DietGoal
-  macros: {
-    calorieInKcal: number
-    proteinInGrams: number
-    carbInGrams: number
-    fatInGrams: number
-  }
+  totalCalorieInKcal: number
+  totalProteinInGrams: number
+  totalCarbInGrams: number
+  totalFatInGrams: number
 }
