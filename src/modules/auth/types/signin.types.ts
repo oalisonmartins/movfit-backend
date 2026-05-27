@@ -3,7 +3,3 @@ export type SigninInput = {
   password: string
   confirmPassword: string
 }
-
-export type SigninOutput = {
-  accessToken: string
-}

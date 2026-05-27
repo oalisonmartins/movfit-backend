@@ -10,6 +10,7 @@ export class CompleteProfileUseCase {
     private readonly requestContext: RequestContextService,
   ) {}
 
+  // TODO: Adicionar campos "locale" e "language" ao Profile.
   async execute(input: CompleteProfileInput): Promise<CompleteProfileOutput> {
     const userId = this.requestContext.getUserId
     const profile = await this.profileRepository.upsert(userId, input)
