@@ -8,7 +8,7 @@ export class OnboardingGuard implements CanActivate {
 
     if (!isOnboardingCompleted) {
       throw new ForbiddenException({
-        message: 'Finalize a tela de onboarding para prosseguir.',
+        message: 'Finalize a tela de onboarding para prosseguir',
         code: 'COMPLETE_ONBOARDING',
       })
     }

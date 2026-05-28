@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { Payload } from 'src/modules/auth/types/payload.types'
+import { TokenBlacklistService } from 'src/modules/auth/services/token-blacklist.service'
+import { JwtPayload } from 'src/modules/auth/types/auth.types'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly usersRepository: UsersRepository) {
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly tokenBlacklistService: TokenBlacklistService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET as string,
@@ -16,10 +20,30 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(payload: Payload) {
+  async validate(payload: JwtPayload) {
+    const isBlacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti)
+
+    if (isBlacklisted) {
+      throw new HttpException(
+        {
+          message: 'Seu token foi revogado',
+          code: 'REVOKED_TOKEN',
+        },
+        HttpStatus.UNAUTHORIZED,
+      )
+    }
+
     const user = await this.usersRepository.findOneById(payload.sub)
 
-    if (!user) return null
+    if (!user) {
+      throw new HttpException(
+        {
+          message: 'Usuário não encontrado',
+          code: 'USER_NOT_FOUND',
+        },
+        HttpStatus.NOT_FOUND,
+      )
+    }
 
     return {
       id: user.id,

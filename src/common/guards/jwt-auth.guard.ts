@@ -29,20 +29,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       if (info instanceof TokenExpiredError) {
         throw new UnauthorizedException({
-          message: 'Token expirado.',
-          code: 'TOKEN_EXPIRED',
+          message: 'Seu token expirou',
+          code: 'EXPIRED_TOKEN',
         })
       }
 
       if (info instanceof JsonWebTokenError) {
         throw new UnauthorizedException({
-          message: 'Token inválido.',
+          message: 'Seu token é inválido',
           code: 'INVALID_TOKEN',
         })
       }
 
       throw new UnauthorizedException({
-        message: 'Você precisa estar autenticado para prosseguir.',
+        message: 'É necessário estar autenticado para prosseguir',
         code: 'REQUIRE_AUTHENTICATION',
       })
     }

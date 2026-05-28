@@ -1,8 +1,8 @@
+import { randomUUID } from 'node:crypto'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import bcrypt from 'bcryptjs'
 import { AuthOutput } from 'src/modules/auth/types/auth.types'
-import { Payload } from 'src/modules/auth/types/payload.types'
 import { SignupInput } from 'src/modules/auth/types/signup.types'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
 
@@ -33,9 +33,12 @@ export class SignupUseCase {
       password: hash,
     })
 
-    const accessToken = await this.jwtService.signAsync<Payload>({
-      sub: newUser.id,
-    })
+    const accessToken = await this.jwtService.signAsync(
+      {
+        sub: newUser.id,
+      },
+      { jwtid: randomUUID() },
+    )
 
     return {
       accessToken,

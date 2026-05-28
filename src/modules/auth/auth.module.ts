@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
+import { RequestContextService } from 'src/common/services/request-context.service'
 import { AuthController } from 'src/modules/auth/controllers/auth.controller'
+import { TokenBlacklistService } from 'src/modules/auth/services/token-blacklist.service'
 import { JwtStrategy } from 'src/modules/auth/strategies/jwt.strategy'
 import { SigninUseCase } from 'src/modules/auth/use-cases/signin.use-case'
+import { SignoutUseCase } from 'src/modules/auth/use-cases/signout.use-case'
 import { SignupUseCase } from 'src/modules/auth/use-cases/signup.use-case'
 import { UsersModule } from 'src/modules/users/users.module'
 
@@ -30,6 +33,6 @@ import { UsersModule } from 'src/modules/users/users.module'
   ],
   controllers: [AuthController],
   exports: [SigninUseCase, SignupUseCase],
-  providers: [JwtStrategy, SigninUseCase, SignupUseCase],
+  providers: [RequestContextService, TokenBlacklistService, JwtStrategy, SigninUseCase, SignupUseCase, SignoutUseCase],
 })
 export class AuthModule {}

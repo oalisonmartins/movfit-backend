@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_FILTER, APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler/dist'
+import { RedisModule } from '@nestjs-modules/ioredis'
 import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter'
 import { AuthModule } from 'src/modules/auth/auth.module'
 import { DietsModule } from 'src/modules/diets/diets.module'
@@ -45,6 +46,10 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    RedisModule.forRoot({
+      type: 'single',
+      url: process.env.REDIS_URL,
     }),
     UsersModule,
     AuthModule,
