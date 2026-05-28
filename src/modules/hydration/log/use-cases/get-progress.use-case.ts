@@ -32,7 +32,7 @@ export class GetHydrationProgressUseCase {
       dailyGoalInMl: todayHydrationLog.dailyGoalInMl,
       totalConsumedInMl: todayHydrationLog.totalConsumedInMl,
       totalRemainingInMl: Math.max(0, todayHydrationLog.dailyGoalInMl - todayHydrationLog.totalConsumedInMl),
-      totalConsumedPercent: Math.round(todayHydrationLog.totalConsumedInMl / todayHydrationLog.dailyGoalInMl),
+      totalConsumedPercent: Number((todayHydrationLog.totalConsumedInMl / todayHydrationLog.dailyGoalInMl).toFixed(2)),
     }
   }
 }
