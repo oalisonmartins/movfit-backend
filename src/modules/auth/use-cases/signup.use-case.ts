@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import bcrypt from 'bcryptjs'
+import { HashingService } from 'src/modules/auth/services/hashing.service'
 import { AuthOutput } from 'src/modules/auth/types/auth.types'
 import { SignupInput } from 'src/modules/auth/types/signup.types'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
@@ -11,11 +11,11 @@ export class SignupUseCase {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
+    private readonly hashingService: HashingService,
   ) {}
 
   async execute(input: SignupInput): Promise<AuthOutput> {
-    const hashSalt = await bcrypt.genSalt(12)
-    const hash = await bcrypt.hash(input.password, hashSalt)
+    const hash = await this.hashingService.hash(input.password)
     const user = await this.usersRepository.findOneByEmail(input.email)
 
     if (user) {
@@ -33,6 +33,7 @@ export class SignupUseCase {
       password: hash,
     })
 
+    // TODO: Estudar e implementar um refresh token
     const accessToken = await this.jwtService.signAsync(
       {
         sub: newUser.id,

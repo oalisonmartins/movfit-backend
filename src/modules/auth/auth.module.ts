@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { AuthController } from 'src/modules/auth/controllers/auth.controller'
+import { BcryptHashingService } from 'src/modules/auth/services/bcrypt-hashing.service'
+import { HashingService } from 'src/modules/auth/services/hashing.service'
 import { TokenBlacklistService } from 'src/modules/auth/services/token-blacklist.service'
 import { JwtStrategy } from 'src/modules/auth/strategies/jwt.strategy'
 import { SigninUseCase } from 'src/modules/auth/use-cases/signin.use-case'
@@ -33,6 +35,17 @@ import { UsersModule } from 'src/modules/users/users.module'
   ],
   controllers: [AuthController],
   exports: [SigninUseCase, SignupUseCase],
-  providers: [RequestContextService, TokenBlacklistService, JwtStrategy, SigninUseCase, SignupUseCase, SignoutUseCase],
+  providers: [
+    RequestContextService,
+    TokenBlacklistService,
+    JwtStrategy,
+    SigninUseCase,
+    SignupUseCase,
+    SignoutUseCase,
+    {
+      provide: HashingService,
+      useClass: BcryptHashingService,
+    },
+  ],
 })
 export class AuthModule {}

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import bcrypt from 'bcryptjs'
+import { HashingService } from 'src/modules/auth/services/hashing.service'
 import { AuthOutput } from 'src/modules/auth/types/auth.types'
 import { SigninInput } from 'src/modules/auth/types/signin.types'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
@@ -11,6 +11,7 @@ export class SigninUseCase {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
+    private readonly hashingService: HashingService,
   ) {}
 
   async execute(input: SigninInput): Promise<AuthOutput> {
@@ -26,7 +27,7 @@ export class SigninUseCase {
       )
     }
 
-    const isPasswordMatch = await bcrypt.compare(input.password, user.passwordHash)
+    const isPasswordMatch = await this.hashingService.compare(input.password, user.passwordHash)
 
     if (!isPasswordMatch) {
       throw new HttpException(
