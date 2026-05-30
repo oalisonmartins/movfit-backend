@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { NutritionEntryRepository } from 'src/modules/nutritions/repositories/nutrition-entry.repository'
-import { CreateNutritionEntryInput } from 'src/modules/nutritions/types/create-nutrition-entry.types'
-import { NutritionEntryWithFood } from 'src/modules/nutritions/types/nutrition-entry-with-food.types'
+import { NutritionEntryRepository } from 'src/modules/nutrition/entry/repositories/entry.repository'
+import { CreateNutritionEntryInput } from 'src/modules/nutrition/entry/types/create-entry.types'
+import { NutritionEntryWithFood } from 'src/modules/nutrition/entry/types/entry-with-food.types'
 
 @Injectable()
 export class PrismaNutritionEntryRepository extends BaseRepository implements NutritionEntryRepository {

@@ -5,11 +5,11 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
 import { ActiveDietInterceptor } from 'src/common/interceptors/active-diet.interceptor'
 import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
-import { GetNutritionProgressDto } from 'src/modules/nutritions/dtos/get-nutrition-progress.dto'
-import { GetNutritionProgressUseCase } from 'src/modules/nutritions/use-cases/get-nutrition-progress.use-case'
+import { GetNutritionProgressDto } from 'src/modules/nutrition/log/dtos/get-nutrition-progress.dto'
+import { GetNutritionProgressUseCase } from 'src/modules/nutrition/log/use-cases/get-progress.use-case'
 
 @UseGuards(JwtAuthGuard, OnboardingGuard)
-@Controller('nutrition-log')
+@Controller('nutrition/log')
 export class NutritionLogController {
   constructor(private readonly getNutritionProgressUseCase: GetNutritionProgressUseCase) {}
 

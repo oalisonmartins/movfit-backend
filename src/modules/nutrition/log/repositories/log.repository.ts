@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { NutritionLog } from 'generated/prisma/client'
-import { NutritionMacros } from 'src/modules/nutritions/types/nutrition-macros.types'
+import { NutritionMacros } from 'src/modules/nutrition/types/nutrition-macros.types'
 
 @Injectable()
 export abstract class NutritionLogRepository {

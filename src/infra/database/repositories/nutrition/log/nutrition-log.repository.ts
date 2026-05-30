@@ -3,8 +3,8 @@ import { NutritionLog } from 'generated/prisma/client'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { NutritionLogRepository } from 'src/modules/nutritions/repositories/nutrition-log.repository'
-import { NutritionMacros } from 'src/modules/nutritions/types/nutrition-macros.types'
+import { NutritionLogRepository } from 'src/modules/nutrition/log/repositories/log.repository'
+import { NutritionMacros } from 'src/modules/nutrition/types/nutrition-macros.types'
 
 @Injectable()
 export class PrismaNutritionLogRepository extends BaseRepository implements NutritionLogRepository {

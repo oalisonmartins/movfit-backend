@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { DietsRepository } from 'src/modules/diets/repositories/diets.repository'
 import { MealsRepository } from 'src/modules/meals/repositories/meals.repository'
-import { NutritionEntryRepository } from 'src/modules/nutritions/repositories/nutrition-entry.repository'
-import { AddNutritionEntryInput } from 'src/modules/nutritions/types/add-nutrition-entry.types'
+import { NutritionEntryRepository } from 'src/modules/nutrition/entry/repositories/entry.repository'
+import { AddNutritionEntryInput } from 'src/modules/nutrition/entry/types/add-entry.types'
 
 @Injectable()
 export class AddNutritionEntryUseCase {

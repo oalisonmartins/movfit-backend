@@ -3,11 +3,11 @@ import { RequireProfile } from 'src/common/decorators/require-profile.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
 import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
-import { AddNutritionEntryRequestDto } from 'src/modules/nutritions/dtos/add-nutrition-entry.dto'
-import { AddNutritionEntryUseCase } from 'src/modules/nutritions/use-cases/add-nutrition-entry.use-case'
+import { AddNutritionEntryRequestDto } from 'src/modules/nutrition/entry/dtos/add-entry.dto'
+import { AddNutritionEntryUseCase } from 'src/modules/nutrition/entry/use-cases/add-entry.use-case'
 
 @UseGuards(JwtAuthGuard, OnboardingGuard)
-@Controller('nutrition-entry')
+@Controller('nutrition/entry')
 export class NutritionEntryController {
   constructor(private readonly addNutritionEntryUseCase: AddNutritionEntryUseCase) {}
 

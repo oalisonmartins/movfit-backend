@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
-import { NutritionLogRepository } from 'src/modules/nutritions/repositories/nutrition-log.repository'
-import { GetNutritionProgressInput } from 'src/modules/nutritions/types/get-nutrition-progress.types'
+import { NutritionLogRepository } from 'src/modules/nutrition/log/repositories/log.repository'
+import { GetNutritionProgressInput } from 'src/modules/nutrition/log/types/get-nutrition-progress.types'
 
 @Injectable()
 export class GetNutritionProgressUseCase {

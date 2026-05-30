@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { CreateNutritionEntryInput } from 'src/modules/nutritions/types/create-nutrition-entry.types'
-import { NutritionEntryWithFood } from 'src/modules/nutritions/types/nutrition-entry-with-food.types'
+import { CreateNutritionEntryInput } from 'src/modules/nutrition/entry/types/create-entry.types'
+import { NutritionEntryWithFood } from 'src/modules/nutrition/entry/types/entry-with-food.types'
 
 @Injectable()
 export abstract class NutritionEntryRepository {
