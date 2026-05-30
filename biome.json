@@ -24,7 +24,8 @@
         "noExplicitAny": "warn"
       },
       "correctness": {
-        "noUnusedImports": "error"
+        "noUnusedImports": "error",
+        "noUnusedPrivateClassMembers": "off"
       }
     }
   },
@@ -57,6 +58,9 @@
         "rules": {
           "suspicious": {
             "noExplicitAny": "off"
+          },
+          "correctness": {
+            "noUnusedPrivateClassMembers": "off"
           }
         }
       }
