@@ -1,9 +1,9 @@
 import { FocusMuscle } from 'generated/prisma/enums'
 
-export type GetWorkoutConfigOutput = {
+export type WorkoutConfigOutput = {
   id: string
   freeDaysPerWeek: number
   freeTimeByDayInSeconds: number
   focusMuscles: FocusMuscle[]
-  createdAt: Date
+  createdAt: string
 }

@@ -13,7 +13,7 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ProfilesModule } from './modules/profiles/profiles.module'
 import { UsersModule } from './modules/users/users.module'
-import { WorkoutConfigModule } from './modules/workout-config/workout-config.module'
+import { WorkoutConfigModule } from './modules/workout/config/config.module'
 
 @Module({
   controllers: [AppController],
@@ -51,6 +51,7 @@ import { WorkoutConfigModule } from './modules/workout-config/workout-config.mod
       type: 'single',
       url: process.env.REDIS_URL,
     }),
+    // TODO: Implementar WorkoutPlan, WorkoutDay, WorkoutSession e a parte de treinos no geral.
     UsersModule,
     AuthModule,
     WorkoutConfigModule,

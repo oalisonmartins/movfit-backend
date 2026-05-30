@@ -8,7 +8,7 @@ import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { UsersController } from 'src/modules/users/controller/users.controller'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
 import { MeUseCase } from 'src/modules/users/use-cases/me.use-case'
-import { WorkoutConfigModule } from '../workout-config/workout-config.module'
+import { WorkoutConfigModule } from '../workout/config/config.module'
 
 @Module({
   imports: [WorkoutConfigModule, ProfilesModule],

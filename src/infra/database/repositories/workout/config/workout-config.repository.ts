@@ -3,8 +3,8 @@ import { WorkoutConfig } from 'generated/prisma/client'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { WorkoutConfigRepository } from 'src/modules/workout-config/repositories/workout-config.repository'
-import { RegisterWorkoutConfigRepositoryInput } from 'src/modules/workout-config/types'
+import { WorkoutConfigRepository } from 'src/modules/workout/config/repositories/config.repository'
+import { CreateWorkoutConfigInput } from 'src/modules/workout/config/types/create-config.types'
 
 @Injectable()
 export class PrismaWorkoutConfigRepository extends BaseRepository implements WorkoutConfigRepository {
@@ -21,10 +21,10 @@ export class PrismaWorkoutConfigRepository extends BaseRepository implements Wor
     })
   }
 
-  async create(input: RegisterWorkoutConfigRepositoryInput): Promise<WorkoutConfig> {
+  async create(userId: string, input: CreateWorkoutConfigInput): Promise<WorkoutConfig> {
     return await this.db.workoutConfig.create({
       data: {
-        userId: input.userId,
+        userId,
         freeDaysPerWeek: input.freeDaysPerWeek,
         freeTimeByDayInSeconds: input.freeTimeByDayInSeconds,
         focusMuscles: input.focusMuscles,

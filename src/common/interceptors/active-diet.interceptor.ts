@@ -24,7 +24,7 @@ export class ActiveDietInterceptor implements NestInterceptor {
       if (!activeDiet) {
         throw new HttpException(
           {
-            message: 'Você precisa ter uma dieta ativa para continuar.',
+            message: 'É necessário ter uma dieta ativa para continuar',
             code: 'ACTIVE_DIET_REQUIRED',
           },
           HttpStatus.FORBIDDEN,

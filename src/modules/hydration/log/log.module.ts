@@ -11,7 +11,7 @@ import { GetHydrationHistoryUseCase } from 'src/modules/hydration/log/use-cases/
 import { GetHydrationLogUseCase } from 'src/modules/hydration/log/use-cases/get-log.use-case'
 import { GetHydrationProgressUseCase } from 'src/modules/hydration/log/use-cases/get-progress.use-case'
 import { ProfilesModule } from 'src/modules/profiles/profiles.module'
-import { WorkoutConfigModule } from 'src/modules/workout-config/workout-config.module'
+import { WorkoutConfigModule } from 'src/modules/workout/config/config.module'
 
 @Module({
   imports: [ProfilesModule, WorkoutConfigModule],
