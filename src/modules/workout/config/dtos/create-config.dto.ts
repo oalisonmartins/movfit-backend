@@ -1,5 +1,5 @@
 import { ArrayMaxSize, IsArray, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator'
-import { FocusMuscle } from 'generated/prisma/enums'
+import { FocusMuscle, WorkoutGoal } from 'generated/prisma/enums'
 
 export class CreateWorkoutConfigRequestDto {
   @IsInt({
@@ -10,6 +10,9 @@ export class CreateWorkoutConfigRequestDto {
   })
   @Max(7)
   readonly freeDaysPerWeek: number
+
+  @IsEnum(WorkoutGoal)
+  readonly goal: WorkoutGoal
 
   @IsInt()
   @Min(1, {

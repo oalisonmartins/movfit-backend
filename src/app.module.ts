@@ -9,11 +9,11 @@ import { DietsModule } from 'src/modules/diets/diets.module'
 import { FoodsModule } from 'src/modules/foods/foods.module'
 import { HydrationModule } from 'src/modules/hydration/hydration.module'
 import { NutritionModule } from 'src/modules/nutrition/nutrition.module'
+import { WorkoutModule } from 'src/modules/workout/workout.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ProfilesModule } from './modules/profiles/profiles.module'
 import { UsersModule } from './modules/users/users.module'
-import { WorkoutConfigModule } from './modules/workout/config/config.module'
 
 @Module({
   controllers: [AppController],
@@ -54,7 +54,7 @@ import { WorkoutConfigModule } from './modules/workout/config/config.module'
     // TODO: Implementar WorkoutPlan, WorkoutDay, WorkoutSession e a parte de treinos no geral.
     UsersModule,
     AuthModule,
-    WorkoutConfigModule,
+    WorkoutModule,
     ProfilesModule,
     DietsModule,
     FoodsModule,

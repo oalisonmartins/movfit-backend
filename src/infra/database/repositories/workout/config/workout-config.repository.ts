@@ -7,7 +7,10 @@ import { WorkoutConfigRepository } from 'src/modules/workout/config/repositories
 import { CreateWorkoutConfigInput } from 'src/modules/workout/config/types/create-config.types'
 
 @Injectable()
-export class PrismaWorkoutConfigRepository extends BaseRepository implements WorkoutConfigRepository {
+export class PrismaWorkoutConfigRepository
+  extends BaseRepository
+  implements WorkoutConfigRepository
+{
   constructor(
     readonly prisma: PrismaService,
     readonly transactionContext: TransactionContextService,
@@ -25,6 +28,7 @@ export class PrismaWorkoutConfigRepository extends BaseRepository implements Wor
     return await this.db.workoutConfig.create({
       data: {
         userId,
+        goal: input.goal,
         freeDaysPerWeek: input.freeDaysPerWeek,
         freeTimeByDayInSeconds: input.freeTimeByDayInSeconds,
         focusMuscles: input.focusMuscles,
