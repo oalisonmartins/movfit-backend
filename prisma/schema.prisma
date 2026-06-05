@@ -8,34 +8,82 @@ datasource db {
   provider = "postgresql"
 }
 
+/**
+ * --- Enum's ---
+ */
+enum FoodSource {
+  TACO
+  USDA
+  CUSTOM
+}
+
 enum BiologicalSex {
   MALE
   FEMALE
 }
 
-enum Goal {
-  GAIN_MASS
-  DEFINE
-  LOSE_WEIGHT
-  MAINTAIN_WEIGHT
-}
-
 enum DietGoal {
   BULKING
   CUTTING
-  RECOMPOSITION
+  WEIGHT_LOSS
+  MAINTENANCE
 }
 
+enum WorkoutGoal {
+  HYPERTROPHY
+  CUTTING
+  FAT_LOSS
+}
+
+enum EmphasizedMuscle {
+  CHEST
+  BACK
+  SHOULDERS
+  BICEPS
+  TRICEPS
+  FOREARMS
+  CORE
+  GLUTES
+  QUADRICEPS
+  HAMSTRINGS
+  CALVES
+  LOWER_BACK
+}
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum FitnessLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum DietGenerationType {
+  MANUAL
+  AUTO
+}
+
+/**
+ * --- User Level ---
+ */
 model User {
   id           String @id @default(uuid())
   name         String @db.VarChar(255)
   email        String @db.VarChar(255)
   passwordHash String @map("password_hash")
 
-  isOnboardingCompleted Boolean @default(false) @map("is_onboarding_completed")
+  hasCompletedOnboarding Boolean @default(false) @map("has_completed_onboarding")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   profile    Profile?
   weightLogs WeightLog[]
@@ -47,8 +95,11 @@ model User {
   meals Meal[]
   foods Food[]
 
-  workoutPlans  WorkoutPlan[]
-  workoutConfig WorkoutConfig?
+  workoutPlans    WorkoutPlan[]
+  workoutSessions WorkoutSession[]
+
+  workoutPreference WorkoutPreference?
+  dietPreference    DietPreference?
 
   nutritionEntries NutritionEntry[]
   nutritionLogs    NutritionLog[]
@@ -60,18 +111,18 @@ model User {
 model Profile {
   id String @id @default(uuid())
 
-  goal                Goal
-  biologicalSex       BiologicalSex @map("biological_sex")
-  birthDate           DateTime      @map("birth_date") @db.Date()
-  heightInCentimeters Int           @map("height_in_centimeters")
+  biologicalSex BiologicalSex @map("biological_sex")
+  birthDate     DateTime      @map("birth_date") @db.Date()
 
-  weightInKg       Float @map("weight_in_kg")
-  targetWeightInKg Float @map("target_weight_in_kg")
+  fitnessLevel     FitnessLevel @map("fitness_level")
+  heightInCm       Int          @map("height_in_cm")
+  weightInKg       Float        @map("weight_in_kg")
+  targetWeightInKg Float        @map("target_weight_in_kg")
 
   timezone String @default("America/Sao_Paulo")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -80,8 +131,9 @@ model Profile {
   @@map("profiles")
 }
 
-// NUTRITION
-
+/**
+ * --- Nutrition Level ---
+ */
 model NutritionLog {
   id   String   @id @default(uuid())
   date DateTime @db.Date
@@ -128,6 +180,25 @@ model NutritionEntry {
   @@map("nutrition_entries")
 }
 
+/**
+ * --- Diet Level ---
+ */
+model DietPreference {
+  id String @id @default(uuid())
+
+  goal           DietGoal
+  generationType DietGenerationType @map("generation_type")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@map("diet_preferences")
+}
+
 model Diet {
   id String @id @default(uuid())
 
@@ -155,8 +226,8 @@ model Diet {
 model Meal {
   id String @id @default(uuid())
 
-  name                  String
-  scheduleTimeInSeconds Int    @map("schedule_time_in_seconds")
+  name                   String
+  scheduledTimeInSeconds Int    @map("scheduled_time_in_seconds")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
@@ -175,12 +246,6 @@ model Meal {
   @@map("meals")
 }
 
-enum FoodSource {
-  TACO
-  USDA
-  CUSTOM
-}
-
 model MealFood {
   id String @id @default(uuid())
 
@@ -197,12 +262,13 @@ model MealFood {
 }
 
 model Food {
-  id            String     @id @default(uuid())
+  id            String  @id @default(uuid())
   name          String
-  source        FoodSource @default(CUSTOM)
   description   String?
-  coverImageUrl String?    @map("cover_image_url")
-  isRecipe      Boolean    @default(false) @map("is_recipe")
+  coverImageUrl String? @map("cover_image_url")
+
+  source   FoodSource @default(CUSTOM)
+  isRecipe Boolean    @default(false) @map("is_recipe")
 
   caloriePer100gInKcal  Float @map("calorie_per_100g_in_kcal")
   proteinPer100gInGrams Float @map("protein_per_100g_in_grams")
@@ -218,7 +284,6 @@ model Food {
   mealFoods        MealFood[]
   nutritionEntries NutritionEntry[]
 
-  @@unique([userId, name])
   @@index([userId, name])
   @@map("foods")
 }
@@ -237,62 +302,34 @@ model WeightLog {
   @@map("weight_logs")
 }
 
-// WORKOUT
+/**
+ * --- Workout Level ---
+ */
+model WorkoutPreference {
+  id String @id @default(uuid())
 
-enum FocusMuscle {
-  CHEST
-  BACK
-  SHOULDERS
-  BICEPS
-  TRICEPS
-  FOREARMS
-  CORE
-  ABS
-  OBLIQUES
-  GLUTES
-  QUADRICEPS
-  HAMSTRINGS
-  CALVES
-  ADDUCTORS
-  ABDUCTORS
-  TRAPS
-  LATS
-  LOWER_BACK
-  NECK
-  FULL_BODY
-}
-
-enum WorkoutGoal {
-  GAIN_MASS
-  DEFINITION
-}
-
-model WorkoutConfig {
-  id                     String        @id @default(uuid())
-
-  goal  WorkoutGoal
-  freeDaysPerWeek        Int           @map("free_days_per_week")
-  freeTimeByDayInSeconds Int           @map("free_time_by_day_in_seconds")
-  focusMuscles           FocusMuscle[] @map("focus_muscles")
+  goal                         WorkoutGoal
+  availableDaysPerWeek         Int                @map("available_days_per_week")
+  availableTimePerDayInSeconds Int                @map("available_time_per_day_in_seconds")
+  emphasizedMuscles            EmphasizedMuscle[] @map("emphasized_muscles")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
-  userId String @unique @map("user_id")
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("workout_configs")
+  @@unique([userId])
+  @@map("workout_preferences")
 }
 
+// REVISAR E CONCLUIR TUDO AMANHA (05/06)
 model WorkoutPlan {
   id String @id @default(uuid())
 
-  /* TODO: Incluir um campo "Goal" para o objetivo especifico do plano de treino.
-     - Ao ativar/criar um plano de treino, o objetivo dele deve ser passado para "WorkoutConfig", que deve sempre permanecer atualizado com o objetivo do plano de treino ativo atualmente.
-  */
   name     String
   goal     WorkoutGoal
-  isActive Boolean @default(true) @map("is_active")
+  isActive Boolean     @default(true) @map("is_active")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
@@ -302,17 +339,8 @@ model WorkoutPlan {
 
   workoutDays WorkoutDay[]
 
+  @@index([userId, isActive])
   @@map("workout_plans")
-}
-
-enum WeekDay {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
 }
 
 model WorkoutDay {
@@ -320,9 +348,10 @@ model WorkoutDay {
 
   name                       String
   isRest                     Boolean @default(false) @map("is_rest")
-  estimatedDurationInSeconds Int     @map("estimated_duration_in_seconds")
+  estimatedDurationInSeconds Int     @default(0) @map("estimated_duration_in_seconds")
   coverImageUrl              String? @map("cover_image_url")
-  weekDay                    WeekDay @map("week_day")
+
+  weekDay WeekDay @map("week_day")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
@@ -333,6 +362,7 @@ model WorkoutDay {
   exercises WorkoutExercise[]
   sessions  WorkoutSession[]
 
+  @@unique([workoutPlanId, weekDay])
   @@map("workout_days")
 }
 
@@ -343,7 +373,7 @@ model WorkoutExercise {
   order             Int
   reps              Int
   sets              Int
-  restTimeInSeconds Int    @map("rest_time_in_seconds")
+  restTimeInSeconds Int    @default(0) @map("rest_time_in_seconds")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
@@ -366,11 +396,15 @@ model WorkoutSession {
   workoutDayId String     @map("workout_day_id")
   workoutDay   WorkoutDay @relation(fields: [workoutDayId], references: [id], onDelete: Cascade)
 
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("workout_sessions")
 }
 
-// HYDRATION:
-
+/**
+ * --- Hydration Level ---
+ */
 model HydrationLog {
   id String @id @default(uuid())
 
