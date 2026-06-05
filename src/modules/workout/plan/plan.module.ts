@@ -8,6 +8,7 @@ import { WorkoutConfigModule } from 'src/modules/workout/config/config.module'
 import { WorkoutPlanController } from 'src/modules/workout/plan/controllers/plan.controller'
 import { WorkoutPlanRepository } from 'src/modules/workout/plan/repositories/plan.repository'
 import { CreateWorkoutPlanUseCase } from 'src/modules/workout/plan/use-cases/create-plan.use-case'
+import { GetActiveWorkoutPlanUseCase } from 'src/modules/workout/plan/use-cases/get-active-plan.use-case'
 
 @Module({
   imports: [WorkoutConfigModule],
@@ -15,6 +16,7 @@ import { CreateWorkoutPlanUseCase } from 'src/modules/workout/plan/use-cases/cre
   exports: [WorkoutPlanRepository],
   providers: [
     CreateWorkoutPlanUseCase,
+    GetActiveWorkoutPlanUseCase,
     PrismaService,
     RequestContextService,
     TransactionContextService,
