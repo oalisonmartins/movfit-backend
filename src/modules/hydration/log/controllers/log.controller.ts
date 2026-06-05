@@ -1,11 +1,20 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 import { RequireProfile } from 'src/common/decorators/require-profile.decorator'
-import { RequireWorkoutConfig } from 'src/common/decorators/require-workout-config.decorator'
+import { RequireWorkoutPreference } from 'src/common/decorators/require-workout-preference.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
 import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
-import { WorkoutConfigInterceptor } from 'src/common/interceptors/workout-config.interceptor'
+import { WorkoutPreferenceInterceptor } from 'src/common/interceptors/workout-preference.interceptor'
 import { CreateHydrationLogDto } from 'src/modules/hydration/log/dtos/create-log.dto'
 import { GetHydrationHistoryDto } from 'src/modules/hydration/log/dtos/get-history.dto'
 import { GetHydrationLogDto } from 'src/modules/hydration/log/dtos/get-log.dto'
@@ -25,8 +34,8 @@ export class HydrationLogController {
   ) {}
 
   @RequireProfile()
-  @RequireWorkoutConfig()
-  @UseInterceptors(ProfileInterceptor, WorkoutConfigInterceptor)
+  @RequireWorkoutPreference()
+  @UseInterceptors(ProfileInterceptor, WorkoutPreferenceInterceptor)
   @ApiCreatedResponse({ type: CreateHydrationLogDto })
   @Post()
   @HttpCode(HttpStatus.CREATED)

@@ -14,14 +14,20 @@ export class CreateHydrationLogUseCase {
   async execute() {
     const userId = this.requestContext.getUserId
 
-    const { freeDaysPerWeek, freeTimeByDayInSeconds } = this.requestContext.getWorkoutConfig
-    const { weightInKg, goal, biologicalSex, birthDate } = this.requestContext.getProfile
+    const { availableDaysPerWeek, availableTimePerDayInSeconds } =
+      this.requestContext.getWorkoutPreference
+    const { weightInKg, biologicalSex, birthDate } = this.requestContext.getProfile
 
-    const activityFactor = this.getActivityFactor(freeDaysPerWeek, freeTimeByDayInSeconds)
+    const activityFactor = this.getActivityFactor(
+      availableDaysPerWeek,
+      availableTimePerDayInSeconds,
+    )
     const ageFactor = this.getAgeFactor(birthDate)
     const sexFactor = biologicalSex === 'MALE' ? 1.1 : 1.0
 
-    const dailyGoalInMl = Math.round(weightInKg * GoalFactors[goal] * sexFactor * ageFactor * activityFactor)
+    const dailyGoalInMl = Math.round(
+      weightInKg * GoalFactors['DEFINE'] * sexFactor * ageFactor * activityFactor,
+    )
 
     const today = new Date()
     today.setUTCHours(0, 0, 0, 0)
@@ -44,10 +50,10 @@ export class CreateHydrationLogUseCase {
     }
   }
 
-  private getActivityFactor(freeDaysPerWeek: number, freeTimeByDayInSeconds: number) {
-    const activeDays = freeDaysPerWeek
+  private getActivityFactor(availableDaysPerWeek: number, availableTimePerDayInSeconds: number) {
+    const activeDays = availableDaysPerWeek
 
-    const availableMinutes = freeTimeByDayInSeconds / 60
+    const availableMinutes = availableTimePerDayInSeconds / 60
     const isHigh = availableMinutes >= 60
     const isLow = availableMinutes < 30
 

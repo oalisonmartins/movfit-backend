@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { WorkoutConfigModule } from 'src/modules/workout/config/config.module'
 import { WorkoutPlanModule } from 'src/modules/workout/plan/plan.module'
+import { WorkoutPreferenceModule } from 'src/modules/workout/preference/preference.module'
 
 @Module({
-  imports: [WorkoutConfigModule, WorkoutPlanModule],
+  imports: [WorkoutPreferenceModule, WorkoutPlanModule],
 })
 export class WorkoutModule {}

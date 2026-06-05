@@ -16,14 +16,15 @@ export class CreateWorkoutPlanUseCase {
 
   async execute(input: CreateWorkoutPlanInput): Promise<ActiveWorkoutPlan> {
     const userId = this.requestContext.getUserId
-    const { freeDaysPerWeek, freeTimeByDayInSeconds, goal } = this.requestContext.getWorkoutConfig
+    const { availableDaysPerWeek, availableTimePerDayInSeconds, goal } =
+      this.requestContext.getWorkoutPreference
 
     const activeWorkoutPlan = await this.workoutPlanRepository.findOne(userId, true)
 
     const restDays = input.workoutDays.filter((workoutDay) => workoutDay.isRest)
     const workoutDays = input.workoutDays.filter((workoutDay) => !workoutDay.isRest)
 
-    if (workoutDays.length - restDays.length > freeDaysPerWeek) {
+    if (workoutDays.length - restDays.length > availableDaysPerWeek) {
       throw new HttpException(
         {
           message: 'Dias de treino inválidos, diminua a quantidade de treinos na semana',
@@ -50,17 +51,17 @@ export class CreateWorkoutPlanUseCase {
       }
 
       if (input.goal !== goal) {
-        await tx.workoutConfig.update({
+        await tx.workoutPreference.update({
           where: { userId },
           data: { goal: input.goal },
         })
       }
 
       for (const workoutDay of input.workoutDays) {
-        if (totalWorkoutTimePerDayInSeconds[workoutDay.weekDay] > freeTimeByDayInSeconds) {
+        if (totalWorkoutTimePerDayInSeconds[workoutDay.weekDay] > availableTimePerDayInSeconds) {
           throw new HttpException(
             {
-              message: `Treino: ${workoutDay.name} muito longo. Diminua o tempo do treino ou atualize suas preferências de treino`,
+              message: `Treino: ${workoutDay.name} muito longo, diminua o tempo do treino ou atualize suas preferências de treino`,
               code: 'WORKOUT_TOO_LONG',
             },
             HttpStatus.BAD_REQUEST,
@@ -73,7 +74,7 @@ export class CreateWorkoutPlanUseCase {
         ) {
           throw new HttpException(
             {
-              message: 'Você não pode ter exercícios para serem treinados em dias de descanso',
+              message: 'Você não pode ter exercícios em dias de descanso',
               code: 'INVALID_REST_DAY',
             },
             HttpStatus.BAD_REQUEST,

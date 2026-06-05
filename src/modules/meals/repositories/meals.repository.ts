@@ -5,5 +5,5 @@ import { CreateMealInput } from '../types/create-meal.type'
 @Injectable()
 export abstract class MealsRepository {
   abstract create(input: CreateMealInput): Promise<Meal>
-  abstract findOne(userId: string, scheduleTimeInSeconds: number): Promise<Meal | null>
+  abstract findOne(userId: string, scheduledTimeInSeconds: number): Promise<Meal | null>
 }

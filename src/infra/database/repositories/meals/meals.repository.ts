@@ -15,19 +15,19 @@ export class PrismaMealsRepository extends BaseRepository implements MealsReposi
     super(prisma, transactionContext)
   }
 
-  async findOne(userId: string, scheduleTimeInSeconds: number): Promise<Meal | null> {
+  async findOne(userId: string, scheduledTimeInSeconds: number): Promise<Meal | null> {
     return await this.db.meal.findFirst({
       where: {
         userId,
-        scheduleTimeInSeconds: {
-          lte: scheduleTimeInSeconds,
+        scheduledTimeInSeconds: {
+          lte: scheduledTimeInSeconds,
         },
         diet: {
           isActive: true,
         },
       },
       orderBy: {
-        scheduleTimeInSeconds: 'desc',
+        scheduledTimeInSeconds: 'desc',
       },
     })
   }
@@ -38,7 +38,7 @@ export class PrismaMealsRepository extends BaseRepository implements MealsReposi
         userId: input.userId,
         dietId: input.dietId,
         name: input.name,
-        scheduleTimeInSeconds: input.scheduleTimeInSeconds,
+        scheduledTimeInSeconds: input.scheduledTimeInSeconds,
         foods: {
           createMany: {
             data: input.foods.map((mealFood) => ({

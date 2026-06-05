@@ -1,22 +1,21 @@
-import { BiologicalSex, Goal } from 'generated/prisma/enums'
+import { BiologicalSex, FitnessLevel } from 'generated/prisma/enums'
 
 export type CompleteProfileInput = {
-  goal: Goal
   biologicalSex: BiologicalSex
   birthDate: Date
-  heightInCentimeters: number
+  heightInCm: number
   weightInKg: number
   targetWeightInKg: number
   timezone: string
+  fitnessLevel: FitnessLevel
 }
 
 export type CompleteProfileOutput = {
   id: string
   weightInKg: number
   targetWeightInKg: number
-  heightInCentimeters: number
+  heightInCm: number
   biologicalSex: BiologicalSex
   timezone: string
   birthDate: string
-  goal: Goal
 }

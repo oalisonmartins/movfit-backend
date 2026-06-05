@@ -9,7 +9,7 @@ export class MeUseCase {
   async execute(): Promise<MeOutput> {
     const user = this.requestContext.getUser
     const profile = this.requestContext.getProfile
-    const workoutConfig = this.requestContext.getWorkoutConfig
+    const workoutPreference = this.requestContext.getWorkoutPreference
 
     return {
       id: user.id,
@@ -19,17 +19,16 @@ export class MeUseCase {
         id: profile.id,
         timezone: profile.timezone,
         biologicalSex: profile.biologicalSex,
-        birthDate: profile.birthDate.toLocaleDateString('pt-BR', { timeZone: profile.timezone }),
-        goal: profile.goal,
-        heightInCentimeters: profile.heightInCentimeters,
+        birthDate: profile.birthDate.toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
+        heightInCm: profile.heightInCm,
         targetWeightInKg: profile.targetWeightInKg,
         weightInKg: profile.weightInKg,
       },
-      workoutConfig: {
-        id: workoutConfig.id,
-        focusMuscles: workoutConfig.focusMuscles,
-        freeDaysPerWeek: workoutConfig.freeDaysPerWeek,
-        freeTimeByDayInSeconds: workoutConfig.freeTimeByDayInSeconds,
+      workoutPreference: {
+        id: workoutPreference.id,
+        emphasizedMuscles: workoutPreference.emphasizedMuscles,
+        availableDaysPerWeek: workoutPreference.availableDaysPerWeek,
+        availableTimePerDayInSeconds: workoutPreference.availableTimePerDayInSeconds,
       },
     }
   }

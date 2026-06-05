@@ -19,13 +19,10 @@ export class CompleteProfileUseCase {
       id: profile.id,
       weightInKg: profile.weightInKg,
       targetWeightInKg: profile.targetWeightInKg,
-      heightInCentimeters: profile.heightInCentimeters,
+      heightInCm: profile.heightInCm,
       biologicalSex: profile.biologicalSex,
       timezone: profile.timezone,
-      birthDate: input.birthDate.toLocaleDateString('pt-BR', {
-        timeZone: 'UTC',
-      }),
-      goal: profile.goal,
+      birthDate: input.birthDate.toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
     }
   }
 }

@@ -12,7 +12,7 @@ export type MealFood = {
 export type CreateMealInput = {
   userId: string
   dietId: string
-  scheduleTimeInSeconds: number
+  scheduledTimeInSeconds: number
   name: string
 
   totalCalorieInKcal: number

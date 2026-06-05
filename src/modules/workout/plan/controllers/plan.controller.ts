@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
-import { RequireWorkoutConfig } from 'src/common/decorators/require-workout-config.decorator'
+import { RequireWorkoutPreference } from 'src/common/decorators/require-workout-preference.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
-import { WorkoutConfigInterceptor } from 'src/common/interceptors/workout-config.interceptor'
+import { WorkoutPreferenceInterceptor } from 'src/common/interceptors/workout-preference.interceptor'
 import { CreateWorkoutPlanRequestDto } from 'src/modules/workout/plan/dtos/create-plan.dto'
 import { ActiveWorkoutPlanDto } from 'src/modules/workout/plan/dtos/plan.dto'
 import { CreateWorkoutPlanUseCase } from 'src/modules/workout/plan/use-cases/create-plan.use-case'
@@ -18,9 +18,9 @@ export class WorkoutPlanController {
     private readonly getActiveWorkoutPlanUseCase: GetActiveWorkoutPlanUseCase,
   ) {}
 
-  @RequireWorkoutConfig()
+  @RequireWorkoutPreference()
   @ApiCreatedResponse({ type: ActiveWorkoutPlanDto })
-  @UseInterceptors(WorkoutConfigInterceptor)
+  @UseInterceptors(WorkoutPreferenceInterceptor)
   @Throttle({ heavy: { ttl: 60000, limit: 5 } })
   @Post()
   createWorkoutPlan(@Body() body: CreateWorkoutPlanRequestDto) {

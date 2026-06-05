@@ -3,5 +3,5 @@ export type AuthUser = {
   name: string
   email: string
   passwordHash: string
-  isOnboardingCompleted: boolean
+  hasCompletedOnboarding: boolean
 }

@@ -13,7 +13,7 @@ export type CreateDietInput = {
   goal: DietGoal
   meals: {
     name: string
-    scheduleTimeInSeconds: number
+    scheduledTimeInSeconds: number
     foods: {
       foodId: string
       amountInGrams: number

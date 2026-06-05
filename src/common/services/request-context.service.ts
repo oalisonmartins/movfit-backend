@@ -1,12 +1,12 @@
 import { Injectable, Scope } from '@nestjs/common'
-import { Diet, Profile, WorkoutConfig } from 'generated/prisma/client'
+import { Diet, Profile, WorkoutPreference } from 'generated/prisma/client'
 import { AuthUser } from '../types/auth-user.types'
 
 @Injectable({ scope: Scope.REQUEST })
 export class RequestContextService {
   private _user: AuthUser
   private _profile: Profile
-  private _workoutConfig: WorkoutConfig
+  private _workoutPreference: WorkoutPreference
   private _activeDiet: Diet
 
   set setUser(user: AuthUser) {
@@ -17,8 +17,8 @@ export class RequestContextService {
     this._profile = profile
   }
 
-  set setWorkoutConfig(workoutConfig: WorkoutConfig) {
-    this._workoutConfig = workoutConfig
+  set setWorkoutPreference(workoutPreWorkoutPreference: WorkoutPreference) {
+    this._workoutPreference = workoutPreWorkoutPreference
   }
 
   set setActiveDiet(activeDiet: Diet) {
@@ -33,8 +33,8 @@ export class RequestContextService {
     return this._profile
   }
 
-  get getWorkoutConfig(): WorkoutConfig {
-    return this._workoutConfig
+  get getWorkoutPreference(): WorkoutPreference {
+    return this._workoutPreference
   }
 
   get getActiveDiet(): Diet {

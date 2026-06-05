@@ -4,14 +4,14 @@ import { TransactionService } from 'src/common/services/transaction.service'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { PrismaWorkoutPlanRepository } from 'src/infra/database/repositories/workout/plan/workout-plan.repository'
-import { WorkoutConfigModule } from 'src/modules/workout/config/config.module'
 import { WorkoutPlanController } from 'src/modules/workout/plan/controllers/plan.controller'
 import { WorkoutPlanRepository } from 'src/modules/workout/plan/repositories/plan.repository'
 import { CreateWorkoutPlanUseCase } from 'src/modules/workout/plan/use-cases/create-plan.use-case'
 import { GetActiveWorkoutPlanUseCase } from 'src/modules/workout/plan/use-cases/get-active-plan.use-case'
+import { WorkoutPreferenceModule } from 'src/modules/workout/preference/preference.module'
 
 @Module({
-  imports: [WorkoutConfigModule],
+  imports: [WorkoutPreferenceModule],
   controllers: [WorkoutPlanController],
   exports: [WorkoutPlanRepository],
   providers: [

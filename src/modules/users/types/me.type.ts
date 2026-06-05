@@ -1,4 +1,4 @@
-import { BiologicalSex, FocusMuscle, Goal } from 'generated/prisma/enums'
+import { BiologicalSex, EmphasizedMuscle } from 'generated/prisma/enums'
 
 export type MeOutput = {
   id: string
@@ -6,18 +6,17 @@ export type MeOutput = {
   email: string
   profile: {
     id: string
-    goal: Goal
     biologicalSex: BiologicalSex
     birthDate: string
-    heightInCentimeters: number
+    heightInCm: number
     weightInKg: number
     targetWeightInKg: number
     timezone: string
   }
-  workoutConfig: {
+  workoutPreference: {
     id: string
-    focusMuscles: FocusMuscle[]
-    freeDaysPerWeek: number
-    freeTimeByDayInSeconds: number
+    emphasizedMuscles: EmphasizedMuscle[]
+    availableDaysPerWeek: number
+    availableTimePerDayInSeconds: number
   }
 }

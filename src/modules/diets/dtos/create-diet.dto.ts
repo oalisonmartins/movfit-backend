@@ -33,7 +33,7 @@ class MealDTO {
   @IsInt()
   @Min(0)
   @Max(86399)
-  readonly scheduleTimeInSeconds: number
+  readonly scheduledTimeInSeconds: number
 
   @IsArray()
   @ArrayMinSize(1)

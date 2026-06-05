@@ -16,7 +16,7 @@ export class CreateDietUseCase {
     const userId = this.requestContext.getUserId
 
     const { goal: dietGoal, meals: dietMeals } = input
-    const mealsTimes = dietMeals.map((dietMeal) => dietMeal.scheduleTimeInSeconds)
+    const mealsTimes = dietMeals.map((dietMeal) => dietMeal.scheduledTimeInSeconds)
 
     if (new Set(mealsTimes).size !== mealsTimes.length) {
       throw new HttpException(
@@ -28,7 +28,9 @@ export class CreateDietUseCase {
       )
     }
 
-    const sortedMeals = dietMeals.sort((a, b) => a.scheduleTimeInSeconds - b.scheduleTimeInSeconds)
+    const sortedMeals = dietMeals.sort(
+      (a, b) => a.scheduledTimeInSeconds - b.scheduledTimeInSeconds,
+    )
 
     const foodsIds = new Set(sortedMeals.flatMap((meal) => meal.foods.map((food) => food.foodId)))
     const foods = await this.foodsRepository.findManyByIds([...foodsIds.keys()])
@@ -62,7 +64,7 @@ export class CreateDietUseCase {
 
       return {
         name: dietMeal.name,
-        scheduleTimeInSeconds: dietMeal.scheduleTimeInSeconds,
+        scheduledTimeInSeconds: dietMeal.scheduledTimeInSeconds,
         foods: mealFoods,
         totalMacros: mealTotalMacros,
       }
@@ -108,7 +110,7 @@ export class CreateDietUseCase {
             userId,
             dietId: createdDiet.id,
             name: meal.name,
-            scheduleTimeInSeconds: meal.scheduleTimeInSeconds,
+            scheduledTimeInSeconds: meal.scheduledTimeInSeconds,
             foods: {
               createMany: {
                 data: meal.foods.map((food) => ({

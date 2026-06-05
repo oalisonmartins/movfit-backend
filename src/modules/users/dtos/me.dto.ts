@@ -1,12 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { BiologicalSex, DietGoal, FocusMuscle, Goal } from 'generated/prisma/enums'
-
+import { BiologicalSex, EmphasizedMuscle } from 'generated/prisma/enums'
 export class ProfileDTO {
   @ApiProperty({ title: 'ID', type: 'string', format: 'uuid' })
   readonly id: string
-
-  @ApiProperty({ title: 'Goal', enum: Goal })
-  readonly goal: Goal
 
   @ApiProperty({ title: 'Biological sex', enum: BiologicalSex })
   readonly biologicalSex: BiologicalSex
@@ -15,7 +11,7 @@ export class ProfileDTO {
   readonly birthDate: string
 
   @ApiProperty({ title: 'Height (cm)', type: 'integer', minimum: 1 })
-  readonly heightInCentimeters: number
+  readonly heightInCm: number
 
   @ApiProperty({ title: 'Weight (g)', type: 'integer', minimum: 1 })
   readonly weightInGrams: number
@@ -27,18 +23,23 @@ export class ProfileDTO {
   readonly timezone: string
 }
 
-export class WorkoutConfigDTO {
+export class WorkoutPreferenceDto {
   @ApiProperty({ title: 'ID', type: 'string', format: 'uuid' })
   readonly id: string
 
   @ApiProperty({ title: 'Free days per week', type: 'integer', minimum: 1, maximum: 7 })
-  readonly freeDaysPerWeek: number
+  readonly availableDaysPerWeek: number
 
   @ApiProperty({ title: 'Free time by day (s)', type: 'integer', minimum: 1, maximum: 86_399 })
-  readonly freeTimeByDayInSeconds: number
+  readonly availableTimePerDayInSeconds: number
 
-  @ApiProperty({ title: 'Focus muscles (2 max)', enum: [FocusMuscle], isArray: true, maxItems: 2 })
-  readonly focusMuscles: FocusMuscle[]
+  @ApiProperty({
+    title: 'Focus muscles (2 max)',
+    enum: [EmphasizedMuscle],
+    isArray: true,
+    maxItems: 2,
+  })
+  readonly emphasizedMuscles: EmphasizedMuscle[]
 }
 
 export class FoodDTO {
@@ -112,9 +113,6 @@ export class DietDTO {
   @ApiProperty({ title: 'Total fats (g)', type: 'integer', minimum: 1 })
   readonly totalFatsInGrams: number
 
-  @ApiProperty({ title: 'Diet goal', enum: DietGoal })
-  readonly goal: DietGoal
-
   @ApiProperty({ title: 'Meals', type: [MealDTO], isArray: true })
   readonly meals: MealDTO[]
 }
@@ -132,6 +130,6 @@ export class MeResponseDTO {
   @ApiProperty({ title: 'Profile', type: ProfileDTO })
   readonly profile: ProfileDTO
 
-  @ApiProperty({ title: 'Workout config', type: WorkoutConfigDTO })
-  readonly workoutConfig: WorkoutConfigDTO
+  @ApiProperty({ title: 'Workout config', type: WorkoutPreferenceDto })
+  readonly workoutPreference: WorkoutPreferenceDto
 }

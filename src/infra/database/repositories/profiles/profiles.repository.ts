@@ -4,7 +4,7 @@ import { TransactionContextService } from 'src/common/services/transaction-conte
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
-import { CompleteProfileInput } from 'src/modules/profiles/types'
+import { CompleteProfileInput } from 'src/modules/profiles/types/complete-profile.type'
 
 @Injectable()
 export class PrismaProfileRepository extends BaseRepository implements ProfileRepository {
@@ -21,34 +21,26 @@ export class PrismaProfileRepository extends BaseRepository implements ProfileRe
     })
   }
 
-  async upsert(userId: string, data: CompleteProfileInput): Promise<Profile> {
+  async upsert(userId: string, input: CompleteProfileInput): Promise<Profile> {
     return await this.db.$transaction(async (tx) => {
       const upsertedProfile = await tx.profile.upsert({
         where: { userId },
         create: {
           userId,
-          biologicalSex: data.biologicalSex,
-          birthDate: data.birthDate,
-          goal: data.goal,
-          heightInCentimeters: data.heightInCentimeters,
-          targetWeightInKg: data.targetWeightInKg,
-          weightInKg: data.weightInKg,
-          timezone: data.timezone,
+          biologicalSex: input.biologicalSex,
+          birthDate: input.birthDate,
+          heightInCm: input.heightInCm,
+          targetWeightInKg: input.targetWeightInKg,
+          weightInKg: input.weightInKg,
+          timezone: input.timezone,
+          fitnessLevel: input.fitnessLevel,
         },
-        update: {
-          userId,
-          ...data,
-        },
+        update: { userId, ...input },
       })
 
       await tx.user.update({
-        where: {
-          id: upsertedProfile.userId,
-          // isOnboardingCompleted: { equals: false },
-        },
-        data: {
-          isOnboardingCompleted: true,
-        },
+        where: { id: upsertedProfile.userId },
+        data: { hasCompletedOnboarding: true },
       })
 
       return upsertedProfile

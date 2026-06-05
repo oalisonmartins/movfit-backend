@@ -15,13 +15,6 @@ export class PrismaUsersRepository extends BaseRepository implements UsersReposi
     super(prisma, transactionContext)
   }
 
-  async me(userId: string): Promise<User | null> {
-    return await this.db.user.findUnique({
-      where: { id: userId },
-      include: { profile: true, workoutConfig: true },
-    })
-  }
-
   async create(input: CreateUserInput): Promise<User> {
     return await this.db.user.create({
       data: { name: input.name, email: input.email, passwordHash: input.password },
