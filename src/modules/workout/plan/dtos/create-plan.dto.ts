@@ -89,7 +89,7 @@ class WorkoutExerciseDto {
   readonly restTimeInSeconds: number
 }
 
-export class CreateWorkoutPlanInputDto {
+export class CreateWorkoutPlanRequestDto {
   @IsString({
     message: 'O nome do plano de treino deve ser uma string',
   })

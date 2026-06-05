@@ -3,6 +3,7 @@ import { WeekDay } from 'generated/prisma/enums'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { TransactionService } from 'src/common/services/transaction.service'
 import { CreateWorkoutPlanInput } from 'src/modules/workout/plan/types/create-plan.types'
+import { ActiveWorkoutPlan } from 'src/modules/workout/plan/types/plan.types'
 import { WorkoutPlanRepository } from '../repositories/plan.repository'
 
 @Injectable()
@@ -13,7 +14,7 @@ export class CreateWorkoutPlanUseCase {
     private readonly transactionService: TransactionService,
   ) {}
 
-  async execute(input: CreateWorkoutPlanInput) {
+  async execute(input: CreateWorkoutPlanInput): Promise<ActiveWorkoutPlan> {
     const userId = this.requestContext.getUserId
     const { freeDaysPerWeek, freeTimeByDayInSeconds, goal } = this.requestContext.getWorkoutConfig
 
@@ -107,7 +108,12 @@ export class CreateWorkoutPlanUseCase {
         },
       })
 
-      return newWorkoutPlan
+      return {
+        id: newWorkoutPlan.id,
+        name: newWorkoutPlan.name,
+        goal: newWorkoutPlan.goal,
+        createdAt: newWorkoutPlan.createdAt,
+      }
     })
   }
 }
