@@ -1,7 +1,7 @@
 import { ArrayMaxSize, IsArray, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator'
 import { EmphasizedMuscle, WorkoutGoal } from 'generated/prisma/enums'
 
-export class CreateWorkoutPreferenceRequestDto {
+export class CreateWorkoutPreferenceDto {
   @IsInt({
     message: 'Os dias precisam ser números inteiros',
   })

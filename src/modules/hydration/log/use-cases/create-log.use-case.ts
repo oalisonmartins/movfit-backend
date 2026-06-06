@@ -14,19 +14,23 @@ export class CreateHydrationLogUseCase {
   async execute() {
     const userId = this.requestContext.getUserId
 
-    const { availableDaysPerWeek, availableTimePerDayInSeconds } =
-      this.requestContext.getWorkoutPreference
-    const { weightInKg, biologicalSex, birthDate } = this.requestContext.getProfile
+    const workoutPreference = this.requestContext.getWorkoutPreference
+    const dietPreference = this.requestContext.getDietPreference
+    const profile = this.requestContext.getProfile
 
     const activityFactor = this.getActivityFactor(
-      availableDaysPerWeek,
-      availableTimePerDayInSeconds,
+      workoutPreference.availableDaysPerWeek,
+      workoutPreference.availableTimePerDayInSeconds,
     )
-    const ageFactor = this.getAgeFactor(birthDate)
-    const sexFactor = biologicalSex === 'MALE' ? 1.1 : 1.0
+    const ageFactor = this.getAgeFactor(profile.birthDate)
+    const sexFactor = profile.biologicalSex === 'MALE' ? 1.1 : 1.0
 
     const dailyGoalInMl = Math.round(
-      weightInKg * GoalFactors['DEFINE'] * sexFactor * ageFactor * activityFactor,
+      profile.weightInKg *
+        GoalFactors[dietPreference.goal] *
+        sexFactor *
+        ageFactor *
+        activityFactor,
     )
 
     const today = new Date()
@@ -35,9 +39,7 @@ export class CreateHydrationLogUseCase {
     const todayHydrationLog = await this.hydrationLogRepository.findOne(userId, today)
 
     if (todayHydrationLog) {
-      return {
-        hydrationGoalInMl: todayHydrationLog.dailyGoalInMl,
-      }
+      return { hydrationGoalInMl: todayHydrationLog.dailyGoalInMl }
     }
 
     await this.hydrationLogRepository.create(userId, {
@@ -45,24 +47,22 @@ export class CreateHydrationLogUseCase {
       date: today,
     })
 
-    return {
-      hydrationGoalInMl: dailyGoalInMl,
-    }
+    return { hydrationGoalInMl: dailyGoalInMl }
   }
 
   private getActivityFactor(availableDaysPerWeek: number, availableTimePerDayInSeconds: number) {
-    const activeDays = availableDaysPerWeek
+    const activityDays = availableDaysPerWeek
 
-    const availableMinutes = availableTimePerDayInSeconds / 60
-    const isHigh = availableMinutes >= 60
-    const isLow = availableMinutes < 30
+    const availableTimePerDayInMinutes = availableTimePerDayInSeconds / 60
+    const isHigh = availableTimePerDayInMinutes >= 60
+    const isLow = availableTimePerDayInMinutes < 30
 
-    if (activeDays >= 6 && isHigh) return 1.3
-    if (activeDays >= 5 && isHigh) return 1.2
-    if (activeDays >= 4 && !isLow) return 1.15
-    if (activeDays >= 3) return 1.1
+    if (activityDays >= 6 && isHigh) return 1.3
+    if (activityDays >= 5 && isHigh) return 1.2
+    if (activityDays >= 4 && !isLow) return 1.15
+    if (activityDays >= 3) return 1.1
 
-    return activeDays >= 2 ? 1.05 : 1.0
+    return activityDays >= 2 ? 1.05 : 1.0
   }
 
   private getAgeFactor(birthDate: Date) {

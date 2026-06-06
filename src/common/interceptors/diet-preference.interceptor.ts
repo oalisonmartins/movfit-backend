@@ -9,36 +9,39 @@ import {
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
 import { RequestContextService } from 'src/common/services/request-context.service'
-import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
+import { DietPreferenceRepository } from 'src/modules/diets/preference/repositories/preference.repository'
 
 @Injectable()
-export class ProfileInterceptor implements NestInterceptor {
+export class DietPreferenceInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
-    private readonly profileRepository: ProfileRepository,
+    private readonly dietPreferenceRepository: DietPreferenceRepository,
     private readonly requestContext: RequestContextService,
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler) {
-    const requireProfile = this.reflector.get(constants.REQUIRE_PROFILE_KEY, context.getHandler())
+    const requireDietPreference = this.reflector.get(
+      constants.REQUIRE_DIET_PREFERENCE_KEY,
+      context.getHandler(),
+    )
 
-    if (requireProfile) {
+    if (requireDietPreference) {
       const request = context.switchToHttp().getRequest()
       const user = request.user
 
-      const profile = await this.profileRepository.findOne(user.id)
+      const dietPreference = await this.dietPreferenceRepository.findOne(user.id)
 
-      if (!profile) {
+      if (!dietPreference) {
         throw new HttpException(
           {
-            message: 'Preencha corretamente seu perfil para continuar',
-            code: 'PROFILE_REQUIRED',
+            message: 'Defina as preferência de dieta para continuar',
+            code: 'DIET_PREFERENCE_REQUIRED',
           },
           HttpStatus.FORBIDDEN,
         )
       }
 
-      this.requestContext.setProfile = profile
+      this.requestContext.setDietPreference = dietPreference
     }
 
     return next.handle()

@@ -3,8 +3,8 @@ import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
-import { CreateWorkoutPreferenceRequestDto } from 'src/modules/workout/preference/dtos/create-preference.dto'
-import { WorkoutPreferenceResponseDto } from 'src/modules/workout/preference/dtos/preference.dto'
+import { CreateWorkoutPreferenceDto } from 'src/modules/workout/preference/dtos/create-preference.dto'
+import { WorkoutPreferenceDto } from 'src/modules/workout/preference/dtos/preference.dto'
 import { CreateWorkoutPreferenceUseCase } from 'src/modules/workout/preference/use-cases/create-preference.use-case'
 import { GetWorkoutPreferenceUseCase } from 'src/modules/workout/preference/use-cases/get-preference.use-case'
 
@@ -16,17 +16,17 @@ export class WorkoutPreferenceController {
     private readonly createWorkoutPreferenceUseCase: CreateWorkoutPreferenceUseCase,
   ) {}
 
-  @ApiOkResponse({ type: WorkoutPreferenceResponseDto })
+  @ApiOkResponse({ type: WorkoutPreferenceDto })
   @Throttle({ heavy: { ttl: 60000, limit: 10 } })
   @Get()
   getWorkoutPreference() {
     return this.getWorkoutPreferenceUseCase.execute()
   }
 
-  @ApiCreatedResponse({ type: WorkoutPreferenceResponseDto })
+  @ApiCreatedResponse({ type: WorkoutPreferenceDto })
   @Throttle({ heavy: { ttl: 60000, limit: 5 } })
   @Post()
-  createWorkoutPreference(@Body() body: CreateWorkoutPreferenceRequestDto) {
+  createWorkoutPreference(@Body() body: CreateWorkoutPreferenceDto) {
     return this.createWorkoutPreferenceUseCase.execute(body)
   }
 }

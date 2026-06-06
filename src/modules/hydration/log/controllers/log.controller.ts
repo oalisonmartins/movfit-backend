@@ -9,10 +9,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
+import { RequireDietPreference } from 'src/common/decorators/require-diet-preference.decorator'
 import { RequireProfile } from 'src/common/decorators/require-profile.decorator'
 import { RequireWorkoutPreference } from 'src/common/decorators/require-workout-preference.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { OnboardingGuard } from 'src/common/guards/onboarding.guard'
+import { DietPreferenceInterceptor } from 'src/common/interceptors/diet-preference.interceptor'
 import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
 import { WorkoutPreferenceInterceptor } from 'src/common/interceptors/workout-preference.interceptor'
 import { CreateHydrationLogDto } from 'src/modules/hydration/log/dtos/create-log.dto'
@@ -34,8 +36,9 @@ export class HydrationLogController {
   ) {}
 
   @RequireProfile()
+  @RequireDietPreference()
   @RequireWorkoutPreference()
-  @UseInterceptors(ProfileInterceptor, WorkoutPreferenceInterceptor)
+  @UseInterceptors(ProfileInterceptor, DietPreferenceInterceptor, WorkoutPreferenceInterceptor)
   @ApiCreatedResponse({ type: CreateHydrationLogDto })
   @Post()
   @HttpCode(HttpStatus.CREATED)

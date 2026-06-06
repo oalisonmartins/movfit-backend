@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { EmphasizedMuscle } from 'generated/prisma/enums'
 
-export class WorkoutPreferenceResponseDto {
+export class WorkoutPreferenceDto {
   @ApiProperty({
     title: 'ID da preferência de treino',
     type: 'string',
@@ -36,7 +36,6 @@ export class WorkoutPreferenceResponseDto {
   @ApiProperty({
     title: 'Data de criação',
     type: 'string',
-    format: 'date',
   })
   readonly createdAt: Date
 }
