@@ -1,6 +1,6 @@
 export enum GoalFactors {
-  LOSE_WEIGHT = 40,
-  GAIN_MASS = 40,
-  DEFINE = 38,
-  MAINTAIN_WEIGHT = 35,
+  WEIGHT_LOSS = 40,
+  BULKING = 40,
+  CUTTING = 38,
+  MAINTENANCE = 35,
 }
