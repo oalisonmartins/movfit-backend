@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Food } from 'generated/prisma/client'
+import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { BaseRepository } from 'src/infra/database/repositories/base.repository'
-import { FoodsRepository } from '../../../../modules/foods/repositories/foods.repository'
-import { FindAllFoodsInput } from '../../../../modules/foods/types/find-all-foods.types'
-import { SaveFoodInput } from '../../../../modules/foods/types/save-food.types'
+import { FoodsRepository } from 'src/modules/foods/repositories/foods.repository'
+import { FindAllFoodsInput } from 'src/modules/foods/types/find-all-foods.types'
+import { SaveFoodInput } from 'src/modules/foods/types/save-food.types'
 
 @Injectable()
 export class PrismaFoodsRepository extends BaseRepository implements FoodsRepository {

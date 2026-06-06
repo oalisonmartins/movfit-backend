@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
+import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { TransactionContextService } from '../../../common/services/transaction-context.service'
 
 @Injectable()
 export abstract class BaseRepository {

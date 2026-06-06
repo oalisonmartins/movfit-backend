@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Meal } from 'generated/prisma/client'
+import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { MealsRepository } from 'src/modules/meals/repositories/meals.repository'
 import { CreateMealInput } from 'src/modules/meals/types'
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Profile } from 'generated/prisma/client'
+import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
 import { SetPersonalInfosInput } from 'src/modules/profiles/types/set-personal-infos.type'
 

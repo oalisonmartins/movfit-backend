@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { HydrationEntry } from 'generated/prisma/client'
+import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { HydrationEntryRepository } from 'src/modules/hydration/entry/repositories/entry.repository'
 
 @Injectable()
-export class PrismaHydrationEntryRepository extends BaseRepository implements HydrationEntryRepository {
+export class PrismaHydrationEntryRepository
+  extends BaseRepository
+  implements HydrationEntryRepository
+{
   constructor(
     readonly prisma: PrismaService,
     readonly transactionService: TransactionContextService,
@@ -14,7 +17,10 @@ export class PrismaHydrationEntryRepository extends BaseRepository implements Hy
     super(prisma, transactionService)
   }
 
-  async create(userId: string, input: { amountInMl: number; hydrationLogId: string }): Promise<HydrationEntry> {
+  async create(
+    userId: string,
+    input: { amountInMl: number; hydrationLogId: string },
+  ): Promise<HydrationEntry> {
     return await this.db.$transaction(async (tx) => {
       const hydrationEntry = await tx.hydrationEntry.create({
         data: {

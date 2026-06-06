@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { HydrationLog } from 'generated/prisma/client'
+import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { HydrationLogRepository } from 'src/modules/hydration/log/repositories/log.repository'
 import { HydrationLogWithEntries } from 'src/modules/hydration/log/types/log-with-entries.types'
 
@@ -15,7 +15,10 @@ export class PrismaHydrationLogRepository extends BaseRepository implements Hydr
     super(prisma, transactionService)
   }
 
-  async create(userId: string, input: { dailyGoalInMl: number; date: Date }): Promise<HydrationLog> {
+  async create(
+    userId: string,
+    input: { dailyGoalInMl: number; date: Date },
+  ): Promise<HydrationLog> {
     return await this.db.hydrationLog.create({
       data: {
         userId,
