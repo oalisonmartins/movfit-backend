@@ -9,13 +9,13 @@ import {
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
 import { RequestContextService } from 'src/common/services/request-context.service'
-import { DietPreferenceRepository } from 'src/modules/diets/preference/repositories/preference.repository'
+import { DietsPreferenceRepository } from 'src/modules/diets/preference/repositories/diets-preference.repository'
 
 @Injectable()
 export class DietPreferenceInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
-    private readonly dietPreferenceRepository: DietPreferenceRepository,
+    private readonly DietsPreferenceRepository: DietsPreferenceRepository,
     private readonly requestContext: RequestContextService,
   ) {}
 
@@ -29,7 +29,7 @@ export class DietPreferenceInterceptor implements NestInterceptor {
       const request = context.switchToHttp().getRequest()
       const user = request.user
 
-      const dietPreference = await this.dietPreferenceRepository.findOne(user.id)
+      const dietPreference = await this.DietsPreferenceRepository.findOne(user.id)
 
       if (!dietPreference) {
         throw new HttpException(

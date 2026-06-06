@@ -1,6 +1,6 @@
 import { DietGoal } from 'generated/prisma/enums'
 
-export type CreateDietRepositoryInput = {
+export type CreateDietsRepositoryInput = {
   userId: string
   goal: DietGoal
   totalCalorieInKcal: number

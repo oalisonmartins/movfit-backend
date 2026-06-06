@@ -4,7 +4,7 @@ import { TransactionContextService } from 'src/common/services/transaction-conte
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
-import { CompleteProfileInput } from 'src/modules/profiles/types/complete-profile.type'
+import { SetPersonalInfosInput } from 'src/modules/profiles/types/set-personal-infos.type'
 
 @Injectable()
 export class PrismaProfileRepository extends BaseRepository implements ProfileRepository {
@@ -21,29 +21,21 @@ export class PrismaProfileRepository extends BaseRepository implements ProfileRe
     })
   }
 
-  async upsert(userId: string, input: CompleteProfileInput): Promise<Profile> {
-    return await this.db.$transaction(async (tx) => {
-      const upsertedProfile = await tx.profile.upsert({
-        where: { userId },
-        create: {
-          userId,
-          biologicalSex: input.biologicalSex,
-          birthDate: input.birthDate,
-          heightInCm: input.heightInCm,
-          targetWeightInKg: input.targetWeightInKg,
-          weightInKg: input.weightInKg,
-          timezone: input.timezone,
-          fitnessLevel: input.fitnessLevel,
-        },
-        update: { userId, ...input },
-      })
-
-      await tx.user.update({
-        where: { id: upsertedProfile.userId },
-        data: { hasCompletedOnboarding: true },
-      })
-
-      return upsertedProfile
+  // TODO: Criar métodos "create" e "update"
+  async upsert(userId: string, input: SetPersonalInfosInput): Promise<Profile> {
+    return await this.db.profile.upsert({
+      where: { userId },
+      create: {
+        userId,
+        biologicalSex: input.biologicalSex,
+        birthDate: input.birthDate,
+        heightInCm: input.heightInCm,
+        targetWeightInKg: input.targetWeightInKg,
+        weightInKg: input.weightInKg,
+        timezone: input.timezone,
+        fitnessLevel: input.fitnessLevel,
+      },
+      update: { userId, ...input },
     })
   }
 }

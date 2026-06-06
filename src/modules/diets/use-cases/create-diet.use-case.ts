@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { TransactionService } from 'src/common/services/transaction.service'
 import { CreateDietInput, CreateDietOutput } from 'src/modules/diets/types'
@@ -14,11 +14,25 @@ export class CreateDietUseCase {
 
   async execute(input: CreateDietInput): Promise<CreateDietOutput> {
     const userId = this.requestContext.getUserId
+    const { generationType } = this.requestContext.getDietPreference
+
+    if (generationType !== 'MANUAL') {
+      throw new HttpException(
+        {
+          message:
+            'Você está no modo de geração automática de dieta. Altere para o modo manual ou utilize nossa geração automática de dieta',
+          code: 'INVALID_GENERATION_TYPE',
+        },
+        HttpStatus.BAD_REQUEST,
+      )
+    }
 
     const { goal: dietGoal, meals: dietMeals } = input
-    const mealsTimes = dietMeals.map((dietMeal) => dietMeal.scheduledTimeInSeconds)
 
-    if (new Set(mealsTimes).size !== mealsTimes.length) {
+    const mealsScheduleTime = dietMeals.map((dietMeal) => dietMeal.scheduledTimeInSeconds)
+    const mealsScheduleTimeSet = new Set(mealsScheduleTime)
+
+    if (mealsScheduleTimeSet.size !== mealsScheduleTime.length) {
       throw new HttpException(
         {
           message: 'Já existe uma refeição nesse horário',
@@ -28,36 +42,48 @@ export class CreateDietUseCase {
       )
     }
 
-    const sortedMeals = dietMeals.sort(
+    const mealsSortedByScheduleTime = dietMeals.sort(
       (a, b) => a.scheduledTimeInSeconds - b.scheduledTimeInSeconds,
     )
 
-    const foodsIds = new Set(sortedMeals.flatMap((meal) => meal.foods.map((food) => food.foodId)))
-    const foods = await this.foodsRepository.findManyByIds([...foodsIds.keys()])
+    const foodsIds = new Set(
+      mealsSortedByScheduleTime.flatMap((meal) => meal.foods.map((food) => food.foodId)),
+    )
+    const foods = await this.foodsRepository.findManyByIds([...foodsIds])
     const foodsMap = new Map(foods.map((food) => [food.id, food]))
 
-    const computedMeals = sortedMeals.map((dietMeal) => {
+    const computedMeals = mealsSortedByScheduleTime.map((dietMeal) => {
       const mealFoods = dietMeal.foods.map((dietMealFood) => {
         const food = foodsMap.get(dietMealFood.foodId)
 
-        if (!food) throw new NotFoundException(`Food with ID: ${dietMealFood.foodId} not found`)
+        if (!food) {
+          throw new HttpException(
+            {
+              message: `O alimento com ID: ${dietMealFood.foodId} não foi encontrado`,
+              code: `FOOD_NOT_FOUND`,
+            },
+            HttpStatus.NOT_FOUND,
+          )
+        }
 
         return {
           foodId: food.id,
-          calorieInKcal: food.caloriePer100gInKcal,
-          proteinInGrams: food.proteinPer100gInGrams,
-          carbInGrams: food.carbPer100gInGrams,
-          fatInGrams: food.fatPer100gInGrams,
+          caloriePer100gInKcal: food.caloriePer100gInKcal,
+          proteinPer100gInGrams: food.proteinPer100gInGrams,
+          carbPer100gInGrams: food.carbPer100gInGrams,
+          fatPer100gInGrams: food.fatPer100gInGrams,
           amountInGrams: dietMealFood.amountInGrams,
         }
       })
 
       const mealTotalMacros = mealFoods.reduce(
         (total, food) => ({
-          calorieInKcal: total.calorieInKcal + (food.calorieInKcal * food.amountInGrams) / 100,
-          proteinInGrams: total.proteinInGrams + (food.proteinInGrams * food.amountInGrams) / 100,
-          carbInGrams: total.carbInGrams + (food.carbInGrams * food.amountInGrams) / 100,
-          fatInGrams: total.fatInGrams + (food.fatInGrams * food.amountInGrams) / 100,
+          calorieInKcal:
+            total.calorieInKcal + (food.caloriePer100gInKcal * food.amountInGrams) / 100,
+          proteinInGrams:
+            total.proteinInGrams + (food.proteinPer100gInGrams * food.amountInGrams) / 100,
+          carbInGrams: total.carbInGrams + (food.carbPer100gInGrams * food.amountInGrams) / 100,
+          fatInGrams: total.fatInGrams + (food.fatPer100gInGrams * food.amountInGrams) / 100,
         }),
         { calorieInKcal: 0, proteinInGrams: 0, carbInGrams: 0, fatInGrams: 0 },
       )
@@ -104,24 +130,26 @@ export class CreateDietUseCase {
         },
       })
 
-      for (const meal of computedMeals) {
-        await tx.meal.create({
-          data: {
-            userId,
-            dietId: createdDiet.id,
-            name: meal.name,
-            scheduledTimeInSeconds: meal.scheduledTimeInSeconds,
-            foods: {
-              createMany: {
-                data: meal.foods.map((food) => ({
-                  amountInGrams: food.amountInGrams,
-                  foodId: food.foodId,
-                })),
+      await Promise.all(
+        computedMeals.map((meal) =>
+          tx.meal.create({
+            data: {
+              userId,
+              dietId: createdDiet.id,
+              name: meal.name,
+              scheduledTimeInSeconds: meal.scheduledTimeInSeconds,
+              foods: {
+                createMany: {
+                  data: meal.foods.map((food) => ({
+                    amountInGrams: food.amountInGrams,
+                    foodId: food.foodId,
+                  })),
+                },
               },
             },
-          },
-        })
-      }
+          }),
+        ),
+      )
 
       return {
         id: createdDiet.id,

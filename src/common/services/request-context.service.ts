@@ -44,7 +44,7 @@ export class RequestContextService {
   }
 
   get getDietPreference(): DietPreference {
-    return this.getDietPreference
+    return this._dietPreference
   }
 
   get getActiveDiet(): Diet {

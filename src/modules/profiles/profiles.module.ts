@@ -6,17 +6,17 @@ import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { PrismaProfileRepository } from 'src/infra/database/repositories/profiles/profiles.repository'
 import { ProfilesController } from 'src/modules/profiles/controller/profiles.controller'
 import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
-import { CompleteProfileUseCase } from 'src/modules/profiles/use-cases/complete-profile.use-case'
+import { SetPersonalInfosUseCase } from 'src/modules/profiles/use-cases/set-personal-infos.use-case'
 
 @Module({
   controllers: [ProfilesController],
   exports: [ProfileRepository],
   providers: [
+    SetPersonalInfosUseCase,
     PrismaService,
     TransactionService,
     TransactionContextService,
     RequestContextService,
-    CompleteProfileUseCase,
     {
       provide: ProfileRepository,
       useClass: PrismaProfileRepository,

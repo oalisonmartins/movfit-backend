@@ -8,8 +8,10 @@ export class MeUseCase {
 
   async execute(): Promise<MeOutput> {
     const user = this.requestContext.getUser
+
     const profile = this.requestContext.getProfile
     const workoutPreference = this.requestContext.getWorkoutPreference
+    const dietPreference = this.requestContext.getDietPreference
 
     return {
       id: user.id,
@@ -29,6 +31,12 @@ export class MeUseCase {
         emphasizedMuscles: workoutPreference.emphasizedMuscles,
         availableDaysPerWeek: workoutPreference.availableDaysPerWeek,
         availableTimePerDayInSeconds: workoutPreference.availableTimePerDayInSeconds,
+      },
+      dietPreference: {
+        id: dietPreference.id,
+        goal: dietPreference.goal,
+        generationType: dietPreference.generationType,
+        updatedAt: dietPreference.updatedAt,
       },
     }
   }

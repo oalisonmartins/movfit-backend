@@ -1,4 +1,9 @@
-import { BiologicalSex, EmphasizedMuscle } from 'generated/prisma/enums'
+import {
+  BiologicalSex,
+  DietGenerationType,
+  DietGoal,
+  EmphasizedMuscle,
+} from 'generated/prisma/enums'
 
 export type MeOutput = {
   id: string
@@ -18,5 +23,11 @@ export type MeOutput = {
     emphasizedMuscles: EmphasizedMuscle[]
     availableDaysPerWeek: number
     availableTimePerDayInSeconds: number
+  }
+  dietPreference: {
+    id: string
+    goal: DietGoal
+    generationType: DietGenerationType
+    updatedAt: Date
   }
 }

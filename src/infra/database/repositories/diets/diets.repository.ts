@@ -4,7 +4,7 @@ import { TransactionContextService } from 'src/common/services/transaction-conte
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { BaseRepository } from 'src/infra/database/repositories/base.repository'
 import { DietsRepository } from '../../../../modules/diets/repositories/diets.repository'
-import { CreateDietRepositoryInput } from '../../../../modules/diets/types/create-diet.types'
+import { CreateDietsRepositoryInput } from '../../../../modules/diets/types/create-diet.types'
 
 @Injectable()
 export class PrismaDietsRepository extends BaseRepository implements DietsRepository {
@@ -15,7 +15,7 @@ export class PrismaDietsRepository extends BaseRepository implements DietsReposi
     super(prisma, transactionContext)
   }
 
-  async create(input: CreateDietRepositoryInput): Promise<Diet> {
+  async create(input: CreateDietsRepositoryInput): Promise<Diet> {
     return await this.db.diet.create({
       data: {
         userId: input.userId,

@@ -9,7 +9,7 @@ import {
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
 import { RequestContextService } from 'src/common/services/request-context.service'
-import { WorkoutPreferenceRepository } from 'src/modules/workout/preference/repositories/preference.repository'
+import { WorkoutPreferenceRepository } from 'src/modules/workout/preference/repositories/workout-preference.repository'
 
 @Injectable()
 export class WorkoutPreferenceInterceptor implements NestInterceptor {
