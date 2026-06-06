@@ -3,11 +3,12 @@ import { Profile } from 'generated/prisma/client'
 import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
+import { ProfilesRepository } from 'src/modules/profiles/repositories/profiles.repository'
 import { SetPersonalInfosInput } from 'src/modules/profiles/types/set-personal-infos.type'
+import { UpdatePersonalInfosInput } from 'src/modules/profiles/types/update-personal-infos.types'
 
 @Injectable()
-export class PrismaProfileRepository extends BaseRepository implements ProfileRepository {
+export class PrismaProfilesRepository extends BaseRepository implements ProfilesRepository {
   constructor(
     readonly prisma: PrismaService,
     readonly transactionContext: TransactionContextService,
@@ -21,21 +22,19 @@ export class PrismaProfileRepository extends BaseRepository implements ProfileRe
     })
   }
 
-  // TODO: Criar métodos "create" e "update"
-  async upsert(userId: string, input: SetPersonalInfosInput): Promise<Profile> {
-    return await this.db.profile.upsert({
-      where: { userId },
-      create: {
+  async create(userId: string, input: SetPersonalInfosInput): Promise<Profile> {
+    return await this.db.profile.create({
+      data: {
         userId,
-        biologicalSex: input.biologicalSex,
-        birthDate: input.birthDate,
-        heightInCm: input.heightInCm,
-        targetWeightInKg: input.targetWeightInKg,
-        weightInKg: input.weightInKg,
-        timezone: input.timezone,
-        fitnessLevel: input.fitnessLevel,
+        ...input,
       },
-      update: { userId, ...input },
+    })
+  }
+
+  async update(userId: string, input: UpdatePersonalInfosInput): Promise<Profile> {
+    return await this.db.profile.update({
+      where: { userId },
+      data: input,
     })
   }
 }

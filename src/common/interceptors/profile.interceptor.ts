@@ -9,13 +9,13 @@ import {
 import { Reflector } from '@nestjs/core'
 import { constants } from 'src/common/constants'
 import { RequestContextService } from 'src/common/services/request-context.service'
-import { ProfileRepository } from 'src/modules/profiles/repositories/profiles.repository'
+import { ProfilesRepository } from 'src/modules/profiles/repositories/profiles.repository'
 
 @Injectable()
 export class ProfileInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
-    private readonly profileRepository: ProfileRepository,
+    private readonly ProfilesRepository: ProfilesRepository,
     private readonly requestContext: RequestContextService,
   ) {}
 
@@ -26,7 +26,7 @@ export class ProfileInterceptor implements NestInterceptor {
       const request = context.switchToHttp().getRequest()
       const user = request.user
 
-      const profile = await this.profileRepository.findOne(user.id)
+      const profile = await this.ProfilesRepository.findOne(user.id)
 
       if (!profile) {
         throw new HttpException(
