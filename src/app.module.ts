@@ -9,6 +9,7 @@ import { DietsModule } from 'src/modules/diets/diets.module'
 import { FoodsModule } from 'src/modules/foods/foods.module'
 import { HydrationModule } from 'src/modules/hydration/hydration.module'
 import { NutritionModule } from 'src/modules/nutrition/nutrition.module'
+import { OnboardingModule } from 'src/modules/onboarding/onboarding.module'
 import { WorkoutModule } from 'src/modules/workout/workout.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -60,6 +61,7 @@ import { UsersModule } from './modules/users/users.module'
     FoodsModule,
     NutritionModule,
     HydrationModule,
+    OnboardingModule,
   ],
   providers: [
     AppService,
