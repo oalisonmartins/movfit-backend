@@ -8,7 +8,6 @@ import { DietsPreferenceModule } from 'src/modules/diets/preference/diets-prefer
 import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { UsersController } from 'src/modules/users/controller/users.controller'
 import { UsersRepository } from 'src/modules/users/repositories/users-repository'
-import { CompleteOnboardingUseCase } from 'src/modules/users/use-cases/complete-onboarding.use-case'
 import { MeUseCase } from 'src/modules/users/use-cases/me.use-case'
 import { WorkoutPreferenceModule } from '../workout/preference/workout-preference.module'
 
@@ -18,7 +17,6 @@ import { WorkoutPreferenceModule } from '../workout/preference/workout-preferenc
   exports: [UsersRepository],
   providers: [
     MeUseCase,
-    CompleteOnboardingUseCase,
     PrismaService,
     TransactionService,
     TransactionContextService,

@@ -11,7 +11,6 @@ export class CompleteOnboardingUseCase {
 
   async execute() {
     const userId = this.requestContext.getUserId
-
     await this.usersRepository.update(userId, { hasCompletedOnboarding: true })
   }
 }
