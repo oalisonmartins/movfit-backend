@@ -52,7 +52,6 @@ import { UsersModule } from './modules/users/users.module'
       type: 'single',
       url: process.env.REDIS_URL,
     }),
-    // TODO: Implementar WorkoutPlan, WorkoutDay, WorkoutSession e a parte de treinos no geral.
     UsersModule,
     AuthModule,
     WorkoutModule,

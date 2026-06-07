@@ -1,6 +1,5 @@
-import { randomUUID } from 'node:crypto'
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { AuthService } from 'src/modules/auth/services/auth.service'
 import { HashingService } from 'src/modules/auth/services/hashing.service'
 import { AuthOutput } from 'src/modules/auth/types/auth.types'
 import { SigninInput } from 'src/modules/auth/types/signin.types'
@@ -10,44 +9,29 @@ import { UsersRepository } from 'src/modules/users/repositories/users-repository
 export class SigninUseCase {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly jwtService: JwtService,
     private readonly hashingService: HashingService,
+    private readonly authService: AuthService,
   ) {}
 
   async execute(input: SigninInput): Promise<AuthOutput> {
     const user = await this.usersRepository.findOneByEmail(input.email)
 
     if (!user) {
-      throw new HttpException(
-        {
-          message: 'E-mail ou senha inválidos.',
-          code: 'INVALID_EMAIL_OR_PASSWORD',
-        },
-        HttpStatus.BAD_REQUEST,
-      )
+      throw new BadRequestException({
+        message: 'E-mail ou senha inválidos.',
+        code: 'INVALID_EMAIL_OR_PASSWORD',
+      })
     }
 
     const isPasswordMatch = await this.hashingService.compare(input.password, user.passwordHash)
 
     if (!isPasswordMatch) {
-      throw new HttpException(
-        {
-          message: 'E-mail ou senha inválidos.',
-          code: 'INVALID_EMAIL_OR_PASSWORD',
-        },
-        HttpStatus.BAD_REQUEST,
-      )
+      throw new BadRequestException({
+        message: 'E-mail ou senha inválidos.',
+        code: 'INVALID_EMAIL_OR_PASSWORD',
+      })
     }
 
-    const accessToken = await this.jwtService.signAsync(
-      {
-        sub: user.id,
-      },
-      { jwtid: randomUUID() },
-    )
-
-    return {
-      accessToken,
-    }
+    return await this.authService.generateTokens(user)
   }
 }
