@@ -4,6 +4,7 @@ import { DietsPreferenceModule } from 'src/modules/diets/preference/diets-prefer
 import { OnboardingController } from 'src/modules/onboarding/controllers/onboarding.controller'
 import { CompleteOnboardingUseCase } from 'src/modules/onboarding/use-cases/complete-onboarding.use-case'
 import { GetOnboardingStatusUseCase } from 'src/modules/onboarding/use-cases/get-onboarding-status.use-case'
+import { SetDietsPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-diets-preference.use-case'
 import { SetPersonalInfosUseCase } from 'src/modules/onboarding/use-cases/set-personal-infos.use-case'
 import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { UsersModule } from 'src/modules/users/users.module'
@@ -16,6 +17,7 @@ import { WorkoutPreferenceModule } from 'src/modules/workout/preference/workout-
     GetOnboardingStatusUseCase,
     CompleteOnboardingUseCase,
     SetPersonalInfosUseCase,
+    SetDietsPreferenceUseCase,
     RequestContextService,
   ],
 })

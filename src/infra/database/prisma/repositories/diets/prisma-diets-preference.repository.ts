@@ -4,8 +4,8 @@ import { BaseRepository } from 'src//infra/database/prisma/repositories/base.rep
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { DietsPreferenceRepository } from 'src/modules/diets/preference/repositories/diets-preference.repository'
-import { SetDietPreferenceInput } from 'src/modules/diets/preference/types/set-diets-preference.types'
 import { UpdateDietsPreferenceInput } from 'src/modules/diets/preference/types/update-diets-preference.types'
+import { SetDietPreferenceInput } from 'src/modules/onboarding/types/set-diets-preference.types'
 
 @Injectable()
 export class PrismaDietsPreferenceRepository

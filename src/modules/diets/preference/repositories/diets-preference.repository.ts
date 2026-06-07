@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { DietPreference } from 'generated/prisma/client'
-import { SetDietPreferenceInput } from 'src/modules/diets/preference/types/set-diets-preference.types'
 import { UpdateDietsPreferenceInput } from 'src/modules/diets/preference/types/update-diets-preference.types'
+import { SetDietPreferenceInput } from 'src/modules/onboarding/types/set-diets-preference.types'
 
 @Injectable()
 export abstract class DietsPreferenceRepository {

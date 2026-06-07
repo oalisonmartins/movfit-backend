@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { ProfilesRepository } from 'src/modules/profiles/repositories/profiles.repository'
 import { Profile } from 'src/modules/profiles/types/profile.types'
@@ -13,6 +13,18 @@ export class SetPersonalInfosUseCase {
 
   async execute(input: SetPersonalInfosInput): Promise<Profile> {
     const userId = this.requestContext.getUserId
+
+    const existingPersonalInfos = await this.profilesRepository.findOne(userId)
+
+    if (existingPersonalInfos) {
+      throw new HttpException(
+        {
+          message: 'Você já têm suas informações pessoais definidas',
+          code: 'EXISTING_PERSONAL_INFOS',
+        },
+        HttpStatus.CONFLICT,
+      )
+    }
 
     const personalInfos = await this.profilesRepository.create(userId, input)
 

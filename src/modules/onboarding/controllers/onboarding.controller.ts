@@ -18,9 +18,11 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { DietPreferenceInterceptor } from 'src/common/interceptors/diet-preference.interceptor'
 import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
 import { WorkoutPreferenceInterceptor } from 'src/common/interceptors/workout-preference.interceptor'
+import { SetDietPreferenceDto } from 'src/modules/onboarding/dtos/set-diets-preference.dto'
 import { SetPersonalInfosDto } from 'src/modules/onboarding/dtos/set-personal-infos.dto'
 import { CompleteOnboardingUseCase } from 'src/modules/onboarding/use-cases/complete-onboarding.use-case'
 import { GetOnboardingStatusUseCase } from 'src/modules/onboarding/use-cases/get-onboarding-status.use-case'
+import { SetDietsPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-diets-preference.use-case'
 import { SetPersonalInfosUseCase } from 'src/modules/onboarding/use-cases/set-personal-infos.use-case'
 import { ProfileDto } from 'src/modules/profiles/dtos/profile.dto'
 
@@ -31,6 +33,7 @@ export class OnboardingController {
     private readonly getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
     private readonly completeOnboardingUseCase: CompleteOnboardingUseCase,
     private readonly setPersonalInfosUseCase: SetPersonalInfosUseCase,
+    private readonly setDietPreferenceUseCase: SetDietsPreferenceUseCase,
   ) {}
 
   @Get('status')
@@ -45,8 +48,12 @@ export class OnboardingController {
     return this.setPersonalInfosUseCase.execute(body)
   }
 
-  @Post('diet-preference')
-  setDietPreference() {}
+  @Throttle({ heavy: { ttl: 60000, limit: 5 } })
+  @Post()
+  @Post('diets-preference')
+  setDietPreference(@Body() body: SetDietPreferenceDto) {
+    return this.setDietPreferenceUseCase.execute(body)
+  }
 
   @Post('workout-preference')
   setWorkoutPreference() {}

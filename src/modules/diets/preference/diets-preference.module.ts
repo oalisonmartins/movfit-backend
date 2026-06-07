@@ -6,8 +6,8 @@ import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 import { PrismaDietsPreferenceRepository } from 'src/infra/database/prisma/repositories/diets/prisma-diets-preference.repository'
 import { DietsPreferenceControler } from 'src/modules/diets/preference/controllers/diets-preference.controller'
 import { DietsPreferenceRepository } from 'src/modules/diets/preference/repositories/diets-preference.repository'
-import { SetDietsPreferenceUseCase } from 'src/modules/diets/preference/use-cases/set-diets-preference.use-case'
 import { UpdateDietsPreferenceUseCase } from 'src/modules/diets/preference/use-cases/update-diets-preference.use-case'
+import { SetDietsPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-diets-preference.use-case'
 
 @Module({
   controllers: [DietsPreferenceControler],

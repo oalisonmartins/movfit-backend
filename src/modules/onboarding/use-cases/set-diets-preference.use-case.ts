@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { RequestContextService } from 'src/common/services/request-context.service'
 import { DietsPreferenceRepository } from 'src/modules/diets/preference/repositories/diets-preference.repository'
-import { SetDietPreferenceInput } from 'src/modules/diets/preference/types/set-diets-preference.types'
+import { SetDietPreferenceInput } from 'src/modules/onboarding/types/set-diets-preference.types'
 
 @Injectable()
 export class SetDietsPreferenceUseCase {
@@ -18,7 +18,7 @@ export class SetDietsPreferenceUseCase {
     if (existingDietPreference) {
       throw new HttpException(
         {
-          message: 'Você já tem preferências alimentares definidas',
+          message: 'Você já têm preferências alimentares definidas',
           code: 'EXISTING_DIET_PREFERENCE',
         },
         HttpStatus.CONFLICT,
