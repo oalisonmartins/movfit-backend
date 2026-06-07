@@ -53,9 +53,8 @@ export class OnboardingController {
   }
 
   @Throttle({ heavy: { ttl: 60000, limit: 5 } })
-  @Post()
   @Post('diets-preference')
-  setDietPreference(@Body() body: SetDietPreferenceDto) {
+  setDietsPreference(@Body() body: SetDietPreferenceDto) {
     return this.setDietPreferenceUseCase.execute(body)
   }
 
