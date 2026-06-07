@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { WorkoutPreference } from 'generated/prisma/client'
-import { SetWorkoutPreferenceInput } from 'src/modules/workout/preference/types/set-workout-preference.types'
+import { SetWorkoutPreferenceInput } from 'src/modules/onboarding/types/set-workout-preference.types'
 
 @Injectable()
 export abstract class WorkoutPreferenceRepository {

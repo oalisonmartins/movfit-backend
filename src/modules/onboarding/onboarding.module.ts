@@ -6,6 +6,7 @@ import { CompleteOnboardingUseCase } from 'src/modules/onboarding/use-cases/comp
 import { GetOnboardingStatusUseCase } from 'src/modules/onboarding/use-cases/get-onboarding-status.use-case'
 import { SetDietsPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-diets-preference.use-case'
 import { SetPersonalInfosUseCase } from 'src/modules/onboarding/use-cases/set-personal-infos.use-case'
+import { SetWorkoutPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-workout-preference.use-case'
 import { ProfilesModule } from 'src/modules/profiles/profiles.module'
 import { UsersModule } from 'src/modules/users/users.module'
 import { WorkoutPreferenceModule } from 'src/modules/workout/preference/workout-preference.module'
@@ -18,6 +19,7 @@ import { WorkoutPreferenceModule } from 'src/modules/workout/preference/workout-
     CompleteOnboardingUseCase,
     SetPersonalInfosUseCase,
     SetDietsPreferenceUseCase,
+    SetWorkoutPreferenceUseCase,
     RequestContextService,
   ],
 })

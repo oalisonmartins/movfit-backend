@@ -20,11 +20,14 @@ import { ProfileInterceptor } from 'src/common/interceptors/profile.interceptor'
 import { WorkoutPreferenceInterceptor } from 'src/common/interceptors/workout-preference.interceptor'
 import { SetDietPreferenceDto } from 'src/modules/onboarding/dtos/set-diets-preference.dto'
 import { SetPersonalInfosDto } from 'src/modules/onboarding/dtos/set-personal-infos.dto'
+import { SetWorkoutPreferenceDto } from 'src/modules/onboarding/dtos/set-workout-preference.dto'
 import { CompleteOnboardingUseCase } from 'src/modules/onboarding/use-cases/complete-onboarding.use-case'
 import { GetOnboardingStatusUseCase } from 'src/modules/onboarding/use-cases/get-onboarding-status.use-case'
 import { SetDietsPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-diets-preference.use-case'
 import { SetPersonalInfosUseCase } from 'src/modules/onboarding/use-cases/set-personal-infos.use-case'
+import { SetWorkoutPreferenceUseCase } from 'src/modules/onboarding/use-cases/set-workout-preference.use-case'
 import { ProfileDto } from 'src/modules/profiles/dtos/profile.dto'
+import { WorkoutPreferenceDto } from 'src/modules/workout/preference/dtos/workout-preference.dto'
 
 @UseGuards(JwtAuthGuard)
 @Controller('onboarding')
@@ -34,6 +37,7 @@ export class OnboardingController {
     private readonly completeOnboardingUseCase: CompleteOnboardingUseCase,
     private readonly setPersonalInfosUseCase: SetPersonalInfosUseCase,
     private readonly setDietPreferenceUseCase: SetDietsPreferenceUseCase,
+    private readonly setWorkoutPreferenceUseCase: SetWorkoutPreferenceUseCase,
   ) {}
 
   @Get('status')
@@ -55,8 +59,12 @@ export class OnboardingController {
     return this.setDietPreferenceUseCase.execute(body)
   }
 
+  @ApiCreatedResponse({ type: WorkoutPreferenceDto })
+  @Throttle({ heavy: { ttl: 60000, limit: 5 } })
   @Post('workout-preference')
-  setWorkoutPreference() {}
+  setWorkoutPreference(@Body() body: SetWorkoutPreferenceDto) {
+    return this.setWorkoutPreferenceUseCase.execute(body)
+  }
 
   @RequireProfile()
   @RequireDietPreference()

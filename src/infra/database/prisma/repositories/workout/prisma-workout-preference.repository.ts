@@ -3,8 +3,8 @@ import { WorkoutPreference } from 'generated/prisma/client'
 import { BaseRepository } from 'src//infra/database/prisma/repositories/base.repository'
 import { TransactionContextService } from 'src/common/services/transaction-context.service'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
+import { SetWorkoutPreferenceInput } from 'src/modules/onboarding/types/set-workout-preference.types'
 import { WorkoutPreferenceRepository } from 'src/modules/workout/preference/repositories/workout-preference.repository'
-import { SetWorkoutPreferenceInput } from 'src/modules/workout/preference/types/set-workout-preference.types'
 
 @Injectable()
 export class PrismaWorkoutPreferenceRepository

@@ -7,14 +7,12 @@ import { PrismaWorkoutPreferenceRepository } from 'src/infra/database/prisma/rep
 import { WorkoutPreferenceController } from 'src/modules/workout/preference/controllers/workout-preference.controller'
 import { WorkoutPreferenceRepository } from 'src/modules/workout/preference/repositories/workout-preference.repository'
 import { GetWorkoutPreferenceUseCase } from 'src/modules/workout/preference/use-cases/get-workout-preference.use-case'
-import { SetWorkoutPreferenceUseCase } from 'src/modules/workout/preference/use-cases/set-workout-preference.use-case'
 
 @Module({
   controllers: [WorkoutPreferenceController],
   exports: [WorkoutPreferenceRepository],
   providers: [
     GetWorkoutPreferenceUseCase,
-    SetWorkoutPreferenceUseCase,
     PrismaService,
     TransactionService,
     TransactionContextService,
